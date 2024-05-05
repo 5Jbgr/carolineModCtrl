@@ -1,0 +1,18 @@
+import win.ui;
+/*DSG{{*/
+var winform = win.form(text="警告";right=499;bottom=135;bgcolor=15793151;border="dialog frame";max=false;min=false;mode="popup";topmost=1)
+winform.add(
+warningText={cls="edit";text="Edit";left=32;top=24;right=464;bottom=128;align="center";bgcolor=15793151;color=255;db=1;dl=1;dr=1;dt=1;font=LOGFONT(h=-16);multiline=1;readonly=1;z=1}
+)
+/*}}*/
+
+var str = 
+/*模组是作者的一片心血，请大家不要随意分享，
+也请大家不要去官方以及社区分享这些信息！！！
+不要把MOD截图发到官群和公开平台,否则会导致封号和MOD被堵死
+*/; 
+winform.warningText.text=str;
+
+winform.show();
+win.loopMessage();
+return winform;

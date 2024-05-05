@@ -1,0 +1,95 @@
+﻿//modSQL 模块数据库
+namespace modSQL{
+	mods={"id","file_name","character_num","web","describe"};
+	mod_types={"INTEGER PRIMARY KEY NOT NULL","VARCHAR(200)","INT","VARCHAR(300)","VARCHAR(500)"};
+	characters={"id","name","character_num","star","true_name"};
+	character_types={"INTEGER PRIMARY KEY NOT NULL","VARCHAR(20)","INT","CHAR(1)","VARCHAR(20)"};
+	
+	get_mods_info=function(){
+		var _info={};
+		for(i=0;#mods;1){
+			table.push(_info,type_info(mods[i],mods_types[i]));
+		}
+		return _info; 
+	};
+	get_characters_info=function(){
+		var _info={};
+		for(i=0;#mods;1){
+			table.push(_info,type_info(characters[i],character_types[i]));
+		}
+		return _info; 
+	}
+
+	class type_info{
+		ctor( name,sql_type ){
+			this.name=name;
+			this.sql_type=sql_type;
+		};
+		name;
+		sql_type;
+		_tostring=function(){
+			return this.name+this.sql_type; 
+		}
+		
+	}
+	
+	class modSQLimpl{
+		ctor(path,mods/*模组信息*/,characters/*角色信息*/){
+			import sqlite;
+			var _db=sqlite(path);
+			if( not _db.existsTable("mod总表") /*是否已存在指定的表*/ ) {  
+	    		_db.exec( "CREATE TABLE [mod总表]( id INTEGER PRIMARY KEY NOT NULL,file_name VARCHAR(200),character_num VARCHAR(20),web VARCHAR(300),describe VARCHAR(500));" );
+			}  
+			if( not _db.existsTable("character_list") ) {  
+    			_db.exec( "CREATE TABLE [character_list]( id INTEGER PRIMARY KEY NOT NULL,name VARCHAR(20),character_num INT,star CHAR(1),true_name VARCHAR(20));" );
+			}
+			var _mods=mods;
+			var _characters=characters; 
+			var _insert_mod = _db.prepare("INSERT INTO [mod总表] VALUES (null,@file_name,@character_num,@web,@describe);");
+			var _insert_character = _db.prepare("INSERT INTO [character_list] VALUES (null,@name,@character,@star,@true_name);");
+			var _delete_mod=_db.prepare("DELETE FROM [mod总表] WHERE id=@id;");
+			var _delete_character=_db.prepare("DELETE FROM [character_list] WHERE id=@id;");
+		};
+		_db;
+		add_mod=function(mod){
+			_insert_mod.step(mod);
+			return _db.changes();
+		};
+		update_mod=function(mod){
+			_db.exec("UPDATE [mod总表] SET file_name = @file_name,character_num=@character_num,web=@web,describe=@describe WHERE id = @id;",mod);
+			return _db.changes();
+		};
+		delete_mod=function(mod){
+			_delete_mod.step(mod);
+			return _db.changes();
+		};
+		
+		rollback=function(){
+			_db.rollbackTrans();
+		}
+		
+		
+		add_character=function(character){
+			return _insert_character.step(character);
+		};
+		
+		update_character=function(character){
+			return _db.exec("UPDATE [character_list] SET name = @name,character_num=@character_num,star=@star,true_name=@true_name WHERE id = @id;",character);
+		};
+		delete_character=function(character){
+			return _delete_character.step(character);
+		};
+		get_mod_table=function(){
+			return _db.getTable("SELECT * FROM [mod总表] ");
+		};
+		get_character_table=function(){
+			return _db.getTable("SELECT * FROM [character_list] ");
+		};
+		get_mod_last=function(){
+			return _db.stepQuery("SELECT * FROM [mod总表] ORDER BY id DESC"); 
+		}
+		
+		
+		/*对象的所有成员必须用分号分隔*/
+	}
+}

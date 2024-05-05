@@ -1,0 +1,118 @@
+﻿//myutil 工具库
+namespace myutil{
+	protectButton=function(button,func){
+		button.oncommand= lambda(...){
+			owner.disabled=true;
+			func(...);
+			owner.disabled=false;
+		}
+	}
+	settings=null;
+	import fsys.table;
+	get_setting=function(path="/config.table"){
+		if(not self.settings){
+			self.settings = fsys.table(path);
+			self.settings.mix(
+				data_path="/mods",
+				game_path="",
+				db_path="/modinfo.db",
+				install_dir=null,
+				mod_path="\data\game\Game\Content\Paks\~mod",
+				use_colors={},
+				ui={
+					delete_file=false;
+					check_once=false;
+				},
+				default_mod_template={
+					file_name="文件名称";
+					character_num="角色名称";
+					web="mod网址";
+					describe="mod描述";
+				}
+			)
+		}
+		return self.settings;
+	}
+	save_setting=function(){
+		self.settings.save();
+	}
+	
+	import io;
+	import string;
+	use_mod=function(from,to,ext=".pak"){
+		if(from&&to){
+			if(io.exist(to)){
+				return fsys.rename(to,to++ext);
+			}elseif(io.exist(from)){
+				fsys.createParentDir(to,false);
+				return fsys.copy(from,to++ext);
+			}else {
+				self[["dlg"]].error_dlg(string.format("路径不存在:{%s}",from));
+			}
+		}
+		return false;
+	}
+	
+	disable_mod=function(path,ext=".pak"){
+		if(path){
+			true_path=path++ext;
+			if(io.exist(true_path)){
+				return fsys.rename(true_path,path);
+			}else {
+				self.dlg.error_dlg(string.format("路径不存在:{%s}",true_path));
+			}
+		}
+		return false; 
+	}
+	
+	
+	namespace dlg{
+		import win.dlg.message;
+	    dlg=null;
+	    init=function(phwnd){
+	    	if(not dlg){
+	    		self.dlg=win.dlg.message(phwnd);
+	    		self.dlg.bgcolor=..gdi.RGB(232,232,232);
+	    		self.dlg.textColor=..gdi.RGB(20,20,20);
+	    		self.dlg.buttonStyle = { 
+	    			color = {  
+	    				hover = 0xFF40826D;
+	    				active = 0xFF2E8B57; 
+	    				default = 0xFF3CB371;
+	    			} 
+	    			border = {
+	    				default = {width=0;}
+	    				hover = { bottom = 1;color= 0xF0FFFFFF; }
+	    				focus = { bottom = 1;color= 0xF0FFFFFF; }
+	    				active = { bottom = 1;color= 0x30FFFFFF; }
+	    			} 
+	    		}
+	    		self.dlg.titlebarStyle = { 
+	    			color = { 
+	    				hover = 0xFF40826D;
+	    				active = 0xFF2E8B57; 
+	    				default = 0xFF3CB371;
+	    			}
+	    		}
+	    		//self.dlg.iconColor=..gdi.RGB(20,20,20);
+	    	}
+	    }
+	    error_dlg=function(msg){
+	    	self.dlg.err(msg);
+	    }
+	    info_dlg=function(msg){
+	    	self.dlg.info(msg);
+	    }
+	    success_dlg=function(msg){
+	    	self.dlg.ok(msg);
+	    }
+	    ask_dlg=function(msg){
+	    	return self.dlg.ask(msg); 
+	    }
+	    	
+	}
+	
+	
+}
+namespace myutil{
+}
