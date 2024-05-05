@@ -5,29 +5,26 @@ import win.ui.grid;
 import myutil;
 import fsys;
 /*DSG{{*/
-mainForm = win.form(text="卡罗琳mod管理器";right=759;bottom=467)
+mainForm = win.form(text="卡罗琳mod管理器";right=791;bottom=467)
 mainForm.add(
-add_button={cls="button";text="添加";left=96;top=104;right=168;bottom=128;dl=1;dt=1;z=7};
-ask_once_checkbox={cls="checkbox";text="Checkbox";left=96;top=48;right=112;bottom=64;dl=1;dt=1;z=13};
-btnIFileOpenDir={cls="plus";text="打开";left=680;top=32;right=744;bottom=58;autohscroll=false;autovscroll=false;bgcolor=16775408;color=3947580;dr=1;dt=1;font=LOGFONT(h=-13);iconStyle={align="left";font=LOGFONT(h=-13;name='FontAwesome');padding={left=7;top=2}};iconText='\uF07C';notify=1;textPadding={left=18};z=12};
-delete_file_checkbox={cls="checkbox";text="Checkbox";left=16;top=48;right=32;bottom=64;dl=1;dt=1;z=10};
-disable_button={cls="button";text="禁用";left=96;top=72;right=168;bottom=96;dl=1;dt=1;z=5};
-editPath={cls="plus";left=264;top=32;right=672;bottom=58;align="right";border={bottom=1;color=-6908266};dl=1;dr=1;dt=1;editable=1;font=LOGFONT(h=-13);textPadding={top=6;bottom=2};z=2};
-enable_button={cls="button";text="启用";left=16;top=72;right=88;bottom=96;dl=1;dt=1;z=4};
-groupbox={cls="groupbox";text="模组";left=8;top=24;right=176;bottom=168;dl=1;dt=1;edge=1;z=3};
-mod_listview={cls="listview";left=184;top=72;right=752;bottom=451;ah=1;aw=1;db=1;dl=1;dr=1;dt=1;edge=1;fullRow=1;hscroll=1;vscroll=1;z=1};
-remove_button={cls="button";text="删除";left=16;top=104;right=88;bottom=128;dl=1;dt=1;z=6};
-static={cls="static";text="删除文件";left=32;top=48;right=88;bottom=64;center=1;dl=1;dt=1;transparent=1;z=9};
-static2={cls="static";text="游戏目录：";left=192;top=32;right=264;bottom=58;align="center";center=1;dl=1;dt=1;font=LOGFONT(h=-14);transparent=1;z=11};
-static3={cls="static";text="单次确认";left=112;top=48;right=168;bottom=64;align="center";center=1;dl=1;dt=1;transparent=1;z=14};
-upadte_button={cls="button";text="更新文件";left=16;top=136;right=168;bottom=160;dl=1;dt=1;z=8}
+EnglishUI={cls="checkbox";text="EnglishUI";left=16;top=176;right=120;bottom=200;z=13};
+add_button={cls="button";text="添加";left=112;top=104;right=200;bottom=128;dl=1;dt=1;z=7};
+ask_once_checkbox={cls="checkbox";text="单次确认";left=112;top=48;right=200;bottom=64;dl=1;dt=1;z=12};
+btnIFileOpenDir={cls="plus";text="打开";left=712;top=32;right=776;bottom=58;autohscroll=false;autovscroll=false;bgcolor=16775408;color=3947580;dr=1;dt=1;font=LOGFONT(h=-13);iconStyle={align="left";font=LOGFONT(h=-13;name='FontAwesome');padding={left=7;top=2}};iconText='\uF07C';notify=1;textPadding={left=18};z=11};
+delete_file_checkbox={cls="checkbox";text="删除文件";left=16;top=48;right=104;bottom=64;dl=1;dt=1;z=9};
+disable_button={cls="button";text="禁用";left=112;top=72;right=200;bottom=96;dl=1;dt=1;z=5};
+editPath={cls="plus";left=296;top=32;right=704;bottom=58;align="right";border={bottom=1;color=-6908266};dl=1;dr=1;dt=1;editable=1;font=LOGFONT(h=-13);textPadding={top=6;bottom=2};z=2};
+enable_button={cls="button";text="启用";left=16;top=72;right=104;bottom=96;dl=1;dt=1;z=4};
+groupbox={cls="groupbox";text="模组";left=8;top=24;right=208;bottom=168;dl=1;dt=1;edge=1;z=3};
+mod_listview={cls="listview";left=216;top=72;right=784;bottom=451;ah=1;aw=1;db=1;dl=1;dr=1;dt=1;edge=1;fullRow=1;hscroll=1;vscroll=1;z=1};
+remove_button={cls="button";text="删除";left=16;top=104;right=104;bottom=128;dl=1;dt=1;z=6};
+static2={cls="static";text="游戏目录：";left=224;top=32;right=296;bottom=58;align="center";center=1;dl=1;dt=1;font=LOGFONT(h=-14);transparent=1;z=10};
+upadte_button={cls="button";text="更新文件";left=16;top=136;right=200;bottom=160;dl=1;dt=1;z=8}
 )
 /*}}*/
 
-/*
 var frmChild = mainForm.loadForm("\dlg\warning.aardio");
 frmChild.show();
-*/
 
 //初始化配置
 var settings=myutil.get_setting();
@@ -35,8 +32,16 @@ myutil.dlg.init(mainForm);
 mainForm.editPath.text = settings.game_path;
 mainForm.delete_file_checkbox.checked=settings.ui.delete_file;
 mainForm.ask_once_checkbox.checked=settings.ui.check_once;
+mainForm.EnglishUI.checked=settings.ui.language=="english";
 
+myutil.set_language(mainForm,settings.ui.language);
 var mod_template=table.clone(settings.default_mod_template);
+if(settings.ui.language=="english"){
+	mod_template.file_name="filename";
+	mod_template.character_num="character name";
+	mod_template.web="mod URL";
+	mod_template.describe="mod discribe";
+}
 fsys.createDir(settings.data_path,false);
 
 //打开数据库及数据初始化
@@ -198,11 +203,11 @@ mainForm.add_button.oncommand = function(id,event){
 	}
 	owner.disabled=false;
 }
-
+//
 mainForm.delete_file_checkbox.oncommand = function(id,event){
 	settings.ui.delete_file=mainForm.delete_file_checkbox.checked;
 }
-
+//
 mainForm.ask_once_checkbox.oncommand = function(id,event){
 	settings.ui.check_once=mainForm.ask_once_checkbox.checked;
 }
@@ -249,6 +254,20 @@ mainForm.upadte_button.oncommand = function(id,event){
 	}
 	owner.disabled=false;
 }
+
+mainForm.EnglishUI.oncommand = function(id,event){
+	settings.ui.language=mainForm.EnglishUI.checked?"english":"chinese";
+	myutil.set_language(mainForm,settings.ui.language);
+	if(settings.ui.language=="english"){
+		mod_template.file_name="filename";
+		mod_template.character_num="character name";
+		mod_template.web="mod URL";
+		mod_template.describe="mod discribe";	
+	}else {
+		mod_template=table.clone(settings.default_mod_template);
+	}
+}
+
 
 mainForm.show();
 win.loopMessage();

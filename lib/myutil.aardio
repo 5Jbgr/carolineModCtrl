@@ -22,6 +22,7 @@ namespace myutil{
 				ui={
 					delete_file=false;
 					check_once=false;
+					language="chinese"
 				},
 				default_mod_template={
 					file_name="文件名称";
@@ -65,6 +66,33 @@ namespace myutil{
 		return false; 
 	}
 	
+	//设置语言
+	set_language = function(form, lang){
+		if(lang=="english"){
+			form.groupbox.text="Mods";
+			form.static2.text="Game path:";
+			form.delete_file_checkbox.text="delete files";
+			form.ask_once_checkbox.text="confirm once";
+			form.enable_button.text="enable";
+			form.disable_button.text="disable"
+			form.upadte_button.text="update file";
+			form.add_button.text="add";
+			form.remove_button.text="remove";
+			form.btnIFileOpenDir.text="open";
+		}else {
+			form.groupbox.text="模组";
+			form.static2.text="游戏目录：";
+			form.delete_file_checkbox.text="删除文件";
+			form.ask_once_checkbox.text="单次确认";
+			form.enable_button.text="启用";
+			form.disable_button.text="禁用"
+			form.upadte_button.text="更新文件";
+			form.add_button.text="添加";
+			form.remove_button.text="删除";
+			form.btnIFileOpenDir.text="打开";
+		}
+		
+	}
 	
 	namespace dlg{
 		import win.dlg.message;
