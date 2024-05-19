@@ -1,0 +1,50 @@
+﻿//dlg 弹出窗口库
+import win.dlg.message;
+namespace myutil.dlg{
+	dlg=null;
+	init=function(phwnd){
+	    if(not self.dlg){
+	    	self.dlg=..win.dlg.message(phwnd);
+	    	self.dlg.bgcolor=..gdi.RGB(232,232,232);
+	    	self.dlg.textColor=..gdi.RGB(20,20,20);
+	    	self.dlg.buttonStyle = { 
+	    		color = {  
+	    			hover = 0xFF40826D;
+	    			active = 0xFF2E8B57; 
+	    			default = 0xFF3CB371;
+	    		} 
+	    		border = {
+	    			default = {width=0;}
+	    			hover = { bottom = 1;color= 0xF0FFFFFF; }
+	    			focus = { bottom = 1;color= 0xF0FFFFFF; }
+	    			active = { bottom = 1;color= 0x30FFFFFF; }
+	    		} 
+	    	}
+	    	self.dlg.titlebarStyle = { 
+	    		color = { 
+	    			hover = 0xFF40826D;
+	    			active = 0xFF2E8B57; 
+	    			default = 0xFF3CB371;
+	    		}
+	    	}
+	    	//self.dlg.iconColor=..gdi.RGB(20,20,20);
+	    }
+	}
+	error_dlg=function(msg){
+		init();
+	    self.dlg.err(msg);
+	}
+	info_dlg=function(msg){
+		init();
+	    self.dlg.info(msg);
+	}
+	success_dlg=function(msg){
+		init();
+	    self.dlg.ok(msg);
+	}
+	ask_dlg=function(msg){
+		init();
+	    return self.dlg.ask(msg); 
+	}
+	    
+}

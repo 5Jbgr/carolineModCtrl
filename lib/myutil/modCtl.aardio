@@ -1,0 +1,137 @@
+﻿//modCtl 模组控制库
+namespace myutil.modCtl;
+import fsys.hardlink;
+import web.json;
+import myutil.dlg;
+import myutil.config;
+_lang_config=null;
+_get_lang=function(){
+	if(not _lang_config){
+		_lang_config=myutil.config.get_langconfig().get_other("modCtl");
+		..table.mix(_lang_config,{
+			path_not_found_error="路径不存在:{%s}";
+		});
+	}
+	return _lang_config;
+}
+
+//启用模组
+enable_mod=function(from ,to ,ext=".pak"){
+	if(from&&to){
+	    if(..io.exist(from,6)){
+	        if(..io.exist(to)){
+	            fsys.delete(to++ext);
+	        }
+	        fsys.hardlink.create(to++ext,from);
+	        return true;
+	    }
+		myutil.dlg.error_dlg(..string.format(_get_lang().path_not_found_error,from));
+		return false; 
+	}
+}
+//禁用模组
+disable_mod=function(path,ext=".pak"){
+	if(path){
+		true_path=path++ext;
+		if(..io.exist(true_path)){
+			
+			return fsys.delete(true_path);
+		}else {
+			myutil.dlg.error_dlg(..string.format(_get_lang().path_not_found_error,true_path));
+		}
+	}
+	return false; 
+}
+
+remove_mod=function(path,install,trash){
+	..console.log(path,install,trash);
+	if(path and ..io.exist(path,6)){
+		if(trash){
+			fsys.hardlink.create(trash,path);
+		}
+		fsys.delete(path);
+	}
+	if(install and ..io.exist(install,6)){
+		fsys.delete(install);
+	}
+	return true; 
+}
+
+_category=null;
+get_category=function(){
+	if(not _category){
+		_category=mod_category();
+	}
+	return _category; 
+}
+
+get_path=function(cat){
+	return string.replace(cat,"-","\");
+}
+
+
+
+//模组分类
+class mod_category {
+	ctor(path="/config/category.json"){
+	    //import console;
+	    var _cat = null; 
+	    var _tree = null; 
+	    var _ids = null; 
+	    if(..io.exist(path)){	
+	    	_cat=..web.json.parse(..string.load(path));
+	    }else {
+	    	myutil.dlg.error_dlg("");
+	    	return ; 
+	    }
+	}
+	
+	_gen_tree=function(table_,cat_,root){
+	    for(k,v in table_){
+	    	var node={text=v.name;data=v;flag=cat_+'-'+v["id"]};
+	    	//console.log(..table.tostring(node));
+	    	..table.push(root,node);
+	    	var a,b = ..table.find(v,lambda(val) ..table.isArray(val));
+	    	//console.log(a,b)
+	    	if(b){
+	    		this._gen_tree(b,cat_+'-'+v["id"],node);
+	    	}else {
+	    		..table.push(_ids,{name=root.data.name+'-'+v.name;id=cat_+'-'+v["id"]});
+	    	}
+	    }
+	}
+	
+	init=function(){
+	    _tree = ..table.array();
+	    _ids = ..table.array();
+	    for(k,v in _cat){
+	    	var node = {text=v.name,data=v,flag=tostring(v.id)}; 
+	    	//console.log(..table.tostring(node));
+	    	..table.push(_tree,node);
+	    	this._gen_tree(v.list,tostring(v.id),node);
+	    }
+	}
+	
+	
+	get_tree=function(){
+	    if(not _tree){
+	        this.init();
+	    }
+	    //console.log(..table.tostring(_ids));
+	    return _tree; 
+	}
+	
+	//{id:"";name:""}
+	get_ids=function(){
+	    if(not _ids){
+	        this.init();
+	    }
+	    return _ids; 
+	}
+	
+	
+	get_string=function(){
+	    return table.tostring(_cat); 
+	}
+
+} 

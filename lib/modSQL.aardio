@@ -5,32 +5,76 @@ namespace modSQL{
 	characters={"id","name","character_num","star","true_name"};
 	character_types={"INTEGER PRIMARY KEY NOT NULL","VARCHAR(20)","INT","CHAR(1)","VARCHAR(20)"};
 	
-	get_mods_info=function(){
-		var _info={};
-		for(i=0;#mods;1){
-			table.push(_info,type_info(mods[i],mods_types[i]));
+	_translate=null;
+	
+	get_translate=function(){
+		import myutil.config;
+		if(not _translate){
+			_translate=myutil.config.get_langconfig().get_other("db");
+			..table.mix(_translate,{
+				id="编号";
+				name="文件名";
+	    		version="版本";
+	    		author="作者";
+	    		URL="链接";
+	    		category="分类";
+	    		tags="标签";
+	    		describe="描述";
+	    		hash="哈希";
+	    		enabled="启用";
+	    		image="图片";
+			});
 		}
-		return _info; 
-	};
-	get_characters_info=function(){
-		var _info={};
-		for(i=0;#mods;1){
-			table.push(_info,type_info(characters[i],character_types[i]));
-		}
-		return _info; 
+		return _translate; 
 	}
+	
+	//import myutil;
+	import myutil.dlg;
 
-	class type_info{
-		ctor( name,sql_type ){
-			this.name=name;
-			this.sql_type=sql_type;
-		};
-		name;
-		sql_type;
-		_tostring=function(){
-			return this.name+this.sql_type; 
+	update_sql=function(_db,new_version,old_version){
+		var data = _db.getTable("SELECT * FROM [mod总表] ");
+		var _insert=_db.prepare("INSERT INTO [mods] VALUES (NULL,@name,@version,@author,@URL,
+		@category,@tags,@describe,@hash,0,@image);");
+		var mod = {
+            name="";//模组文件名
+            author="";//作者
+            URL="";//网站链接
+            category="99-1";//分组编号
+            tags="";//标签
+            image="";//展示图片
+            version="";//版本
+            describe="";//描述
+            hash="";//哈希校验
+            enabled=false;//是否已启用
+		}; 
+		var err_mod=..table.array();
+		for(i=1;#data;1){
+			mod.name=data[i].file_name;
+			mod.describe=data[i].describe;
+			mod.URL=data[i].web;
+			mod.tags=data[i].character_num;
+			mod.hash=myutil.hash_file(..io.joinpath("/mods",data[i].id,mod.name+".pak"));
+			if(#mod.hash==32){
+				_insert.step(mod);
+				var id=_db.lastInsertRowid();
+				..fsys.move(..io.joinpath("/mods",data[i].id,mod.name+".pak"),..io.joinpath("/mods","99/1",id+"_"+mod.name+".pak"));
+			}else {
+				..table.push(err_mod,data[i].id);
+			}
 		}
-		
+		if(#err_mod>0){
+			myutil.dlg.error_dlg(..string.format("以下文件转换失败(convert field):id=%s", ..table.tostring(err_mod)));
+		}else{
+			myutil.dlg.success_dlg("所有旧数据全部转换成功(all data have convert to new DB)");
+		}
+	}
+	
+	_sql=null;
+	get_mod_sql=function(path="\modinfo.db"){
+		if(not _sql){
+			self._sql=modSQLimpl2(path);
+		}
+		return self._sql; 
 	}
 	
 	class modSQLimpl{
@@ -92,4 +136,128 @@ namespace modSQL{
 		
 		/*对象的所有成员必须用分号分隔*/
 	}
+	
+	class modSQLimpl2{
+		ctor(path /*输入构造函数所需要的参数*/ ){
+			import sqlite;
+			var _db = sqlite(path);
+			if( not _db.existsTable("mods") ) { 
+	    		_db.exec( "CREATE TABLE [mods](
+	      			id INTEGER PRIMARY KEY NOT NULL,
+	    			name VARCHAR(200),
+	    			version VARCHAR(10),
+	    			author VARCHAR(20),
+	    			URL VARCHAR(300),
+	    			category VARCHAR(16) NOT NULL,
+	    			tags VARCHAR(100),
+	    			describe VARCHAR(500),
+	    			hash CHAR(32) NOT NULL,
+	    			enabled BOOLEAN NOT NULL DEFAULT false,
+	    			image VARCHAR(200)
+	    			);");
+			}
+			var _insert_mod=_db.prepare("INSERT INTO [mods] VALUES (NULL,
+				@name,
+				@version,
+				@author,
+				@URL,
+				@category,
+				@tags,
+				@describe,
+				@hash,
+				0,
+				@image);");
+			var _delete_mod = _db.prepare("DELETE FROM [mods] WHERE id=@id;");
+			if( not _db.existsTable("images") ) {  
+	    		_db.exec( "CREATE TABLE [images]( 
+	    			id INTEGER PRIMARY KEY NOT NULL,
+	    			ext VARCHAR(10),
+	    			hash CHAR(32) NOT NULL);" );
+			}
+			var _insert_image=_db.prepare("INSERT INTO [images] VALUES (NULL,@ext,@hash);");
+			var _delete_image=_db.prepare("DELETE FROM [images] WHERE id=@id;");
+			if( not _db.existsTable("version") ) {  
+	    		_db.exec( "CREATE TABLE [version]( 
+	    			id INTEGER PRIMARY KEY NOT NULL,
+	    			version VARCHAR(10));" );
+	    		_db.exec("INSERT INTO version VALUES(NULL, 2.0 )");
+	    		if(_db.existsTable("mod总表")){
+	    		    import modSQL;
+	    			modSQL.update_sql(_db,2,1);
+	    		}
+			}
+		};
+		
+		add_mod=function(mod){
+			_insert_mod.step(mod);
+			return _db.changes(),_db.lastInsertRowid();
+		};
+		update_mod=function(update_thing,id){
+			_db.exec("UPDATE [mods] SET ? WHERE id = ?;",{update_thing;id});
+			return _db.changes();
+		};
+		delete_mod=function(mod){
+			_delete_mod.step(mod);
+			return _db.changes();
+		};
+		search_mod_byid=function(id){
+			var query = ..string.format("SELECT * FROM [mods] where id = %s;",id);
+			return _db.getTable(query); 
+		}
+		
+		search_mod=function(category,...){
+			var query = "SELECT * FROM [mods] ORDER BY category;";
+			var c={...}
+			if(category){
+				if(not c[1]){
+					query=..string.format("SELECT * FROM [mods] WHERE category LIKE '%s%%' ORDER BY category;",category);
+				}else {
+					var _st="OR (category LIKE '%s%%')";
+					var st="(category LIKE '%s%%') ";
+					for(i=1;#c;1){
+						st=st++_st;
+					}
+					query=..string.format("SELECT * FROM [mods] WHERE %s ORDER BY category;",st);
+					query=..string.format(query,category,...);
+				}	
+			}
+			//..console.log(query);
+			return _db.getTable(query); 
+		}
+		
+		test_modhash=function(hash){
+			return _db.getTable("SELECT id FROM [mods] WHERE hash = @hash;",{hash=hash}); 
+		}
+		
+		
+		get_latest_insert_mod=function(){
+			return _db.lastInsertRowid(); 
+		}
+		
+		
+		add_image=function(img){
+			_insert_image.step(img);
+			return _db.lastInsertRowid();
+		}
+		
+		delete_image=function(id){
+			_delete_image.step({"id"=id});
+			return _db.changes(); 
+		}
+		
+		search_image=function(hash){
+			var r=_db.stepQuery("SELECT * FROM [images] WHERE hash=@hash;",{hash=hash});
+			return r; 
+		}
+		
+		all_image=function(){
+			return _db.getTable("SELECT * FROM [images] ;"); 
+		}
+		
+		
+		rollback=function(){
+			_db.rollbackTrans();
+		}
+	}
+	
 }

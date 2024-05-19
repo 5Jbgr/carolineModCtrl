@@ -1,0 +1,126 @@
+﻿//config 配置文件
+import fsys.config;
+namespace myutil.config{
+	configs=null;
+	langconfig=null;
+	get_config=function(path="/config/"){
+	    if(not self.configs){
+	    	self.configs=..fsys.config(path);
+	    	self.configs.path.mix(
+	    		data="/mods";//程序管理的模组目录位置
+            	game="";//游戏目录
+            	mod="/data/game/Game/Content/Paks/~mod";//mod模组相对于游戏目录的位置
+            	install="";//安装模组的目录
+            	db="/modinfo.db";//数据库路径
+            	language="/config/language";//语言文件目录
+            	trash="/trash";//删除文件目录
+            	image="/image";//图片文件目录
+	    	);
+	    	self.configs.ui.mix(
+	    		language="zh_cn";//界面语言，默认中文
+	    	);
+	    	self.configs.db.mix(
+	    		bace_mod_template={
+                	name="";//模组文件名
+                	author="";//作者
+                	URL="";//网站链接
+                	category="99-1";//分组编号
+                	tags="";//标签
+                	image="";//展示图片
+                	version="";//版本
+                	describe="";//描述
+                	hash="";//哈希校验
+                	enabled=false;//是否已启用
+            	};
+	    	);
+	    }
+	    return self.configs; 
+	}
+	save_config=function(){
+	    self.configs.saveAll();
+	}
+	
+	get_langconfig=function(){
+		if(not self.langconfig){
+			self.langconfig=langConfig();
+		}
+		return self.langconfig; 
+	}
+	
+	
+	class langConfig{
+		ctor(path="/config/language/"){
+			import myutil.config;
+			var allform = {}; 
+			var _lang_table = null; 
+			var _language = myutil.config.get_config().ui.language; 
+			var npath=..fsys.joinpath(path,_language);
+	        if(..io.exist(npath)){
+	        	_lang_table=..fsys.config(npath);
+	        }else {
+	        	_lang_table=..fsys.config(fsys.joinpath(path,"zh_cn"));
+	        }
+	        var _lang_other=_lang_table["other"];
+		};
+		
+		get_now_lang=function(){
+			return _language; 
+		}
+		
+		
+		//加载语言文件
+		load_lang=function(name,winform,bind_component,path="/config/language/"){
+	    	if(allform and not allform[name]){
+	        	allform[name]={{winform;bind_component}};
+	    	}elseif(allform){
+	    	    ..table.push(allform[name],{winform;bind_component});
+	    	}
+	    	winform.bindConfig( _lang_table[name],bind_component);
+	    	_lang_table[name].load();
+		}
+		
+		//重新加载语言文件
+		reset_lang=function(path="/config/language/"){
+			if(myutil.config.get_config().ui.language!=_language){
+				_language=myutil.config.get_config().ui.language;
+	    		if(_lang_table){
+	    			for(k,v in _lang_table){
+	    			    //import console;
+	    			    //..console.log(k,v);
+	    	    		if(type(v)!=type.string and v[["beforeSave"]]||v[["afterLoad"]]){
+	    	    			v["beforeSave"]= function(){return 1; };
+	    	    			v["afterLoad"]=	function(){return 1;};    	    		
+	    	    		}
+	    			}
+	    			_lang_table=null;
+	    		}
+	    		npath=..io.joinpath(path,_language);
+	    		if(..io.exist(npath)){
+	        		_lang_table=..fsys.config(npath);
+	    		}else {
+	        		_lang_table=..fsys.config(fsys.joinpath(path,"zh_cn"));
+	    		}
+	    		for(k,v in allform){
+	    		    //console.log(k);
+	    		    for(k1,v1 in v){
+	    		    	//console.dumpTable(v1[2]);
+	    		    	v1[1].bindConfig(_lang_table[k],v1[2]);
+	    		    	_lang_table[k].load();
+	    		    }
+	    		}
+	    	}
+		}
+		
+		//获得语言的其他配置项
+		get_other=function(name){
+			if(_lang_other[[name]]){	
+				return _lang_other[name]; 
+			}else {
+				_lang_other[name]={};
+				return _lang_other[name]; 
+			}
+		}
+		
+	}
+
+}
