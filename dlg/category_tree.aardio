@@ -1,0 +1,143 @@
+import fonts.fontAwesome;
+import myutil.config;
+import win.ui;
+import win.ui.tabs;
+import myutil.modCtl;
+import console;
+/*DSG{{*/
+var category_tree = win.form(text="模组类别";right=255;bottom=550)
+category_tree.add(
+clear_plus={cls="plus";text="清空";left=80;top=0;right=160;bottom=23;bgcolor=-5197169;dl=1;dt=1;font=LOGFONT(h=-13);iconStyle={align="left";font=LOGFONT(h=-15;name='FontAwesome');padding={left=10;top=2}};iconText='\uF01E';notify=1;textPadding={left=10};z=2};
+search_plus={cls="plus";text="查询";left=160;top=0;right=240;bottom=23;bgcolor=-5197169;dl=1;dt=1;font=LOGFONT(h=-13);iconStyle={align="left";font=LOGFONT(h=-15;name='FontAwesome');padding={left=10;top=2}};iconText='\uF002';notify=1;textPadding={left=10};z=4};
+selectall_plus={cls="plus";text="全选";left=0;top=0;right=80;bottom=23;bgcolor=-5197169;dl=1;dt=1;font=LOGFONT(h=-13);iconStyle={align="left";font=LOGFONT(h=-15;name='FontAwesome');padding={left=10;top=2}};iconText='\uF0C9';notify=1;textPadding={left=10};z=3};
+treeview={cls="treeview";left=0;top=24;right=256;bottom=552;acceptfiles=1;asel=false;bgcolor=16777215;chkBox=1;db=1;dl=1;dr=1;dt=1;edge=1;hscroll=1;vscroll=1;z=1}
+)
+/*}}*/
+
+var skin={
+	background={
+		default=0x668FB2B0;
+		disabled=0xFFCCCCCC;
+		hover=0xFF928BB3
+	};
+	color={
+		default=0xFF000000;
+		disabled=0xFF6D6D6D
+	}
+};
+category_tree.clear_plus.skin(skin);
+category_tree.selectall_plus.skin(skin);
+category_tree.search_plus.skin(skin);
+
+var tabs = win.ui.tabs(
+category_tree.clear_plus,
+category_tree.selectall_plus,
+category_tree.search_plus
+); 
+tabs.dropButton.skin({   
+	color = { 
+		hover = 0xff99ffcc;
+		active = 0xffff6666; 
+		default = 0xff333333; 
+	}
+});
+
+
+//搜索选中的种类
+category_tree.searchCategory=null;
+
+var a=myutil.modCtl.get_category().get_tree();
+category_tree.treeview.insertItem(a);
+category_tree.treeview.expand(category_tree.treeview.getFirst());
+//console.log(table.tostring(a));
+
+var _config=myutil.config.get_langconfig();
+_config.load_lang("category_tree",category_tree,{
+	selectall_plus="text";
+	clear_plus="text";
+	search_plus="text";
+})
+var _lang_other=_config.get_other("category_tree");
+table.mix(_lang_other,{
+	title="模组类别";
+});
+category_tree.text=_lang_other.title;
+//全选
+category_tree.selectall_plus.oncommand = function(id,event){
+	var root=category_tree.treeview.getRoot();
+	category_tree.treeview.checkAll(,true); 
+	category_tree.treeview.expandAll(root);
+}
+//清空选择
+category_tree.clear_plus.oncommand = function(id,event){
+	var root=category_tree.treeview.getRoot();
+	category_tree.treeview.checkAll(,false);
+	category_tree.treeview.enum(
+		function(hItem,parent){
+			category_tree.treeview.collapse(hItem);
+		}
+	)
+}
+//双击搜索
+category_tree.treeview.onDoubleClick = function(hItem,data){
+	//console.dumpTable(data);
+	if(category_tree.searchCategory){
+		category_tree.searchCategory(data.flag);
+	}
+}
+
+category_tree.treeview.onnotify = function(id,code,ptr){
+	 //用户勾选、取消勾选复选框
+    if(code = 0xFFFFFFE8/*_NM_TVSTATEIMAGECHANGING*/){
+         var hItem = category_tree.treeview.hitTest(); 
+         
+         //因为节点正在被勾选,勾选状态还未更新，所以下面要取反
+         var checked = !category_tree.treeview.getChecked(hItem);    
+         
+         /*
+         全选所有下级节点,并更新所有上级父节点勾选状态。
+         如果有任意下级节点被勾选则勾选父节点,如果所有下级节点都没有被勾选则取消勾选父节点。 
+         */
+         category_tree.treeview.checkAll(hItem,checked); 
+         
+         //展开所有下级节点
+         category_tree.treeview.expand(hItem);
+         //console.dumpTable(category_tree.treeview.getItem(hItem));
+    }
+}
+
+category_tree.search_plus.oncommand = function(id,event){
+	var root=category_tree.treeview.getRoot();
+	var all_category=table.array();
+	var traveling = null;
+	traveling=function(hItem){
+		var children=category_tree.treeview.getChildren(hItem);
+		if(#children==0){
+			return category_tree.treeview.getChecked(hItem); 
+		}
+		var flag=true;
+		var result=table.array();
+		for(k,v in children){
+			var r=traveling(v);
+			if(r){
+				table.push(result,category_tree.treeview.getItemData(v).flag);
+			}else {
+				flag=false;
+			}
+		}
+		if(not flag and #result>0){
+			table.append(all_category,result);
+		}
+		return flag; 
+	}
+	if(category_tree.searchCategory){
+		//如果全选设置参数为null
+		if(traveling(root)){category_tree.searchCategory();}
+		else{category_tree.searchCategory(all_category);}
+	}
+	//console.dumpTable(all_category);
+}
+
+category_tree.show();
+win.loopMessage();
+return category_tree;
