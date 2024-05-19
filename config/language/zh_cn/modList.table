@@ -1,0 +1,9 @@
+﻿{
+enable_plus="启用";
+disable_plus="禁用";
+afterLoad=null;
+add_plus="添加";
+update_plus="更新";
+beforeSave=null;
+delete_plus="删除"
+}

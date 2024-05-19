@@ -1,0 +1,14 @@
+﻿{
+url_static="网址";
+enable_edit="编辑";
+afterLoad=null;
+describe_static="描述";
+beforeSave=null;
+image_static="预览图";
+version_static="版本";
+author_static="作者";
+category_static="类别";
+tag_static="标签";
+save_plus="保存";
+filename_static="文件名"
+}

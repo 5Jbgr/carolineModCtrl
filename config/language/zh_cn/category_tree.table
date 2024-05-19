@@ -1,0 +1,7 @@
+﻿{
+selectall_plus="全选";
+afterLoad=null;
+search_plus="查询";
+beforeSave=null;
+clear_plus="清空"
+}

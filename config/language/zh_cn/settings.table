@@ -1,0 +1,7 @@
+﻿{
+open_plus="打开";
+language_static="语言：";
+afterLoad=null;
+beforeSave=null;
+game_static="游戏目录："
+}
