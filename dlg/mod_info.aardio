@@ -1,0 +1,340 @@
+import fonts.fontAwesome;
+import win.ui;
+import win.inputBox;
+import win.ui.menu;
+import console;
+import myutil.config;
+import modSQL;
+import myutil;
+import myutil.dlg;
+import myutil.modCtl;
+import string.conv.pinyin;
+/*DSG{{*/
+var mod_info = win.form(text="模组信息";right=351;bottom=550;mode="popup")
+mod_info.add(
+all_img_combobox={cls="combobox";left=216;top=296;right=344;bottom=320;bgcolor=16771561;db=1;disabled=1;dr=1;edge=1;items={};mode="dropdown";vscroll=1;z=18};
+author_edit={cls="edit";left=72;top=64;right=344;bottom=88;bgcolor=15335401;disabled=1;dl=1;dr=1;dt=1;edge=1;z=3};
+author_static={cls="static";text="作者";left=0;top=64;right=64;bottom=88;align="right";center=1;dl=1;dt=1;transparent=1;z=4};
+category_combobox={cls="combobox";left=72;top=128;right=344;bottom=152;bgcolor=16771561;disabled=1;dl=1;dr=1;dt=1;edge=1;items={};mode="dropdown";vscroll=1;z=17};
+category_static={cls="static";text="类别";left=0;top=128;right=64;bottom=152;align="right";center=1;dl=1;dt=1;transparent=1;z=7};
+describe_edit={cls="edit";left=72;top=224;right=344;bottom=288;bgcolor=15329791;db=1;disabled=1;dl=1;dr=1;dt=1;edge=1;multiline=1;z=13};
+describe_static={cls="static";text="描述";left=0;top=224;right=64;bottom=248;align="right";center=1;dl=1;dt=1;transparent=1;z=12};
+enable_edit={cls="plus";text="编辑";left=48;top=8;right=152;bottom=24;align="left";dl=1;dt=1;iconStyle={align="left";font=LOGFONT(h=-13;name='FontAwesome')};iconText='\uF0C8';notify=1;textPadding={left=15;top=-2};transparent=1;z=15};
+filename_edit={cls="edit";left=72;top=32;right=344;bottom=56;acceptfiles=1;bgcolor=15335423;disabled=1;dl=1;dr=1;dt=1;edge=1;z=1};
+filename_static={cls="static";text="文件名";left=0;top=32;right=64;bottom=56;align="right";center=1;dl=1;dt=1;transparent=1;z=2};
+image_plus={cls="plus";left=0;top=320;right=352;bottom=552;acceptfiles=1;db=1;dl=1;dr=1;notify=1;repeat="scale";z=20};
+image_static={cls="static";text="预览图";left=0;top=296;right=64;bottom=320;align="right";center=1;db=1;dl=1;transparent=1;z=14};
+mod_img_combobox={cls="combobox";left=72;top=296;right=200;bottom=320;bgcolor=16771561;db=1;dl=1;dr=1;edge=1;items={};mode="dropdown";vscroll=1;z=19};
+save_plus={cls="plus";text="保存";left=248;top=8;right=336;bottom=24;align="left";color=3947580;disabled=1;dr=1;dt=1;iconStyle={align="left";font=LOGFONT(h=-13;name='FontAwesome')};iconText='\uF0ED';notify=1;textPadding={left=15;top=-3};transparent=1;z=16};
+tag_edit={cls="edit";left=72;top=160;right=344;bottom=184;bgcolor=16771561;disabled=1;dl=1;dr=1;dt=1;edge=1;z=9};
+tag_static={cls="static";text="标签";left=0;top=160;right=64;bottom=184;align="right";center=1;dl=1;dt=1;transparent=1;z=8};
+url_edit={cls="edit";left=72;top=96;right=344;bottom=120;bgcolor=16777193;disabled=1;dl=1;dr=1;dt=1;edge=1;z=5};
+url_static={cls="static";text="网址";left=0;top=96;right=64;bottom=120;align="right";center=1;dl=1;dt=1;transparent=1;z=6};
+version_edit={cls="edit";left=72;top=192;right=344;bottom=216;bgcolor=16771583;disabled=1;dl=1;dr=1;dt=1;edge=1;z=11};
+version_static={cls="static";text="版本";left=0;top=192;right=64;bottom=216;align="right";center=1;dl=1;dt=1;transparent=1;z=10}
+)
+/*}}*/
+
+mod_info.save_plus.skin({
+	color={
+		active=0xFF00FF00;
+		default=0xFF3C3C3C;
+		disabled=0xFF6D6D6D;
+		hover=0xFFFF0000
+	}
+})
+
+mod_info.enable_edit.skin({
+	color={
+		active=0xFF00FF00;
+		default=0xFF000000;
+		disabled=0xEE666666;
+		hover=0xFFFF0000
+	};
+	checked={
+		iconText='\uF14A'
+	}
+})
+
+
+var categorys = myutil.modCtl.get_category();//模组分类
+var _cats=categorys.get_ids(); //模组分类列表
+var lang_config=myutil.config.get_langconfig();//语言配置
+var lang_config_other = lang_config.get_other("mod_info"); 
+var itemData=table.map(_cats,lambda(v,k) v.name);
+var itemData_pinyin=table.map(itemData,lambda(v,k) string.conv.pinyin(v,""));
+var _db=modSQL.get_mod_sql();
+var _config = myutil.config.get_config();
+var all_image = null; 
+var info_now=null;
+var _now_img=null;
+//回调函数
+mod_info.update_info=null;
+mod_info.create_info=null;
+//mod_info.create_info=lambda(v) console.dumpTable(v);
+var ctl_list={
+	filename_edit="name";
+	author_edit="author";
+	url_edit="URL";
+	category_combobox="category";
+	tag_edit="tags";
+	mod_img_combobox="image";
+	version_edit="version";
+	describe_edit="describe";
+}
+
+//配置初始化
+table.mix(lang_config_other,{
+	title="模组信息";
+	mod_img_tip="当前模组预览图";
+	all_img_tip="所有已注册预览图";
+	use_this_image="使用此图作为预览图";
+	delete_this_image="从预览图中删除";
+	do_not_have_file="没有添加文件";
+	no_image="暂无预览图";
+	please_enable_edit="请先启用编辑模式";
+	only_one_pak="只能拖入一个pak文件";
+});
+lang_config.load_lang("mod_info",mod_info,{
+	filename_static="text";
+	author_static="text";
+	url_static="text";
+	category_static="text";
+	tag_static="text";
+	image_static="text";
+	version_static="text";
+	describe_static="text";
+	enable_edit="text";
+	save_plus="text";
+})
+mod_info.all_img_combobox.setCueBannerText(lang_config_other.all_img_tip);//所有图片提示
+mod_info.mod_img_combobox.setCueBannerText(lang_config_other.mod_img_tip);//当前图片提示
+mod_info.text=lang_config_other.title;//标题
+//弹出菜单
+mod_info.popmenu = win.ui.popmenu(mod_info);
+mod_info.popmenu.add(lang_config_other.use_this_image,function(){
+	var t=mod_info.all_img_combobox.selText;
+	if(string.len(t)>0){
+		_now_img=t;
+		mod_info.mod_img_combobox.insert(t);
+		mod_info.mod_img_combobox.selIndex=1;
+		mod_info.all_img_combobox.selIndex=null;
+	}else {
+		_now_img=null;
+	}
+});
+mod_info.popmenu.add(lang_config_other.delete_this_image,function(){
+	var t=mod_info.mod_img_combobox.selText;
+	if(string.len(t)>0){
+		mod_info.mod_img_combobox.delete()
+		mod_info.mod_img_combobox.selIndex=1;
+		if(mod_info.mod_img_combobox.items[1]){
+			_now_img=mod_info.mod_img_combobox.selText;
+			mod_info.image_plus.background=io.joinpath(_config.path.image,_now_img);
+		}
+	}else {
+		_now_img=null;
+	}
+});
+
+mod_info.category_combobox.minVisible = 12;//设置可见项数量
+mod_info.category_combobox.items=itemData;//设置下拉框选项
+//console.dumpTable(itemData_pinyin);
+
+var update_all_image=function(){
+	all_image=_db.all_image();
+	//console.dumpTable(all_image);
+	for(i=1;#all_image;1){
+		var v=all_image[i];
+		all_image[i]=v.id++v.ext;
+	}
+	mod_info.all_img_combobox.items=all_image;
+}
+update_all_image();
+
+//设置显示图片
+var set_image=function(path){
+	if(path){
+		mod_info.image_plus.text=null;
+		mod_info.image_plus.background=io.joinpath(_config.path.image,path);
+		_now_img=path;
+	}else {
+		mod_info.image_plus.text=lang_config_other.no_image;
+		mod_info.image_plus.background=null;
+		_now_img=null;
+	}
+}
+set_image();
+
+//设置数据显示
+mod_info.set_info=function(info){
+	//console.dumpTable(info);
+	info_now=info;
+	if(info){
+		owner.filename_edit.text=info["name"]:"";
+		owner.author_edit.text=info["author"]:"";
+		owner.url_edit.text=info["URL"]:"";
+		var a,b = table.find(_cats,lambda(v) v.id==info["category"]);
+		if(b){	
+			owner.category_combobox.selIndex=table.indexOf(mod_info.category_combobox.items,b.name);
+		}else {
+			var a,b = table.find(_cats,lambda(v) string.startWith(v.id,"99")); 
+			owner.category_combobox.selIndex=table.indexOf(mod_info.category_combobox.items,b.name);
+		}
+		owner.tag_edit.text=info["tags"]:"";
+		owner.version_edit.text=info["version"]:"";
+		owner.describe_edit.text=info["describe"]:"";
+		if(info["image"] and #info["image"]>0){
+			var img_path=string.split(info["image"],';')
+			set_image(img_path[1]);
+			_now_img=img_path[1];
+			//console.log(img_path[1])
+			owner.mod_img_combobox.items=img_path;
+			owner.mod_img_combobox.selIndex=1;
+		}else {
+			set_image();
+		}
+	}else {
+		for(name,ctrl in mod_info.eachControl("edit") ){
+			ctrl.text=null;
+		}
+		mod_info.category_combobox.selIndex=null;
+		mod_info.mod_img_combobox.items=null;
+		set_image();
+	}
+}
+
+//类别列表自动完成
+var timer=null;
+mod_info.category_combobox.onEditChange = function(){ 
+	if(timer)return;
+	timer=mod_info.setTimeout(function(){
+		var text = mod_info.category_combobox.text;
+    	var items = null;
+    	if(lang_config.get_now_lang()=="zh_cn"){
+    		items = table.filter(itemData,function(v,index){
+    			return string.startWith(v,text) or string.startWith(itemData_pinyin[index],text); 
+    		});
+    	}else {
+    		items = table.filter(itemData, lambda(v,k) string.startWith(v,text));
+    	}
+    	mod_info.category_combobox.autoComplete(#items?items:itemData);
+    	timer=null;
+	},500);
+}
+//丢失焦点即清空
+var clear = function(){
+	if(not owner.selIndex){
+		//console.log("clear")
+		owner.text=null;
+	}
+};
+mod_info.category_combobox.onCancel =clear;
+mod_info.all_img_combobox.onCancel = clear;
+//选好图片后清空当前选项
+
+
+
+mod_info.all_img_combobox.onListChange = function(){ 	
+	var t=mod_info.all_img_combobox.selText;
+	if(string.len(t)>0){
+		set_image(t);
+	}else set_image();
+}
+mod_info.mod_img_combobox.onOk = function(){
+	set_image(owner.selText);
+}
+mod_info.mod_img_combobox.onListChange = function(){ 
+	set_image(owner.selText);	
+}
+
+
+//编辑开关
+mod_info.enable_edit.oncommand = function(id,event){
+	var b=not mod_info.enable_edit.checked;
+	for(name,ctrl in mod_info.eachControl() ){
+		if(not (string.endWith(name,"static") or table.indexOf({"enable_edit","mod_img_combobox","filename_edit"},name))){
+			ctrl.disabled=b;
+		}
+	}
+}
+//保存
+mod_info.save_plus.oncommand = function(id,event){
+	if(info_now[["id"]]){
+		if(type(mod_info.update_info)===type.function){
+			var info = {id=info_now.id};
+			for(name,ctrl in mod_info.eachControl("edit") ){
+				if(info_now[ctl_list[name]]!==ctrl.text){
+					info[ctl_list[name]]=ctrl.text;
+				}
+			}
+			for(k,v in mod_info.mod_img_combobox.items){
+				if(not string.find(info_now["image"],v)){
+					info["image"]=string.join(mod_info.mod_img_combobox.items,';');
+					break;
+				}
+			};
+			var k,v=table.find(_cats,lambda(v) v.name==mod_info.category_combobox.selText);
+			info["category"]=(v?v["id"]):"99-1";
+			//console.dumpTable(info);
+			mod_info.update_info(info,info_now);
+		}
+	}else {
+		if(type(mod_info.create_info)===type.function){
+			var info = {};
+			for(name,ctrl in mod_info.eachControl("edit") ){
+				info[ctl_list[name]]=ctrl.text;
+			}
+			info["image"]=string.join(mod_info.mod_img_combobox.items,';');
+			var k,v=table.find(_cats,lambda(v) v.name==mod_info.category_combobox.selText);
+			info["category"]=(v?v["id"]):"99-1";
+			//console.dumpTable(info);
+			if(string.len(info["name"])>0){
+				mod_info.create_info(info);
+			}else {
+				myutil.dlg.error_dlg(lang_config_other.do_not_have_file);
+			}
+		}
+	}
+	
+}
+//右键图片弹出菜单
+mod_info.image_plus.onRightMouseDown = function(wParam,lParam){
+    var x,y = win.getMessagePos(lParam);
+    if(_now_img and mod_info.enable_edit.checked){
+    	mod_info.popmenu.popup();
+    }
+    return null; 
+}
+
+mod_info.image_plus.onDropFiles = function(files){
+	if(mod_info.enable_edit.checked){
+		if(not files)return;
+		if(table.isArray(files)){
+			myutil.add_image(_config.path.image,files);
+		}
+		else myutil.add_image(_config.path.image,{files});
+		update_all_image();
+	}else {
+		myutil.dlg.info_dlg(lang_config_other.please_enable_edit);
+	}
+}
+
+mod_info.onDropFiles = function(files){
+	if(mod_info.enable_edit.checked){
+		if(not files)return;
+		if(table.isArray(files) and #files==1){
+			mod_info.filename_edit.text=files[1];
+		}
+		elseif(type(files)==type.string){
+			mod_info.filename_edit.text=files;
+		}else myutil.dlg.info_dlg(lang_config_other.only_one_pak);
+	}else {
+		myutil.dlg.info_dlg(lang_config_other.please_enable_edit);
+	}
+}
+
+
+mod_info.show();
+win.loopMessage();
+return mod_info;
