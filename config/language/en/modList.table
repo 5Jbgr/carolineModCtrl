@@ -1,0 +1,9 @@
+﻿{
+enable_plus="Enable";
+disable_plus="Disable";
+afterLoad=null;
+add_plus="Add";
+update_plus="Update";
+beforeSave=null;
+delete_plus="Delete"
+}

@@ -1,0 +1,7 @@
+﻿{
+game_static="Game Directory:";
+language_static="Language:";
+afterLoad=null;
+beforeSave=null;
+open_plus="Open"
+}

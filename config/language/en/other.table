@@ -1,0 +1,12 @@
+﻿{
+warning={context="Mods are the author's hard work, please do not share them casually,also please do not share this information on the official and community platforms!!!Do not post MOD screenshots to the official group and public platforms, otherwise it will lead to account bans and MODs being blocked"};
+mod_info={do_not_have_file="No file added";all_img_tip="All registered preview images";please_enable_edit="Please enable edit mode first";only_one_pak="Only one pak file can be dragged in";mod_img_tip="Current mod preview image";title="Mod Information";delete_this_image="Delete from preview images";use_this_image="Use this image as the preview image";no_image="No preview image available"};
+modList={enable_mod_error="Enable failed for mod %s {id=%d}";hash_error="Failed to calculate Hash for file[%s]";ask_for_delete="Confirm to delete file[%s]?
+[%s]";sql_move_error="Failed to register or move file, please check the database and file location
+[path=%s]";have_same_file="Mod file already exists[id=%d]";use_category_or_not="Use category[%s] or not?";update_info="(Need/Can only) select one record!"};
+modManage={have_same_file="Mod file already exists[id=%d]";sql_move_error="Failed to register or move file, please check the database and file location\n[path=%s]";add_success="Registration successful"};
+mod_image={clip_no_img="No image in clipboard";delete_img="Delete";add_from_clip="Add from clipboard";title="Mod Preview Image";no_image="No preview image available"};
+db={hash="Hash";URL="URL";id="ID";author="Author";image="Image";name="Filename";category="Category";describe="Description";version="Version";tags="Tags";enabled="Enabled"};
+mainForm={modsetting="Settings";modctl="Mod Control";modmanage="Mod Management"};
+category_tree={title="Mod Category"}
+}

@@ -1,0 +1,14 @@
+﻿{
+url_static="URL";
+enable_edit="Edit";
+afterLoad=null;
+describe_static="Description";
+beforeSave=null;
+image_static="Preview";
+version_static="Version";
+tag_static="Tags";
+category_static="Category";
+author_static="Author";
+save_plus="Save";
+filename_static="Filename"
+}

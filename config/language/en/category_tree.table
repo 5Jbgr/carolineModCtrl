@@ -1,0 +1,7 @@
+﻿{
+selectall_plus="All";
+afterLoad=null;
+clear_plus="Clear";
+beforeSave=null;
+search_plus="Search"
+}
