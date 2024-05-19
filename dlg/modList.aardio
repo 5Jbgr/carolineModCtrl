@@ -1,0 +1,370 @@
+import fonts.fontAwesome;
+import win.ui.tabs;
+import win.ui;
+import win.ui.grid;
+import console;
+import modSQL;
+import myutil.config;
+import myutil.modCtl;
+import myutil;
+import fsys.dlg.dir;
+/*DSG{{*/
+var modList = win.form(text="模组列表";right=663;bottom=550)
+modList.add(
+add_plus={cls="plus";text="添加";left=176;top=0;right=256;bottom=23;bgcolor=-5197169;dl=1;dt=1;font=LOGFONT(h=-13);iconStyle={align="left";font=LOGFONT(h=-13;name='FontAwesome');padding={left=10}};iconText='\uF0C5';notify=1;textPadding={left=10};z=4};
+delete_plus={cls="plus";text="删除";left=264;top=0;right=344;bottom=23;bgcolor=-5197169;dl=1;dt=1;font=LOGFONT(h=-13);iconStyle={align="left";font=LOGFONT(h=-13;name='FontAwesome');padding={left=10}};iconText='\uF1F8';notify=1;textPadding={left=10};z=5};
+disable_plus={cls="plus";text="禁用";left=88;top=0;right=168;bottom=23;bgcolor=-5197169;dl=1;dt=1;font=LOGFONT(h=-13);iconStyle={align="left";font=LOGFONT(h=-13;name='FontAwesome');padding={left=10}};iconText='\uF00D';notify=1;textPadding={left=10};z=3};
+enable_plus={cls="plus";text="启用";left=0;top=0;right=80;bottom=23;bgcolor=-5197169;dl=1;dt=1;font=LOGFONT(h=-13);iconStyle={align="left";font=LOGFONT(h=-13;name='FontAwesome');padding={left=12}};iconText='\uF00C';notify=1;textPadding={left=10};z=2};
+listview={cls="listview";left=0;top=24;right=664;bottom=552;db=1;dl=1;dr=1;dt=1;edge=1;z=1};
+update_plus={cls="plus";text="更新";left=352;top=0;right=432;bottom=23;bgcolor=-5197169;dl=1;dt=1;font=LOGFONT(h=-13);iconStyle={align="left";font=LOGFONT(h=-13;name='FontAwesome');padding={left=10}};iconText='\uF01E';notify=1;textPadding={left=10};z=6}
+)
+/*}}*/
+
+var sk={
+	background={
+		default=0x668FB2B0;
+		disabled=0xFFCCCCCC;
+		hover=0xFF928BB3
+	};
+	color={
+		default=0xFF000000;
+		disabled=0xFF6D6D6D
+	}
+};
+modList.disable_plus.skin(sk);
+modList.enable_plus.skin(sk);
+modList.add_plus.skin(sk);
+modList.delete_plus.skin(sk);
+modList.update_plus.skin(sk);
+
+//modList.listview.checkbox=true;
+//回调函数
+//显示信息回调，用于根据查看项显示信息
+modList.showInfo=null;
+//更新数据显示回调，用于刷新数据表
+modList.updateTable=null;
+
+
+var translate = modSQL.get_translate();
+var _db=modSQL.get_mod_sql();
+var _config=myutil.config.get_config();
+var _table=null;
+var _columns=null;
+var _focus_id=null;
+var _lang_other=myutil.config.get_langconfig().get_other("modList");
+var mod_template=table.clone(_config.db.bace_mod_template);
+var grid = win.ui.grid(modList.listview); 
+var tabs = win.ui.tabs(
+modList.enable_plus,
+modList.disable_plus,
+modList.add_plus,
+modList.delete_plus,
+modList.update_plus,
+);
+var _lang=myutil.config.get_langconfig().load_lang("modList",modList,{
+	enable_plus="text";
+	disable_plus="text";
+	add_plus="text";
+	delete_plus="text";
+	update_plus="text";
+})
+table.mix(_lang_other,{
+	enable_mod_error="%s启用失败[id=%d]";
+	use_category_or_not="是否使用类别[%s]?";
+	have_same_file="模组文件已存在[id=%d]";
+	hash_error="文件[%s]计算Hash失败";
+	sql_move_error='注册文件/移动文件失败,请检查数据库及文件位置\n[path=%s]';
+	ask_for_delete='确认删除文件[%s]?\n[%s]';
+	update_info="(需要/只能)选择一条记录!";
+});
+
+tabs.dropButton.skin({   
+	color = { 
+		hover = 0xff99ffcc;
+		active = 0xffff6666; 
+		default = 0xff333333; 
+	}
+});
+
+modList.setCallback=function(callbacks){
+	
+}
+
+var enable_mod=function(mod){
+	//console.dumpTable(mod);
+	var mod_path=string.format("%s\%s\%d_%s.pak", fsys.path.canonicalize(_config.path.data),mod.category(),mod.id,mod.name);
+	var install_path=string.format("%s\%d_P",fsys.path.canonicalize(_config.path.install),mod.id);
+	//console.log(mod_path,install_path);
+	if(myutil.modCtl.enable_mod(mod_path,install_path)){
+		_db.update_mod({enabled="true"},mod.id);
+		mod.enabled[1]="√";mod.enabled[2]=true;
+	}else {
+		myutil.dlg.error_dlg(string.format(_lang_other.enable_mod_error,mod.name, mod.id));
+	}
+}
+
+var disable_mod=function(mod){
+	if(mod.enabled()){
+		var install_path=string.format("%s\%d_P",fsys.path.canonicalize(_config.path.install),mod.id);
+		myutil.modCtl.disable_mod(install_path);
+		_db.update_mod({enabled="false"},mod.id);
+		mod.enabled[1]="×";mod.enabled[2]=false;
+	}
+}
+
+
+//双击启用/禁用模组
+modList.listview.onDoubleClick = function(item,subItem,nmListView){
+	//..console.log(item,subItem,nmListView);
+	//console.dumpTable(nmListView);
+	if(item>0){
+		var mod=_table[item];
+		if(mod.enabled()){
+			disable_mod(mod);
+		}else {
+			enable_mod(mod);
+		}
+	}
+}
+
+//变更焦点切换显示信息
+modList.listview.onFocusedChanged = function(item,subItem,nmListView){
+	if(item>0 and modList.showInfo){
+		//console.log(item);
+		_focus_id=_table[item].id;
+		modList.showInfo(_table[item]);
+	}
+}
+
+modList.listview.onClick = function(item,subItem,nmListView){
+	//console.log(item)
+	if(item===0 and modList.showInfo){
+		modList.showInfo();
+		_focus_id=null;
+	}
+}
+
+//右键弹出菜单
+modList.listview.onRightClick = function(item,subItem,nmListView){
+	
+}
+
+
+//已启用模组着色
+modList.listview.onnotify = function(id,code,ptr){
+	if( code == 0xFFFFFFF4/*_NM_CUSTOMDRAW*/ ){
+		var lvcd = modList.listview.getNotifyCustomDraw(code,ptr);
+		if( lvcd.nmcd.dwDrawStage == 0x10001/*_CDDS_ITEMPREPAINT*/){
+			if(_table[lvcd.nmcd.dwItemSpec+1].enabled()){
+				lvcd.clrTextBk=gdi.RGB(249,236,195);
+				lvcd.update();
+			}
+			return 0x0;//0x20/*_CDRF_NOTIFYSUBITEMDRAW*/
+		}
+		elseif( lvcd.nmcd.dwDrawStage == 1/*_CDDS_PREPAINT*/ ){
+			return 0x20/*_CDRF_NOTIFYITEMDRAW*/;
+		}
+	}
+}
+
+//设置列标题
+modList.setColumns=function(columns,size){
+	var width=modList.listview.width;
+	//table.unshift(columns,"_");
+	_columns=columns;
+	for(k,v in size){
+		size[k]=v>0?v*width:-1;
+	}
+	//table.unshift(size,20);
+	modList.listview.setColumns(columns,size);
+	for(k,v in columns){
+		modList.listview.setColumnText(k,translate[v]:" ");
+	}
+	grid.setReadonlyColumns(-1);
+}
+
+//设置显示的列表
+modList.setTable=function(t){
+	_table=t;
+	var cat=myutil.modCtl.get_category().get_ids();
+	var focus_index=null;
+	for(k,v in _table){
+		var kk=table.find(cat,lambda(va) va.id===v["category"]);
+		_table[k]["category"]={
+			cat[kk]?cat[kk]["name"]:"";
+			_table[k]["category"];
+			@{
+				_tostring=lambda() owner[1];
+				_call=lambda() string.replace(owner[2],"-","\");
+			};
+		};
+		v.enabled={
+				v.enabled?"√":"×";
+				not not v.enabled;
+				@{
+					_tostring=lambda() owner[1];
+					_call=lambda() owner[2];
+				}
+		};
+		if(_focus_id and v.id ==_focus_id){
+			focus_index=k;
+		}
+	}
+	_table.fields=_columns;
+	modList.listview.setTable(_table);
+	if(focus_index){
+		modList.listview.selIndex=focus_index;
+	}
+}
+//清空内容
+modList.clearList=modList.listview.clear;
+
+
+//启用模组
+modList.enable_plus.oncommand = function(id,event){
+	owner.disabled=true;
+	var selected=modList.listview.selected;
+	for(k,v in selected){
+		var mod=_table[v];
+		enable_mod(mod);
+	}
+	modList.listview.redraw();
+	owner.disabled=false;
+}
+
+//禁用模组
+modList.disable_plus.oncommand = function(id,event){
+	owner.disabled=true;
+	var selected=modList.listview.selected;
+	for(k,v in selected){
+		var mod=_table[v];
+		disable_mod(mod);
+	}
+	modList.listview.redraw();
+	owner.disabled=false;
+}
+
+//添加模组
+modList.add_plus.oncommand = function(id,event){
+	owner.disabled=true;
+	var path,filename= fsys.dlg.openEx("pak文件|*.pak||");
+	if(not path){ owner.disabled=false;return ;}
+	filename=#path==0||#path>1?filename:{io.splitpath(path[1]).file};
+	//console.dumpTable(filename);
+	if(#path>0){
+		var selected=modList.listview.selected;
+		var category={
+			[2]="99-1";
+			@{_call=lambda() "99\1";}
+		};
+		if(#selected>0){
+			var mod=_table[selected[1]];
+			category=mod.category;
+			var v = myutil.dlg.ask_dlg(
+			string.format(_lang_other.use_category_or_not,mod.category[1])
+			);
+			if(not v){
+				owner.disabled=false;
+				return ; 
+			}
+		}
+		for(k,v in path){
+			mod_template.name=io.splitpath(filename[k]).name;
+			mod_template.category=category[2];
+			mod_template.hash=myutil.hash_file(v);
+			if(#mod_template.hash!=32){
+				myutil.dlg.info_dlg(string.format(_lang_other.hash_error,filename[k]));
+				continue;
+			}
+			var result=_db.test_modhash(mod_template.hash);
+			if(#result!=0){
+				myutil.dlg.info_dlg(string.format(_lang_other.have_same_file,result[1].id));
+				continue;
+			}
+			var mod_path=io.joinpath(_config.path.data,category());
+			fsys.createDir(mod_path,false);
+			var n,_id=_db.add_mod(mod_template);
+			if(n>0 and fsys.move(v,string.format("%s/%d_%s.pak",mod_path,_id,mod_template.name))){
+				//modList.listview.clear();
+				if(modList.updateTable){
+					modList.updateTable();
+				}
+			}else {
+				myutil.dlg.info_dlg(string.format(_lang_other.sql_move_error,v));
+			}
+		}
+	}
+	owner.disabled=false;
+}
+
+//删除模组
+modList.delete_plus.oncommand = function(id,event){
+	owner.disabled=true;
+	var selected=modList.listview.selected;
+	for(k,v in selected){
+		var mod=_table[v];
+		var msg=string.format(_lang_other.ask_for_delete,mod.name,table.tostring(mod));
+		if(myutil.dlg.ask_dlg(msg)){
+			var install_path=io.joinpath(_config.path.install,mod.id++"_P.pak");
+			var mod_path=io.joinpath(_config.path.data,mod.category(),mod.id+"_"+mod.name+".pak");
+			var trash_path=io.joinpath(_config.path.trash,mod.id+"_"+mod.name+".pak");
+			fsys.createParentDir(trash_path);
+			myutil.modCtl.remove_mod(mod_path,install_path,trash_path);
+			_db.delete_mod(mod);
+		};
+	}
+	//modList.listview.clear();
+	if(modList.updateTable){
+		modList.updateTable();
+	}
+	owner.disabled=false;
+}
+
+//更新模组
+modList.update_plus.oncommand = function(id,event){
+	owner.disabled=true;
+	var selected=modList.listview.selected;
+	if(#selected!=1){
+		myutil.dlg.info_dlg(_lang_other.update_info);
+		owner.disabled=false;
+		return ; 
+	}
+	var path = fsys.dlg.open('pak文件|*.pak||',,,);
+	if(path){
+		var mod = _table[selected[1]];
+		var hash=myutil.hash_file(path);
+		if(#mod.hash!=32){
+				myutil.dlg.info_dlg(string.format(_lang_other.hash_error,filename[k]));
+				owner.disabled=false;
+				return ; 
+		}
+		var old_file=mod.name;
+		var install_path=io.joinpath(_config.path.install,mod.id++"_P.pak");
+		var mod_path=io.joinpath(_config.path.data,mod.category(),mod.id+"_"+mod.name+".pak");
+		var trash_path=io.joinpath(_config.path.trash,mod.id+"_"+mod.name+".pak");
+		myutil.modCtl.remove_mod(mod_path,install_path,trash_path);
+		mod.name=io.splitpath(path).name;
+		//console.dumpTable(mod);
+		var new_mod_path=io.joinpath(_config.path.data,mod.category(),mod.id+"_"+mod.name+".pak");
+		fsys.move(path,new_mod_path);
+		if(mod.enabled()){
+			myutil.modCtl.enable_mod(new_mod_path,install_path);
+		}
+		mod.hash=hash;
+		_db.update_mod({name=mod.name,hash=hash},mod.id);
+		if(modList.updateTable){
+			modList.updateTable();
+			//var result=modList.updateTable(mod.id)[1];
+			//_table[selected[1]].name=result.name;
+			//_table[selected[1]].hash=result.hash;
+			//var item=modList.listview.getItem(selected[1]);
+			//console.dumpTable(item);
+			//modList.listview.set(item,
+		} 
+	}
+	owner.disabled=false;
+}
+
+modList.show();
+win.loopMessage();
+return modList;
