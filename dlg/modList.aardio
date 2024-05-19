@@ -96,7 +96,7 @@ var enable_mod=function(mod){
 	var install_path=string.format("%s\%d_P",fsys.path.canonicalize(_config.path.install),mod.id);
 	//console.log(mod_path,install_path);
 	if(myutil.modCtl.enable_mod(mod_path,install_path)){
-		_db.update_mod({enabled="true"},mod.id);
+		_db.update_mod({enabled=true},mod.id);
 		mod.enabled[1]="√";mod.enabled[2]=true;
 	}else {
 		myutil.dlg.error_dlg(string.format(_lang_other.enable_mod_error,mod.name, mod.id));
@@ -107,7 +107,7 @@ var disable_mod=function(mod){
 	if(mod.enabled()){
 		var install_path=string.format("%s\%d_P",fsys.path.canonicalize(_config.path.install),mod.id);
 		myutil.modCtl.disable_mod(install_path);
-		_db.update_mod({enabled="false"},mod.id);
+		_db.update_mod({enabled=false},mod.id);
 		mod.enabled[1]="×";mod.enabled[2]=false;
 	}
 }
@@ -120,10 +120,11 @@ modList.listview.onDoubleClick = function(item,subItem,nmListView){
 	if(item>0){
 		var mod=_table[item];
 		if(mod.enabled()){
-			disable_mod(mod);
+			disable_mod(mod)
 		}else {
 			enable_mod(mod);
 		}
+		modList.listview.setItemText(mod.enabled[1],item,1);
 	}
 }
 
@@ -227,8 +228,8 @@ modList.enable_plus.oncommand = function(id,event){
 	for(k,v in selected){
 		var mod=_table[v];
 		enable_mod(mod);
+		modList.listview.setItemText(mod.enabled[1],v,1);
 	}
-	modList.listview.redraw();
 	owner.disabled=false;
 }
 
@@ -239,8 +240,8 @@ modList.disable_plus.oncommand = function(id,event){
 	for(k,v in selected){
 		var mod=_table[v];
 		disable_mod(mod);
+		modList.listview.setItemText(mod.enabled[1],v,1);
 	}
-	modList.listview.redraw();
 	owner.disabled=false;
 }
 
