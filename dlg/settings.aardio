@@ -1,0 +1,62 @@
+import fonts.fontAwesome;
+import win.ui;
+import myutil.config;
+import fsys.dlg.dir;
+import console;
+/*DSG{{*/
+var settings = win.form(text="设置";right=759;bottom=469)
+settings.add(
+game_static={cls="static";text="游戏目录：";left=24;top=48;right=152;bottom=74;align="right";center=1;dl=1;dt=1;font=LOGFONT(h=-14);transparent=1;z=2};
+gamepath_plus={cls="plus";left=152;top=48;right=560;bottom=74;align="right";border={bottom=1;color=-6908266};dl=1;dr=1;dt=1;editable=1;font=LOGFONT(h=-13);textPadding={top=6;bottom=2};z=1};
+language_combobox={cls="combobox";left=152;top=104;right=560;bottom=128;dl=1;dr=1;dt=1;edge=1;items={};mode="dropdown";z=5};
+language_static={cls="static";text="语言：";left=24;top=104;right=152;bottom=130;align="right";center=1;dl=1;dt=1;font=LOGFONT(h=-14);notify=1;transparent=1;z=4};
+open_plus={cls="plus";text="打开";left=568;top=48;right=632;bottom=74;autohscroll=false;autovscroll=false;bgcolor=16775408;color=3947580;dr=1;dt=1;font=LOGFONT(h=-13);iconStyle={align="left";font=LOGFONT(h=-13;name='FontAwesome');padding={left=7;top=2}};iconText='\uF07C';notify=1;textPadding={left=18};z=3}
+)
+/*}}*/
+
+var langs=table.array();
+var _config = myutil.config.get_config(); 
+var _lang = myutil.config.get_langconfig();
+_lang.load_lang("settings",settings,{
+	game_static="text";
+	open_plus="text";
+	language_static="text";
+});
+
+settings.gamepath_plus.text=_config.path.game;
+
+fsys.enum( _config.path.language, "*.*",
+	function(dir,filename,fullpath,findData){ 
+		if(filename){ 
+           	//..console.log("发现文件："+filename,"完整路径："+fullpath)可使用 return false退出枚举文件过程
+		}
+		else{
+			//..console.log( "发现目录：" + dir )
+			table.push(langs,dir);
+		}
+	},
+	false
+);
+
+settings.language_combobox.items=langs;
+
+settings.open_plus.oncommand =function(id,event){
+	var path = fsys.dlg.dir(,,'请选择目录')
+	if(path){
+		settings.gamepath_plus.text = path;
+		_config.path.game=path;
+		_config.path.install=io.joinpath(path,_config.path.mod);
+		fsys.createDir(_config.path.install,false);
+	}	
+}
+
+settings.language_combobox.onOk = function(){ 
+	var language=settings.language_combobox.selText;
+	_config.ui.language=language;
+	_lang.reset_lang();
+}
+
+
+settings.show();
+win.loopMessage();
+return settings;
