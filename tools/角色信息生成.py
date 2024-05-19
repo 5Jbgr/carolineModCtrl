@@ -15,7 +15,7 @@ table
 
 
 c_dict={"id":1,"name":"角色","list":[]};
-head=table.head();
+head=table.head()
 for i in table.values:
     f=[j["name"]==i[0] for j in c_dict["list"]]
     if any(f):
@@ -23,7 +23,7 @@ for i in table.values:
     else:
         o={"name": i[0],"id": len(c_dict["list"])+1,"category":[]}
         c_dict["list"].append(o)
-    skin=[];
+    skin=[]
     for j in pd.DataFrame(i).dropna()[0][3:]:
             skin.append({"name":j,"id":len(skin)+1})
     o["category"].append({"name":i[1],"id":len(o["category"])+1,"star":str(i[2]),"skin":skin})
