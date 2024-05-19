@@ -1,274 +1,75 @@
+//水平选项卡
 import fonts.fontAwesome;
 import win.ui;
-import modSQL;
-import win.ui.grid;
-import myutil;
-import fsys;
+import myutil.config;
 /*DSG{{*/
-mainForm = win.form(text="卡罗琳mod管理器";right=791;bottom=467)
+var mainForm = win.form(text="卡罗琳模组管理器";right=1100;bottom=623)
 mainForm.add(
-EnglishUI={cls="checkbox";text="EnglishUI";left=16;top=176;right=120;bottom=200;z=13};
-add_button={cls="button";text="添加";left=112;top=104;right=200;bottom=128;dl=1;dt=1;z=7};
-ask_once_checkbox={cls="checkbox";text="单次确认";left=112;top=48;right=200;bottom=64;dl=1;dt=1;z=12};
-btnIFileOpenDir={cls="plus";text="打开";left=712;top=32;right=776;bottom=58;autohscroll=false;autovscroll=false;bgcolor=16775408;color=3947580;dr=1;dt=1;font=LOGFONT(h=-13);iconStyle={align="left";font=LOGFONT(h=-13;name='FontAwesome');padding={left=7;top=2}};iconText='\uF07C';notify=1;textPadding={left=18};z=11};
-delete_file_checkbox={cls="checkbox";text="删除文件";left=16;top=48;right=104;bottom=64;dl=1;dt=1;z=9};
-disable_button={cls="button";text="禁用";left=112;top=72;right=200;bottom=96;dl=1;dt=1;z=5};
-editPath={cls="plus";left=296;top=32;right=704;bottom=58;align="right";border={bottom=1;color=-6908266};dl=1;dr=1;dt=1;editable=1;font=LOGFONT(h=-13);textPadding={top=6;bottom=2};z=2};
-enable_button={cls="button";text="启用";left=16;top=72;right=104;bottom=96;dl=1;dt=1;z=4};
-groupbox={cls="groupbox";text="模组";left=8;top=24;right=208;bottom=168;dl=1;dt=1;edge=1;z=3};
-mod_listview={cls="listview";left=216;top=72;right=784;bottom=451;ah=1;aw=1;db=1;dl=1;dr=1;dt=1;edge=1;fullRow=1;hscroll=1;vscroll=1;z=1};
-remove_button={cls="button";text="删除";left=16;top=104;right=104;bottom=128;dl=1;dt=1;z=6};
-static2={cls="static";text="游戏目录：";left=224;top=32;right=296;bottom=58;align="center";center=1;dl=1;dt=1;font=LOGFONT(h=-14);transparent=1;z=10};
-upadte_button={cls="button";text="更新文件";left=16;top=136;right=200;bottom=160;dl=1;dt=1;z=8}
+custom={cls="custom";left=0;top=32;right=1096;bottom=622;db=1;dl=1;dr=1;dt=1;z=4};
+nav1={cls="plus";left=0;top=0;right=150;bottom=32;border={bottom=1;color=-16744448};dl=1;dt=1;font=LOGFONT(h=-14;name='微软雅黑');z=2};
+nav2={cls="plus";left=149;top=0;right=299;bottom=32;border={bottom=1;color=-16744448};dl=1;dt=1;font=LOGFONT(h=-14;name='微软雅黑');z=3};
+navEnd={cls="bkplus";left=-2;top=31;right=1096;bottom=32;bgcolor=32768;border=1;disabled=1;dl=1;dr=1;dt=1;z=1}
 )
 /*}}*/
+
+import win.ui.tabs;
+var tbs = win.ui.tabs(mainForm.nav1,mainForm.nav2);
+tbs.clear(); //清除模板
+
+var _config=myutil.config.get_config();
+var _lang=myutil.config.get_langconfig();
+
+//选项卡样式	
+tbs.skin({
+	foreground={
+		active=0xFFFFFFFF;
+		default=0x00FFFFFF;
+		hover=0xFFCCCCCC;
+	};
+	checked={
+		foreground={ 
+			default=0x00FFFFFF; 
+		};
+		border = { 
+			default = {left=1;right=1;top=1;color=0xFF008000} 
+			disabled = {left=1;right=1;top=1;color=0xFF008000} 
+		}; 
+	}
+}); 
+
+//下拉菜单按钮样式
+tbs.dropButton.skin({   
+	color = { 
+		hover = 0xff99ffcc;
+		active = 0xffff6666; 
+		default = 0xff333333; 
+	}
+});
+
+var _other=_lang.get_other("mainForm");
+table.mix(_other,{
+	modctl="模组控制";
+	modmanage="模组管理";
+	modsetting="设置";
+});
+
+tbs.addItems({{text=_other.modctl;},{text=_other.modmanage;},{text=_other.modsetting;}});
+
+tbs.loadForm(1,"\dlg\mods_start.aardio");
+tbs.loadForm(2,"\dlg\mod_manage.aardio");
+tbs.loadForm(3,"\dlg\settings.aardio");
+if(not _config.path.game or _config.path.name==""){
+	tbs.preloadForm(3,true);
+}else {
+	tbs.preloadForm(1,true);
+}
+
 
 var frmChild = mainForm.loadForm("\dlg\warning.aardio");
 frmChild.show();
 
-//初始化配置
-var settings=myutil.get_setting();
-myutil.dlg.init(mainForm);
-mainForm.editPath.text = settings.game_path;
-mainForm.delete_file_checkbox.checked=settings.ui.delete_file;
-mainForm.ask_once_checkbox.checked=settings.ui.check_once;
-mainForm.EnglishUI.checked=settings.ui.language=="english";
-
-myutil.set_language(mainForm,settings.ui.language);
-var mod_template=table.clone(settings.default_mod_template);
-if(settings.ui.language=="english"){
-	mod_template.file_name="filename";
-	mod_template.character_num="character name";
-	mod_template.web="mod URL";
-	mod_template.describe="mod discribe";
-}
-fsys.createDir(settings.data_path,false);
-
-//打开数据库及数据初始化
-var db = modSQL.modSQLimpl(settings.db_path);//打开数据库连接,参数指定硬盘文件路径
-/*
-for(i=1;10;1){
-	db.add_mod({file_name="asdasdasd",web="http://adasdasd",character_num="安卡希亚",describe="asdaojdoasjd"});
-}
-*/
-var mod_table=db.get_mod_table();
-
-//设置显示数据库数据
-var grid = win.ui.grid(mainForm.mod_listview);//创建数据视图
-grid.setTable( mod_table );
-grid.setReadonlyColumns(1,2);
-
-grid.onEditChanged = function(text,iItem,iSubItem){
-	var mod=mod_table[iItem];
-	var old = mod[modSQL.mods[iSubItem]]; 
-	mod[modSQL.mods[iSubItem]]=text;
-	if(db.update_mod(mod)!=1){
-		myutil.dlg.error_dlg("数据更新失败!");
-		mod[modSQL.mods[iSubItem]]=old;
-		db.rollback();
-		return false; 
-	}
-	return true; 
-}
-
-//设置启用模组变色
-mainForm.mod_listview.onnotify = function(id,code,ptr){
-	if( code == 0xFFFFFFF4/*_NM_CUSTOMDRAW*/ ){
-		var lvcd = mainForm.mod_listview.getNotifyCustomDraw(code,ptr);
-		if( lvcd.nmcd.dwDrawStage == 0x10001/*_CDDS_ITEMPREPAINT*/){
-			if(settings.use_colors[mod_table[lvcd.nmcd.dwItemSpec+1].id]){
-				lvcd.clrTextBk=gdi.RGB(249,236,195);
-				lvcd.update();
-			}
-			return 0x0;//0x20/*_CDRF_NOTIFYSUBITEMDRAW*/
-		}
-		elseif( lvcd.nmcd.dwDrawStage == 1/*_CDDS_PREPAINT*/ ){
-			return 0x20/*_CDRF_NOTIFYITEMDRAW*/;
-		}
-	}
-};
-
-import fsys.dlg.dir;
-mainForm.btnIFileOpenDir.oncommand =function(id,event){
-	var path = fsys.dlg.dir(,,'请选择目录')
-	if(path){
-		mainForm.editPath.text = path;
-		settings.game_path=path;
-		settings.install_dir=path+settings.mod_path;
-		myutil.save_setting();
-		fsys.createDir(settings.install_dir,false);
-	}	
-}
-mainForm.btnIFileOpenDir.skin({
-	color={
-		active=0xFF00FF00;
-		default=0xFF3C3C3C;
-		disabled=0xFF6D6D6D;
-		hover=0xFF8B4513
-	}
-});
-
-//禁用模组按钮
-mainForm.disable_button.oncommand = function(id,event){
-	owner.disabled=true;
-	var selected=mainForm.mod_listview.selected;
-	for(k,v in selected){
-		var mod=mod_table[v];
-		if(settings.use_colors[mod.id]){
-			var install_path=string.format("%s\%d\%d_P",fsys.path.canonicalize(settings.install_dir),mod.id,mod.id );
-			myutil.disable_mod(install_path);
-			settings.use_colors[mod.id]=null;
-		}
-	}
-	mainForm.mod_listview.redraw();
-	owner.disabled=false;
-}
-
-//删除模组按钮
-mainForm.remove_button.oncommand = function(id,event){
-	owner.disabled=true;
-	var selected=mainForm.mod_listview.selected;
-	if(settings.ui.check_once){
-		var msg=string.format("本次删除将不会进行逐个确认%s,是否继续?", settings.ui.delete_file?",且将删除文件":"");
-		if(not myutil.dlg.ask_dlg(msg)){
-			owner.disabled=false;
-			return ; 
-		}
-	}
-	for(k,v in selected){
-		var mod = mod_table[v]; 
-		var msg=string.format("确认删除{%s,描述:%s}%s?",mod.file_name:"null",(mod.describe:"null"), settings.ui.delete_file?"(包含文件)":"");
-		if(settings.ui.check_once||myutil.dlg.ask_dlg(msg)){
-			settings.use_colors[mod.id]=null;
-			db.delete_mod(mod);
-			if(settings.ui.delete_file){
-				var mod_path=string.format("%s\%d", fsys.path.canonicalize(settings.data_path),mod.id);
-				var install_path=string.format("%s\%d",fsys.path.canonicalize(settings.install_dir),mod.id);
-				if(io.exist(mod_path)){
-					fsys.delete(mod_path);
-				}
-			}
-			if(io.exist(install_path)){
-				fsys.delete(install_path);
-			}
-		}
-	}
-	mod_table=db.get_mod_table();
-	grid.setTable(mod_table);
-	owner.disabled=false;
-}
-
-//启用模组按钮
-mainForm.enable_button.oncommand =function(id,event){
-	owner.disabled=true;
-	var selected=mainForm.mod_listview.selected;
-	for(k,v in selected){
-		var mod=mod_table[v];
-		var mod_path=string.format("%s\%d\%s.pak", fsys.path.canonicalize(settings.data_path),mod.id,mod.file_name);
-		var install_path=string.format("%s\%d\%d_P",fsys.path.canonicalize(settings.install_dir),mod.id,mod.id );
-		if(myutil.use_mod(mod_path,install_path)){
-			settings.use_colors[mod.id]=true;
-		}else {
-			myutil.dlg.error_dlg(string.format("%s启用失败{id=%d}",mod.file_name, mod.id));
-		}
-	}
-	mainForm.mod_listview.redraw();
-	owner.disabled=false;
-}
-
-import fsys.dlg;
-//添加模组按钮-----将模组复制到程序所在文件夹以及游戏所在目录中
-mainForm.add_button.oncommand = function(id,event){
-	owner.disabled=true;
-	var pa = fsys.dlg.open('pak文件|*.pak||',,,mainForm);
-	if(pa){
-		path=io.splitpath(pa);
-		mod_template.file_name=path.name;
-		db.add_mod(mod_template);
-		var id=db.get_mod_last().id;
-		var d_p=fsys.path.canonicalize(settings.data_path) +"\"+id;
-		fsys.createDir(d_p,false);
-		fsys.copy(pa,d_p);
-		if(fsys.path.isDir(settings.install_dir)){
-			var p=fsys.path.canonicalize(settings.install_dir) +"/"+id+"/";
-			fsys.createDir(p,false);
-			fsys.copy(pa,p);
-			fsys.rename(p+path.file,string.format("%s%d_P", p,id));
-		}else {
-			myutil.dlg.info_dlg("未设置游戏根目录！");
-		}
-		mod_table=db.get_mod_table();
-		grid.setTable(mod_table);
-		mainForm.mod_listview.setSelected(#mod_table);
-	}
-	owner.disabled=false;
-}
-//
-mainForm.delete_file_checkbox.oncommand = function(id,event){
-	settings.ui.delete_file=mainForm.delete_file_checkbox.checked;
-}
-//
-mainForm.ask_once_checkbox.oncommand = function(id,event){
-	settings.ui.check_once=mainForm.ask_once_checkbox.checked;
-}
-//更新文件按钮
-mainForm.upadte_button.oncommand = function(id,event){
-	owner.disabled=true;
-	var selected=mainForm.mod_listview.selected;
-	if(#selected!=1){
-		myutil.dlg.info_dlg("(需要/只能)选择一条记录!");
-		owner.disabled=false;
-		return ; 
-	}
-	var pa = fsys.dlg.open('pak文件|*.pak||',,,mainForm);
-	var mod=mod_table[selected[1]];
-	var old_file=mod.file_name;
-	if(pa){
-		path=io.splitpath(pa);
-		var id=mod.id;
-		var d_p=fsys.path.canonicalize(settings.data_path) +"\"+id;
-		fsys.createDir(d_p,false);
-		var del_file=string.format("%s/%s.pak",d_p,old_file );
-		if(io.exist(del_file)){
-			fsys.delete(del_file);
-		}
-		fsys.copy(pa,d_p);
-		if(fsys.path.isDir(settings.install_dir)){
-			var p=fsys.path.canonicalize(settings.install_dir) +"/"+id+"/";
-			del_file=p++id+"_P";
-			if(io.exist(del_file)){
-				fsys.delete(del_file);
-			}elseif(io.exist(del_file+".pak")){
-				fsys.delete(del_file+".pak");
-			}
-			fsys.createDir(p,false);
-			fsys.copy(pa,p);
-			fsys.rename(p+path.file,string.format("%s%d_P", p,id));
-		}else {
-			myutil.dlg.info_dlg("未设置游戏根目录！");
-		}
-		mod.file_name=path.name;
-		db.update_mod(mod);
-		mod_table=db.get_mod_table();
-		grid.setTable(mod_table);
-	}
-	owner.disabled=false;
-}
-
-mainForm.EnglishUI.oncommand = function(id,event){
-	settings.ui.language=mainForm.EnglishUI.checked?"english":"chinese";
-	myutil.set_language(mainForm,settings.ui.language);
-	if(settings.ui.language=="english"){
-		mod_template.file_name="filename";
-		mod_template.character_num="character name";
-		mod_template.web="mod URL";
-		mod_template.describe="mod discribe";	
-	}else {
-		mod_template=table.clone(settings.default_mod_template);
-	}
-}
-
 
 mainForm.show();
 win.loopMessage();
-myutil.save_setting();
+
+myutil.config.save_config();
