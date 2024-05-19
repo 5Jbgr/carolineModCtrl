@@ -1,0 +1,122 @@
+import fonts.fontAwesome;
+import win.ui;
+import win.ui.minmax;
+import win.ui.tabs;
+import console;
+import myutil;
+import myutil.config;
+import modSQL;
+/*DSG{{*/
+var modsStart = win.form(text="模组控制";right=1200;bottom=551)
+modsStart.add(
+image_custom={cls="custom";text="自定义控件";left=824;top=0;right=1196;bottom=544;bgcolor=15793151;db=1;dr=1;dt=1;z=2};
+splitter={cls="splitter";left=312;top=0;right=317;bottom=544;db=1;dl=1;dt=1;z=4};
+splitter2={cls="splitter";left=816;top=0;right=821;bottom=544;db=1;dr=1;dt=1;z=5};
+table_custom={cls="custom";text="自定义控件";left=320;top=0;right=816;bottom=544;bgcolor=15793151;db=1;dl=1;dr=1;dt=1;z=3};
+tree_custom={cls="custom";text="自定义控件";left=8;top=0;right=312;bottom=544;bgcolor=15793151;db=1;dl=1;dt=1;z=1}
+)
+/*}}*/
+
+win.ui.minmax(modsStart,900);
+var _config=myutil.config.get_config();
+var _db=modSQL.get_mod_sql();
+var _table=_db.search_mod();
+var _now_mod=null;
+var img = modsStart.image_custom.loadForm("\dlg\mod_image.aardio");
+var tree = modsStart.tree_custom.loadForm("\dlg\category_tree.aardio");
+var modtable = modsStart.table_custom.loadForm("\dlg\modList.aardio");
+modtable.setColumns({"enabled";"id";"category";"describe"},{0.11;0.11;0.3;-1});
+modtable.setTable(_table);
+
+modsStart.splitter.split(modsStart.tree_custom,modsStart.table_custom);
+modsStart.splitter2.split(modsStart.table_custom,modsStart.image_custom);
+
+modsStart.splitter.ltMin=300;
+modsStart.splitter.rbMin=600;
+modsStart.splitter2.ltMin=600;
+modsStart.splitter2.rbMin=400;
+
+//更新表格
+var update_table=function(){
+	_table=_db.search_mod();
+	modtable.setTable(_table);
+}
+
+//modsStart.image_custom.orphanWindow();
+
+tree.searchCategory=function(categorys){
+	if(not categorys){
+		update_table=function(){
+			_table=_db.search_mod();
+			modtable.setTable(_table);
+		}
+		modtable.updateTable();
+	}elseif(type(categorys)==type.string){
+		update_table=function(){
+			_table=_db.search_mod(categorys);
+			modtable.setTable(_table);
+		}
+		modtable.updateTable();
+	}elseif(table.isArray(categorys)){
+		if(#categorys > 0){
+			update_table=function(){
+				_table=_db.search_mod(table.unpack(categorys));
+				modtable.setTable(_table);
+			}
+			modtable.updateTable();	
+		}
+	}
+}
+
+
+modtable.updateTable=function(id){
+	if(not id){
+		update_table();
+	}else {
+		var result=_db.search_mod_byid(id)
+		return result; 
+	}
+}
+
+modtable.showInfo=function(mod){
+	_now_mod=mod;
+	if(not mod or not mod.image){
+		img.setImages();
+	}else {
+		var imgs=string.split(mod.image,';');
+		for(k,v in imgs){
+			imgs[k]=io.fullpath(io.joinpath(_config.path.image,v));
+		}
+		//console.dumpTable(imgs);
+		img.setImages(imgs);
+	}	
+}
+
+img.addNewImage=function(imgs){
+	if(_now_mod){
+		if(table.isArray(imgs)){
+			_db.update_mod({image=string.trim(_now_mod.image+";"+myutil.add_image(_config.path.image,imgs),';')},_now_mod.id);
+			update_table();
+		}else {
+			_db.update_mod({image=string.trim(_now_mod.image+";"+myutil.add_image(_config.path.image,{imgs}),';')},_now_mod.id);
+			update_table();
+		}
+	}
+}
+
+img.deleteImage=function(img){
+	if(_now_mod and img){
+		var path=io.splitpath(img);
+		var image=string.replace(_now_mod.image,"@"+path.file,"",1);
+		image=string.trim(string.replace(image,"@;;",';'),';');
+		_db.update_mod({image=image},_now_mod.id);
+		console.log(image,img);
+	}
+}
+
+img.show();
+tree.show();
+modtable.show();
+modsStart.show();
+win.loopMessage();
+return modsStart;
