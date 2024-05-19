@@ -1,0 +1,103 @@
+import win.ui;
+import win.ui.menu;
+import win.ui.minmax;
+import win.clip;
+import console;
+import myutil.dlg;
+import myutil.config;
+/*DSG{{*/
+var mod_image = win.form(text="模组预览图";right=287;bottom=550;acceptfiles=1)
+mod_image.add(
+plus={cls="plus";left=0;top=8;right=288;bottom=544;acceptfiles=1;db=1;dl=1;dr=1;dt=1;notify=1;repeat="scale";z=1}
+)
+/*}}*/
+
+win.ui.minmax(mod_image,250);
+
+var pic_list = null;
+var now_img = null;
+
+//添加图片回调
+mod_image.addNewImage=null;
+//删除图片回调
+mod_image.deleteImage=null;
+
+//加载语言配置
+var lang_other = myutil.config.get_langconfig().get_other("mod_image");
+table.mix(lang_other,{
+	title="模组预览图";
+	delete_img="删除此图";
+	add_from_clip="添加自剪切板";
+	clip_no_img="剪贴板没有图像";
+	no_image="暂无预览图";
+})
+mod_image.text=lang_other.title;
+mod_image.plus.text=lang_other.no_image;
+
+mod_image.popmenu = win.ui.popmenu(mod_image);
+mod_image.popmenu.add(lang_other.delete_img,function(id){
+	if(now_img){
+		if(mod_image.deleteImage){
+			mod_image.deleteImage(pic_list?pic_list[now_img]:now_img:null);
+		}
+	}
+});
+mod_image.popmenu.add(lang_other.add_from_clip,function(id){
+	if(mod_image.addNewImage){
+		var hBmp = win.clip.readBitmap();
+		if(!hBmp){
+			return myutil.dlg.error_dlg(lang_other.clip_no_img);
+		}
+		com.picture.fromBitmap(hBmp).Save("/clip.jpg")
+		mod_image.addNewImage("/clip.jpg");
+	}
+});
+
+//设置图片列表
+mod_image.setImages=function(imgs){
+	if(type(imgs)===type.table){
+		mod_image.plus.text=null;
+		pic_list=imgs;
+		mod_image.plus.background=imgs[1];
+		now_img=1;
+	}elseif(type(imgs)===type.string and #imgs>0){
+		mod_image.plus.text=null;
+		mod_image.plus.background=imgs;
+		now_img=imgs;
+		pic_list=null;
+	}else {
+		mod_image.plus.text=lang_other.no_image;
+		pic_list=null;
+		now_img=null;
+	}
+}
+
+//添加新图片
+mod_image.plus.onDropFiles = function(files){
+	if(mod_image.addNewImage){
+		mod_image.addNewImage(files);
+	}
+}
+//右键弹出菜单
+mod_image.plus.onRightMouseUp = function(wParam,lParam){
+    var x,y = win.getMessagePos(lParam);
+    if(not now_img){
+    	mod_image.popmenu.enable(1,false);
+    }
+	mod_image.popmenu.popup();
+}
+//双击下一个
+mod_image.plus.onMouseDoubleClick = function(wParam,lParam){
+    var x,y = win.getMessagePos(lParam);
+	if(pic_list){
+		now_img = now_img+1;
+		if(now_img>#pic_list){
+			now_img=1;
+		}
+		mod_image.plus.background=pic_list[now_img];
+	}
+}
+
+mod_image.show();
+win.loopMessage();
+return mod_image;
