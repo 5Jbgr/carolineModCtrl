@@ -2,3 +2,12 @@ data/*
 config.table
 modinfo.db
 dist/*
+structure.md
+mods/*
+image/
+config/*.table
+tools/category.json
+trash/*
+.build/*
+*.bak
+build_error_log.txt
