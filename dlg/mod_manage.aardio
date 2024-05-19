@@ -1,0 +1,167 @@
+import win.ui;
+import modSQL;
+import myutil;
+import myutil.modCtl;
+import myutil.config;
+/*DSG{{*/
+var modManage = win.form(text="模组管理";right=839;bottom=535)
+modManage.add(
+custom={cls="custom";text="自定义控件";left=0;top=0;right=472;bottom=536;bgcolor=15793151;db=1;dl=1;dr=1;dt=1;z=1};
+splitter={cls="splitter";left=472;top=0;right=477;bottom=536;db=1;dr=1;dt=1;frame=1;z=2};
+tab={cls="tab";left=480;top=0;right=840;bottom=536;bgcolor=15793151;db=1;dr=1;dt=1;edge=1;z=3}
+)
+/*}}*/
+
+var modtable = modManage.custom.loadForm("\dlg\modList.aardio");
+var info = modManage.tab.loadForm("\dlg\mod_info.aardio");
+var tree = modManage.tab.loadForm("\dlg\category_tree.aardio");
+
+modManage.tab.setItemText(1,info.text);
+modManage.tab.setItemText(2,tree.text);
+
+var _config=myutil.config.get_config();
+var _db=modSQL.get_mod_sql();
+var _table=_db.search_mod();
+var _now_mod=null;
+var _lang_other=myutil.config.get_langconfig().get_other("modManage");
+var mod_template=table.clone(_config.db.bace_mod_template);
+
+table.mix(_lang_other,{
+	have_same_file="模组文件已存在[id=%d]";
+	sql_move_error='注册文件/移动文件失败,请检查数据库及文件位置\n[path=%s]';
+	add_success="注册成功";
+});
+
+
+modtable.setColumns({"id";"category";"tags";"describe"},{0.11;0.2;0.3;-1});
+modtable.setTable(_table);
+
+modManage.splitter.split(modManage.custom,modManage.tab);
+modManage.splitter.ltMin=600;
+modManage.splitter.rbMin=300;
+
+//更新表格
+var update_table=function(){
+	_table=_db.search_mod();
+	modtable.setTable(_table);
+}
+
+tree.searchCategory=function(categorys){
+	if(not categorys){
+		update_table=function(){
+			_table=_db.search_mod();
+			modtable.setTable(_table);
+		}
+		modtable.updateTable();
+	}elseif(type(categorys)==type.string){
+		update_table=function(){
+			_table=_db.search_mod(categorys);
+			modtable.setTable(_table);
+		}
+		modtable.updateTable();
+	}elseif(table.isArray(categorys)){
+		if(#categorys > 0){
+			update_table=function(){
+				_table=_db.search_mod(table.unpack(categorys));
+				modtable.setTable(_table);
+			}
+			modtable.updateTable();	
+		}
+	}
+}
+
+modtable.updateTable=function(id){
+	if(not id){
+		update_table();
+	}else {
+		var result=_db.search_mod_byid(id)
+		return result; 
+	}
+}
+//显示信息
+modtable.showInfo=function(mod){
+	_now_mod=mod;
+	if(not mod){
+		info.set_info();
+	}else {
+		var _mod=table.clone(mod)
+		_mod.category=mod.category[2];
+		//console.dumpTable(imgs);
+		info.set_info(_mod);
+	}	
+}
+
+info.update_info=function(_info,oldinfo){
+	var id=_info.id;
+	_info.id=null;
+	if(_info[["name"]] and io.exist(_info.name,6)){
+		_info.hash=myutil.hash_file(_info.name);
+		var path=_info.name;
+		_info.name=io.splitpath(_info.name).name;
+		var _cat=string.replace(oldinfo.category,'-','/');
+		var mod_path=io.joinpath(_config.path.data,_cat,id+"_"+oldinfo.name+".pak");
+		var install_path=io.joinpath(_config.path.install,id++"_P.pak");
+		var trash_path=io.joinpath(_config.path.trash,id+"_"+oldinfo.name+".pak");
+		myutil.modCtl.remove_mod(mod_path,install_path,trash_path);
+		if(_info[["category"]]){
+			_cat=string.replace(_info.category,'-','/');
+		}
+		var new_mod_path=io.joinpath(_config.path.data,_cat);
+		fsys.createDir(new_mod_path,false);
+		new_mod_path=io.joinpath(new_mod_path,id+"_"+_info.name+".pak");
+		fsys.move(path,new_mod_path);
+		if(oldinfo.enabled()){
+			myutil.modCtl.enable_mod(new_mod_path,install_path);
+		}
+	}elseif(_info[["category"]]){
+		var _cat=string.replace(_info.category,'-','/');
+		var new_mod_path=io.joinpath(_config.path.data,_cat);
+		fsys.createDir(new_mod_path,false);
+		new_mod_path=io.joinpath(new_mod_path,id+"_"+oldinfo.name+".pak");
+		_cat=string.replace(oldinfo.category,'-','/');
+		var old_mod_path=io.joinpath(_config.path.data,_cat,id+"_"+oldinfo.name+".pak");
+		fsys.move(old_mod_path,new_mod_path);
+		if(oldinfo.enabled()){
+			myutil.modCtl.enable_mod(new_mod_path,install_path);
+		}
+		_db.update_mod(_info,id);
+	}elseif(_info[["name"]] and not io.exist(_info.name,6)){
+		return;
+	}
+	_db.update_mod(_info,id);
+	update_table();
+}
+
+info.create_info=function(_info){
+	if(_info[["name"]] and io.exist(_info.name,6)){
+		_info.hash=myutil.hash_file(_info.name);
+		var result=_db.test_modhash(_info.hash);
+		if(#result!=0){
+			myutil.dlg.info_dlg(string.format(_lang_other.have_same_file,result[1].id));
+			return ;
+		}
+		var path=_info.name;
+		_info.name=io.splitpath(_info.name).name;
+		var _cat = string.replace(_info.category,'-','/');; 
+		var mod_path=io.joinpath(_config.path.data,_cat);
+		fsys.createDir(mod_path,false);
+		var n,_id=_db.add_mod(_info);
+		mod_path=io.joinpath(mod_path,_id+"_"+_info.name+".pak");
+		if(n>0 and fsys.move(path,mod_path)){
+			tree.searchCategory(_info.categoty);
+			myutil.dlg.success_dlg(string.format(_lang_other.add_success));
+		}else {
+			myutil.dlg.info_dlg(string.format(_lang_other.sql_move_error,v));
+		}
+		update_table();
+	}
+}
+
+
+
+tree.show();
+modtable.show();
+info.show();
+modManage.show();
+win.loopMessage();
+return modManage;
