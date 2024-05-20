@@ -50,6 +50,7 @@ var _db=modSQL.get_mod_sql();
 var _config=myutil.config.get_config();
 var _table=null;
 var _columns=null;
+var _enabled_index=null;
 var _focus_id=null;
 var _lang_other=myutil.config.get_langconfig().get_other("modList");
 var mod_template=table.clone(_config.db.bace_mod_template);
@@ -120,11 +121,13 @@ modList.listview.onDoubleClick = function(item,subItem,nmListView){
 	if(item>0){
 		var mod=_table[item];
 		if(mod.enabled()){
-			disable_mod(mod)
+			disable_mod(mod);
 		}else {
 			enable_mod(mod);
 		}
-		modList.listview.setItemText(mod.enabled[1],item,1);
+		if(_enabled_index){
+			modList.listview.setItemText(mod.enabled[1],item,_enabled_index);
+		}
 	}
 }
 
@@ -180,6 +183,9 @@ modList.setColumns=function(columns,size){
 	modList.listview.setColumns(columns,size);
 	for(k,v in columns){
 		modList.listview.setColumnText(k,translate[v]:" ");
+		if(v=="enabled"){
+			_enabled_index=k;
+		}
 	}
 	grid.setReadonlyColumns(-1);
 }
@@ -228,7 +234,9 @@ modList.enable_plus.oncommand = function(id,event){
 	for(k,v in selected){
 		var mod=_table[v];
 		enable_mod(mod);
-		modList.listview.setItemText(mod.enabled[1],v,1);
+		if(_enabled_index){
+			modList.listview.setItemText(mod.enabled[1],v,_enabled_index);
+		}
 	}
 	owner.disabled=false;
 }
@@ -240,7 +248,9 @@ modList.disable_plus.oncommand = function(id,event){
 	for(k,v in selected){
 		var mod=_table[v];
 		disable_mod(mod);
-		modList.listview.setItemText(mod.enabled[1],v,1);
+		if(_enabled_index){
+			modList.listview.setItemText(mod.enabled[1],v,_enabled_index);
+		}
 	}
 	owner.disabled=false;
 }

@@ -110,7 +110,7 @@ img.deleteImage=function(img){
 		var image=string.replace(_now_mod.image,"@"+path.file,"",1);
 		image=string.trim(string.replace(image,"@;;",';'),';');
 		_db.update_mod({image=image},_now_mod.id);
-		console.log(image,img);
+		//console.log(image,img);
 	}
 }
 

@@ -67,6 +67,7 @@ mod_image.setImages=function(imgs){
 		pic_list=null;
 	}else {
 		mod_image.plus.text=lang_other.no_image;
+		mod_image.plus.background=null;
 		pic_list=null;
 		now_img=null;
 	}
