@@ -55,7 +55,7 @@ mod_image.popmenu.add(lang_other.add_from_clip,function(id){
 
 //设置图片列表
 mod_image.setImages=function(imgs){
-	if(type(imgs)===type.table){
+	if(type(imgs)===type.table and #imgs>0){
 		mod_image.plus.text=null;
 		pic_list=imgs;
 		mod_image.plus.background=imgs[1];

@@ -193,6 +193,7 @@ mod_info.set_info=function(info){
 			owner.mod_img_combobox.selIndex=1;
 		}else {
 			set_image();
+			owner.mod_img_combobox.items=null;
 		}
 	}else {
 		for(name,ctrl in mod_info.eachControl("edit") ){

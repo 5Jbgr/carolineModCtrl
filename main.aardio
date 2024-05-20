@@ -60,13 +60,16 @@ tbs.loadForm(2,"\dlg\mod_manage.aardio");
 tbs.loadForm(3,"\dlg\settings.aardio");
 if(not _config.path.game or _config.path.name==""){
 	tbs.preloadForm(3,true);
+	tbs.selIndex=3;
 }else {
 	tbs.preloadForm(1,true);
+	tbs.selIndex=1;
 }
 
 
 var frmChild = mainForm.loadForm("\dlg\warning.aardio");
 frmChild.show();
+
 
 
 mainForm.show();
