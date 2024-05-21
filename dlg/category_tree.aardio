@@ -82,7 +82,14 @@ category_tree.clear_plus.oncommand = function(id,event){
 category_tree.treeview.onDoubleClick = function(hItem,data){
 	//console.dumpTable(data);
 	if(category_tree.searchCategory){
-		category_tree.searchCategory(data.flag);
+		var children=category_tree.treeview.getChildren(hItem);
+		if(#children){
+			category_tree.searchCategory(data.flag++"-");
+		}else {
+			category_tree.searchCategory(data.flag);
+		}
+		
+		
 	}
 }
 
@@ -113,14 +120,15 @@ category_tree.search_plus.oncommand = function(id,event){
 	traveling=function(hItem){
 		var children=category_tree.treeview.getChildren(hItem);
 		if(#children==0){
-			return category_tree.treeview.getChecked(hItem); 
+			return category_tree.treeview.getChecked(hItem),0; 
 		}
 		var flag=true;
 		var result=table.array();
 		for(k,v in children){
-			var r=traveling(v);
+			var r,n=traveling(v);
 			if(r){
-				table.push(result,category_tree.treeview.getItemData(v).flag);
+				if(n){table.push(result,category_tree.treeview.getItemData(v).flag++"-");			}
+				else{table.push(result,category_tree.treeview.getItemData(v).flag);}
 			}else {
 				flag=false;
 			}
@@ -128,7 +136,7 @@ category_tree.search_plus.oncommand = function(id,event){
 		if(not flag and #result>0){
 			table.append(all_category,result);
 		}
-		return flag; 
+		return flag,#children; 
 	}
 	if(category_tree.searchCategory){
 		//如果全选设置参数为null
