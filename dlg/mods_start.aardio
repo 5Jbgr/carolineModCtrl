@@ -96,11 +96,10 @@ img.addNewImage=function(imgs){
 	if(_now_mod){
 		if(table.isArray(imgs)){
 			_db.update_mod({image=string.trim(_now_mod.image+";"+myutil.add_image(_config.path.image,imgs),';')},_now_mod.id);
-			update_table();
 		}else {
 			_db.update_mod({image=string.trim(_now_mod.image+";"+myutil.add_image(_config.path.image,{imgs}),';')},_now_mod.id);
-			update_table();
 		}
+		update_table();
 	}
 }
 
@@ -110,9 +109,16 @@ img.deleteImage=function(img){
 		var image=string.replace(_now_mod.image,"@"+path.file,"",1);
 		image=string.trim(string.replace(image,"@;;",';'),';');
 		_db.update_mod({image=image},_now_mod.id);
+		update_table();
 		//console.log(image,img);
 	}
 }
+
+
+modsStart.refresh=function(){
+	update_table();
+}
+
 
 img.show();
 tree.show();

@@ -158,6 +158,12 @@ info.create_info=function(_info){
 }
 
 
+modManage.refresh=function(){
+	update_table();
+	info.refresh();
+}
+
+
 
 tree.show();
 modtable.show();

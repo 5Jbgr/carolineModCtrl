@@ -84,7 +84,7 @@ mod_image.plus.onRightMouseUp = function(wParam,lParam){
     var x,y = win.getMessagePos(lParam);
     if(not now_img){
     	mod_image.popmenu.enable(1,false);
-    }
+    }else mod_image.popmenu.enable(1,true);
 	mod_image.popmenu.popup();
 }
 //双击下一个

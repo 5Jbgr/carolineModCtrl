@@ -70,6 +70,12 @@ if(not _config.path.game or _config.path.name==""){
 var frmChild = mainForm.loadForm("\dlg\warning.aardio");
 frmChild.show();
 
+tbs.onSelchange = function(idx,strip,form){
+	if(form and form.refresh){
+		form.refresh();
+	}
+}
+
 
 
 mainForm.show();

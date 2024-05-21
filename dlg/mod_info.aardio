@@ -110,6 +110,23 @@ lang_config.load_lang("mod_info",mod_info,{
 mod_info.all_img_combobox.setCueBannerText(lang_config_other.all_img_tip);//所有图片提示
 mod_info.mod_img_combobox.setCueBannerText(lang_config_other.mod_img_tip);//当前图片提示
 mod_info.text=lang_config_other.title;//标题
+
+
+//设置显示图片
+var set_image=function(path){
+	if(path){
+		mod_info.image_plus.text=null;
+		mod_info.image_plus.background=io.joinpath(_config.path.image,path);
+		_now_img=path;
+	}else {
+		mod_info.image_plus.text=lang_config_other.no_image;
+		mod_info.image_plus.background=null;
+		_now_img=null;
+	}
+}
+set_image();
+
+
 //弹出菜单
 mod_info.popmenu = win.ui.popmenu(mod_info);
 mod_info.popmenu.add(lang_config_other.use_this_image,function(){
@@ -120,21 +137,21 @@ mod_info.popmenu.add(lang_config_other.use_this_image,function(){
 		mod_info.mod_img_combobox.selIndex=1;
 		mod_info.all_img_combobox.selIndex=null;
 	}else {
-		_now_img=null;
+		set_image();
 	}
 });
 mod_info.popmenu.add(lang_config_other.delete_this_image,function(){
 	var t=mod_info.mod_img_combobox.selText;
 	if(string.len(t)>0){
-		mod_info.mod_img_combobox.delete()
-		mod_info.mod_img_combobox.selIndex=1;
-		if(mod_info.mod_img_combobox.items[1]){
-			_now_img=mod_info.mod_img_combobox.selText;
-			mod_info.image_plus.background=io.joinpath(_config.path.image,_now_img);
+		mod_info.mod_img_combobox.delete();
+		if(#mod_info.mod_img_combobox.items>0){
+			mod_info.mod_img_combobox.selIndex=1;
+			set_image(mod_info.mod_img_combobox.selText);
+		}else {
+			mod_info.mod_img_combobox.text=null;
+			set_image();
 		}
-	}else {
-		_now_img=null;
-	}
+	}else set_image();
 });
 
 mod_info.category_combobox.minVisible = 12;//设置可见项数量
@@ -152,19 +169,6 @@ var update_all_image=function(){
 }
 update_all_image();
 
-//设置显示图片
-var set_image=function(path){
-	if(path){
-		mod_info.image_plus.text=null;
-		mod_info.image_plus.background=io.joinpath(_config.path.image,path);
-		_now_img=path;
-	}else {
-		mod_info.image_plus.text=lang_config_other.no_image;
-		mod_info.image_plus.background=null;
-		_now_img=null;
-	}
-}
-set_image();
 
 //设置数据显示
 mod_info.set_info=function(info){
@@ -269,12 +273,15 @@ mod_info.save_plus.oncommand = function(id,event){
 					info[ctl_list[name]]=ctrl.text;
 				}
 			}
-			for(k,v in mod_info.mod_img_combobox.items){
-				if(not string.find(info_now["image"],v)){
-					info["image"]=string.join(mod_info.mod_img_combobox.items,';');
-					break;
-				}
-			};
+			var _items=string.split(info_now["image"]:"",";");
+			if(#_items == #mod_info.mod_img_combobox.items ){
+				for(k,v in mod_info.mod_img_combobox.items){
+					if(not string.find(info_now["image"],v)){
+						info["image"]=string.join(mod_info.mod_img_combobox.items,';');
+						break;
+					}
+				};
+			}else info["image"]=string.join(mod_info.mod_img_combobox.items,';');
 			var k,v=table.find(_cats,lambda(v) v.name==mod_info.category_combobox.selText);
 			info["category"]=(v?v["id"]):"99-1";
 			//console.dumpTable(info);
@@ -333,6 +340,11 @@ mod_info.onDropFiles = function(files){
 	}else {
 		myutil.dlg.info_dlg(lang_config_other.please_enable_edit);
 	}
+}
+
+
+mod_info.refresh=function(){
+	update_all_image();
 }
 
 
