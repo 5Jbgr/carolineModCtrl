@@ -58,7 +58,7 @@ tbs.addItems({{text=_other.modctl;},{text=_other.modmanage;},{text=_other.modset
 tbs.loadForm(1,"\dlg\mods_start.aardio");
 tbs.loadForm(2,"\dlg\mod_manage.aardio");
 tbs.loadForm(3,"\dlg\settings.aardio");
-if(not _config.path.game or _config.path.name==""){
+if(not _config.path.game or _config.path.game==""){
 	tbs.preloadForm(3,true);
 	tbs.selIndex=3;
 }else {
