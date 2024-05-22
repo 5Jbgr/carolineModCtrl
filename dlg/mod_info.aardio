@@ -179,7 +179,7 @@ mod_info.set_info=function(info){
 		owner.author_edit.text=info["author"]:"";
 		owner.url_edit.text=info["URL"]:"";
 		var a,b = table.find(_cats,lambda(v) v.id==info["category"]);
-		if(b){	
+		if(b){
 			owner.category_combobox.selIndex=table.indexOf(mod_info.category_combobox.items,b.name);
 		}else {
 			var a,b = table.find(_cats,lambda(v) string.startWith(v.id,"99")); 
@@ -226,6 +226,13 @@ mod_info.category_combobox.onEditChange = function(){
     	mod_info.category_combobox.autoComplete(#items?items:itemData);
     	timer=null;
 	},500);
+}
+mod_info.category_combobox.onOk = function(){ 
+	if(#mod_info.category_combobox.items!=#itemData){
+		var text=mod_info.category_combobox.selText;
+		mod_info.category_combobox.items=itemData;
+		mod_info.category_combobox.selText=text;
+	}
 }
 //丢失焦点即清空
 var clear = function(){

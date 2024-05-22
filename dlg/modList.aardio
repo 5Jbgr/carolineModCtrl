@@ -221,7 +221,8 @@ modList.setTable=function(t){
 	modList.listview.setTable(_table);
 	if(focus_index){
 		modList.listview.selIndex=focus_index;
-	}
+	}else{if(modList.showInfo)modList.showInfo();}
+	
 }
 //清空内容
 modList.clearList=modList.listview.clear;
@@ -306,10 +307,18 @@ modList.add_plus.oncommand = function(id,event){
 		if(#new_select>0 and modList.updateTable){
 			_focus_id=null;
 			modList.updateTable();
+			var focus=null;
 			for(k,v in _table){
 				if(table.find(new_select,v.id)){
 					modList.listview.setSelected(k);
+					focus=k;
 				}
+			}
+			if(modList.showInfo){
+				if(#new_select==1 and focus){
+					modList.listview.selIndex=focus;
+					modList.showInfo(_table[focus]);
+				}else {modList.showInfo();}
 			}
 		}
 	}
