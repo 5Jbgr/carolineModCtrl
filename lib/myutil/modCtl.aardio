@@ -19,7 +19,7 @@ _get_lang=function(){
 enable_mod=function(from ,to ,ext=".pak"){
 	if(from&&to){
 	    if(..io.exist(from,6)){
-	        if(..io.exist(to)){
+	        if(..io.exist(to++ext,6)){
 	            fsys.delete(to++ext);
 	        }
 	        fsys.hardlink.create(to++ext,from);
