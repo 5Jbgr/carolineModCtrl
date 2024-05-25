@@ -18,6 +18,11 @@ namespace myutil.config{
 	    	);
 	    	self.configs.ui.mix(
 	    		language="zh_cn";//界面语言，默认中文
+	    		now_client="steam/default";
+	    		client={
+	    		    {name="Epic";path="\Game\Content\Paks";};
+	    		    {name="steam/default";path="\data\game\Game\Content\Paks\~mod";};
+	    		}
 	    	);
 	    	self.configs.db.mix(
 	    		bace_mod_template={

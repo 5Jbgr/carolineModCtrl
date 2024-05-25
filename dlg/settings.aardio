@@ -6,6 +6,8 @@ import console;
 /*DSG{{*/
 var settings = win.form(text="设置";right=759;bottom=469)
 settings.add(
+client_combobox={cls="combobox";left=152;top=152;right=560;bottom=176;dl=1;dr=1;dt=1;edge=1;items={};mode="dropdown";z=6};
+client_static={cls="static";text="客户端类型：";left=24;top=152;right=152;bottom=178;align="right";center=1;dl=1;dt=1;font=LOGFONT(h=-14);notify=1;transparent=1;z=7};
 game_static={cls="static";text="游戏目录：";left=24;top=48;right=152;bottom=74;align="right";center=1;dl=1;dt=1;font=LOGFONT(h=-14);transparent=1;z=2};
 gamepath_plus={cls="plus";left=152;top=48;right=560;bottom=74;align="right";border={bottom=1;color=-6908266};dl=1;dr=1;dt=1;editable=1;font=LOGFONT(h=-13);textPadding={top=6;bottom=2};z=1};
 language_combobox={cls="combobox";left=152;top=104;right=560;bottom=128;dl=1;dr=1;dt=1;edge=1;items={};mode="dropdown";z=5};
@@ -21,6 +23,7 @@ _lang.load_lang("settings",settings,{
 	game_static="text";
 	open_plus="text";
 	language_static="text";
+	client_static="text";
 });
 
 settings.gamepath_plus.text=_config.path.game;
@@ -39,6 +42,9 @@ fsys.enum( _config.path.language, "*.*",
 );
 
 settings.language_combobox.items=langs;
+settings.language_combobox.selText=_lang.get_now_lang();
+settings.client_combobox.items=table.map(_config.ui.client,lambda(v,k) v.name);
+settings.client_combobox.selText=_config.ui.now_client;
 
 settings.open_plus.oncommand =function(id,event){
 	var path = fsys.dlg.dir(,,'请选择目录')
@@ -56,6 +62,15 @@ settings.language_combobox.onOk = function(){
 	_lang.reset_lang();
 }
 
+settings.client_combobox.onOk = function(){ 
+	var index=settings.client_combobox.selIndex;
+	_config.ui.now_client=settings.client_combobox.selText;
+	_config.path.mod=_config.ui.client[index].path;
+	if(_config.path.game and _config.path.game!=""){
+		_config.path.install=io.joinpath(_config.path.game,_config.path.mod);
+		fsys.createDir(_config.path.install,false);
+	}
+}
 
 settings.show();
 win.loopMessage();

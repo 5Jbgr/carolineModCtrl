@@ -1,7 +1,8 @@
 ﻿{
 open_plus="打开";
-language_static="语言：";
+game_static="游戏目录：";
 afterLoad=null;
+language_static="语言：";
 beforeSave=null;
-game_static="游戏目录："
+client_static="客户端类型："
 }

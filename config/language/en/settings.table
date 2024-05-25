@@ -1,7 +1,8 @@
 ﻿{
-game_static="Game Directory:";
-language_static="Language:";
+game_static="Game Directory: ";
+open_plus="Open";
 afterLoad=null;
+language_static="Language: ";
 beforeSave=null;
-open_plus="Open"
+client_static="Client Type: "
 }
