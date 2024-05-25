@@ -8,7 +8,7 @@
                 "id": 1,
                 "category": [
                     {
-                        "name": "\u91cc\u8299\u00b7\u5bbf\u820d",
+                        "name": "\u91cc\u8299-\u5bbf\u820d",
                         "id": 1,
                         "star": "0",
                         "skin": [
@@ -19,7 +19,7 @@
                         ]
                     },
                     {
-                        "name": "\u91cc\u8299\u00b7\u661f\u671f\u4e09",
+                        "name": "\u91cc\u8299-\u661f\u671f\u4e09",
                         "id": 2,
                         "star": "4",
                         "skin": [
@@ -34,7 +34,7 @@
                         ]
                     },
                     {
-                        "name": "\u91cc\u8299\u00b7\u72c2\u730e",
+                        "name": "\u91cc\u8299-\u72c2\u730e",
                         "id": 3,
                         "star": "5",
                         "skin": [
@@ -63,7 +63,7 @@
                 "id": 2,
                 "category": [
                     {
-                        "name": "\u82ac\u59ae\u00b7\u5bbf\u820d",
+                        "name": "\u82ac\u59ae-\u5bbf\u820d",
                         "id": 1,
                         "star": "0",
                         "skin": [
@@ -74,7 +74,7 @@
                         ]
                     },
                     {
-                        "name": "\u82ac\u59ae\u00b7\u9ec4\u91d1\u72ee\u5b50",
+                        "name": "\u82ac\u59ae-\u9ec4\u91d1\u72ee\u5b50",
                         "id": 2,
                         "star": "4",
                         "skin": [
@@ -93,7 +93,7 @@
                         ]
                     },
                     {
-                        "name": "\u82ac\u59ae\u00b7\u548e\u51a0",
+                        "name": "\u82ac\u59ae-\u548e\u51a0",
                         "id": 3,
                         "star": "5",
                         "skin": [
@@ -126,7 +126,7 @@
                 "id": 3,
                 "category": [
                     {
-                        "name": "\u8299\u63d0\u96c5\u00b7\u5bbf\u820d",
+                        "name": "\u8299\u63d0\u96c5-\u5bbf\u820d",
                         "id": 1,
                         "star": "0",
                         "skin": [
@@ -137,7 +137,7 @@
                         ]
                     },
                     {
-                        "name": "\u8299\u63d0\u96c5\u00b7\u5c0f\u592a\u9633",
+                        "name": "\u8299\u63d0\u96c5-\u5c0f\u592a\u9633",
                         "id": 2,
                         "star": "4",
                         "skin": [
@@ -148,11 +148,15 @@
                             {
                                 "name": "\u70bd\u70ed\u5fa1\u62a4",
                                 "id": 2
+                            },
+                            {
+                                "name": "\u4e0d\u706d\u8000\u5fc3",
+                                "id": 3
                             }
                         ]
                     },
                     {
-                        "name": "\u8299\u63d0\u96c5\u00b7\u7f04\u9ed8",
+                        "name": "\u8299\u63d0\u96c5-\u7f04\u9ed8",
                         "id": 3,
                         "star": "5",
                         "skin": [
@@ -177,7 +181,7 @@
                 "id": 4,
                 "category": [
                     {
-                        "name": "\u8309\u8389\u5b89\u00b7\u5bbf\u820d",
+                        "name": "\u8309\u8389\u5b89-\u5bbf\u820d",
                         "id": 1,
                         "star": "0",
                         "skin": [
@@ -188,7 +192,7 @@
                         ]
                     },
                     {
-                        "name": "\u8309\u8389\u5b89\u00b7\u7ef7\u5e26\u5c0f\u59d0",
+                        "name": "\u8309\u8389\u5b89-\u7ef7\u5e26\u5c0f\u59d0",
                         "id": 2,
                         "star": "4",
                         "skin": [
@@ -199,7 +203,7 @@
                         ]
                     },
                     {
-                        "name": "\u8309\u8389\u5b89\u00b7\u96e8\u71d5",
+                        "name": "\u8309\u8389\u5b89-\u96e8\u71d5",
                         "id": 3,
                         "star": "5",
                         "skin": [
@@ -220,7 +224,7 @@
                 "id": 5,
                 "category": [
                     {
-                        "name": "\u80b4\u00b7\u5bbf\u820d",
+                        "name": "\u80b4-\u5bbf\u820d",
                         "id": 1,
                         "star": "0",
                         "skin": [
@@ -231,7 +235,7 @@
                         ]
                     },
                     {
-                        "name": "\u80b4\u00b7\u517b\u751f\u4e13\u5bb6",
+                        "name": "\u80b4-\u517b\u751f\u4e13\u5bb6",
                         "id": 2,
                         "star": "4",
                         "skin": [
@@ -250,7 +254,7 @@
                         ]
                     },
                     {
-                        "name": "\u80b4\u00b7\u51ac\u81f3",
+                        "name": "\u80b4-\u51ac\u81f3",
                         "id": 3,
                         "star": "5",
                         "skin": [
@@ -275,7 +279,7 @@
                 "id": 6,
                 "category": [
                     {
-                        "name": "\u5b89\u5361\u5e0c\u96c5\u00b7\u5bbf\u820d",
+                        "name": "\u5b89\u5361\u5e0c\u96c5-\u5bbf\u820d",
                         "id": 1,
                         "star": "0",
                         "skin": [
@@ -286,7 +290,7 @@
                         ]
                     },
                     {
-                        "name": "\u5b89\u5361\u5e0c\u96c5\u00b7\u4e0d\u4e88\u663e\u793a",
+                        "name": "\u5b89\u5361\u5e0c\u96c5-\u4e0d\u4e88\u663e\u793a",
                         "id": 2,
                         "star": "4",
                         "skin": [
@@ -297,7 +301,7 @@
                         ]
                     },
                     {
-                        "name": "\u5b89\u5361\u5e0c\u96c5\u00b7\u8f89\u591c",
+                        "name": "\u5b89\u5361\u5e0c\u96c5-\u8f89\u591c",
                         "id": 3,
                         "star": "5",
                         "skin": [
@@ -322,7 +326,7 @@
                 "id": 7,
                 "category": [
                     {
-                        "name": "\u8fb0\u661f\u00b7\u5bbf\u820d",
+                        "name": "\u8fb0\u661f-\u5bbf\u820d",
                         "id": 1,
                         "star": "0",
                         "skin": [
@@ -333,7 +337,7 @@
                         ]
                     },
                     {
-                        "name": "\u8fb0\u661f\u00b7\u89c2\u6d4b\u8005",
+                        "name": "\u8fb0\u661f-\u89c2\u6d4b\u8005",
                         "id": 2,
                         "star": "4",
                         "skin": [
@@ -344,7 +348,7 @@
                         ]
                     },
                     {
-                        "name": "\u8fb0\u661f\u00b7\u4e91\u7bc6",
+                        "name": "\u8fb0\u661f-\u4e91\u7bc6",
                         "id": 3,
                         "star": "5",
                         "skin": [
@@ -369,7 +373,7 @@
                 "id": 8,
                 "category": [
                     {
-                        "name": "\u745f\u745e\u4e1d\u00b7\u5bbf\u820d",
+                        "name": "\u745f\u745e\u4e1d-\u5bbf\u820d",
                         "id": 1,
                         "star": "0",
                         "skin": [
@@ -380,13 +384,32 @@
                         ]
                     },
                     {
-                        "name": "\u745f\u745e\u4e1d\u00b7\u5c0f\u91d1\u9c7c",
+                        "name": "\u745f\u745e\u4e1d-\u5c0f\u91d1\u9c7c",
                         "id": 2,
                         "star": "4",
                         "skin": [
                             {
                                 "name": "\u9ed8\u8ba4",
                                 "id": 1
+                            }
+                        ]
+                    },
+                    {
+                        "name": "\u745f\u745e\u4e1d-\u77ac\u523b",
+                        "id": 3,
+                        "star": "5",
+                        "skin": [
+                            {
+                                "name": "\u9ed8\u8ba4",
+                                "id": 1
+                            },
+                            {
+                                "name": "\u9ed8\u8ba4\u6362\u8272",
+                                "id": 2
+                            },
+                            {
+                                "name": "\u987b\u81fe\u8e41\u8df9",
+                                "id": 3
                             }
                         ]
                     }
@@ -397,7 +420,7 @@
                 "id": 9,
                 "category": [
                     {
-                        "name": "\u6674\u00b7\u5bbf\u820d",
+                        "name": "\u6674-\u5bbf\u820d",
                         "id": 1,
                         "star": "0",
                         "skin": [
@@ -408,7 +431,7 @@
                         ]
                     },
                     {
-                        "name": "\u6674\u00b7\u65e7\u65e5\u738b\u724c",
+                        "name": "\u6674-\u65e7\u65e5\u738b\u724c",
                         "id": 2,
                         "star": "4",
                         "skin": [
@@ -419,7 +442,7 @@
                         ]
                     },
                     {
-                        "name": "\u6674\u00b7\u85cf\u950b",
+                        "name": "\u6674-\u85cf\u950b",
                         "id": 3,
                         "star": "5",
                         "skin": [
@@ -444,7 +467,7 @@
                 "id": 10,
                 "category": [
                     {
-                        "name": "\u82d4\u4e1d\u00b7\u5bbf\u820d",
+                        "name": "\u82d4\u4e1d-\u5bbf\u820d",
                         "id": 1,
                         "star": "0",
                         "skin": [
@@ -455,7 +478,7 @@
                         ]
                     },
                     {
-                        "name": "\u82d4\u4e1d\u00b7\u9b54\u672f\u5e08",
+                        "name": "\u82d4\u4e1d-\u9b54\u672f\u5e08",
                         "id": 2,
                         "star": "5",
                         "skin": [
@@ -480,7 +503,7 @@
                 "id": 11,
                 "category": [
                     {
-                        "name": "\u51ef\u831c\u5a05\u00b7\u5bbf\u820d",
+                        "name": "\u51ef\u831c\u5a05-\u5bbf\u820d",
                         "id": 1,
                         "star": "0",
                         "skin": [
@@ -491,7 +514,7 @@
                         ]
                     },
                     {
-                        "name": "\u51ef\u831c\u5a05\u00b7\u84dd\u95ea",
+                        "name": "\u51ef\u831c\u5a05-\u84dd\u95ea",
                         "id": 2,
                         "star": "5",
                         "skin": [
@@ -506,6 +529,10 @@
                             {
                                 "name": "\u8fdc\u66f2\u72ec\u821e",
                                 "id": 3
+                            },
+                            {
+                                "name": "\u8d34\u8eab\u7279\u52a9",
+                                "id": 4
                             }
                         ]
                     }
@@ -516,7 +543,7 @@
                 "id": 12,
                 "category": [
                     {
-                        "name": "\u4f0a\u5207\u5c14\u00b7\u5bbf\u820d",
+                        "name": "\u4f0a\u5207\u5c14-\u5bbf\u820d",
                         "id": 1,
                         "star": "0",
                         "skin": [
@@ -527,7 +554,7 @@
                         ]
                     },
                     {
-                        "name": "\u4f0a\u5207\u5c14\u00b7\u8c79\u8c79",
+                        "name": "\u4f0a\u5207\u5c14-\u8c79\u8c79",
                         "id": 2,
                         "star": "5",
                         "skin": [
@@ -548,7 +575,7 @@
                 "id": 13,
                 "category": [
                     {
-                        "name": "\u7434\u8bfa\u00b7\u5bbf\u820d",
+                        "name": "\u7434\u8bfa-\u5bbf\u820d",
                         "id": 1,
                         "star": "0",
                         "skin": [
@@ -559,7 +586,7 @@
                         ]
                     },
                     {
-                        "name": "\u7434\u8bfa\u00b7\u53cc\u9762",
+                        "name": "\u7434\u8bfa-\u53cc\u9762",
                         "id": 2,
                         "star": "4",
                         "skin": [
@@ -570,7 +597,7 @@
                         ]
                     },
                     {
-                        "name": "\u7434\u8bfa\u00b7\u6096\u8c2c",
+                        "name": "\u7434\u8bfa-\u6096\u8c2c",
                         "id": 3,
                         "star": "5",
                         "skin": [
@@ -591,7 +618,7 @@
                 "id": 14,
                 "category": [
                     {
-                        "name": "\u6069\u96c5\u00b7\u5bbf\u820d",
+                        "name": "\u6069\u96c5-\u5bbf\u820d",
                         "id": 1,
                         "star": "0",
                         "skin": [
@@ -602,7 +629,7 @@
                         ]
                     },
                     {
-                        "name": "\u6069\u96c5\u00b7\u59d0\u59d0\u5927\u4eba",
+                        "name": "\u6069\u96c5-\u59d0\u59d0\u5927\u4eba",
                         "id": 2,
                         "star": "4",
                         "skin": [
@@ -617,7 +644,7 @@
                         ]
                     },
                     {
-                        "name": "\u6069\u96c5\u00b7\u7fbd\u8715",
+                        "name": "\u6069\u96c5-\u7fbd\u8715",
                         "id": 3,
                         "star": "5",
                         "skin": [
@@ -638,7 +665,7 @@
                 "id": 15,
                 "category": [
                     {
-                        "name": "\u732b\u6c50\u5c14\u00b7\u5bbf\u820d",
+                        "name": "\u732b\u6c50\u5c14-\u5bbf\u820d",
                         "id": 1,
                         "star": "0",
                         "skin": [
@@ -649,7 +676,7 @@
                         ]
                     },
                     {
-                        "name": "\u732b\u6c50\u5c14\u00b7\u732b\u732b",
+                        "name": "\u732b\u6c50\u5c14-\u732b\u732b",
                         "id": 2,
                         "star": "4",
                         "skin": [
@@ -664,7 +691,7 @@
                         ]
                     },
                     {
-                        "name": "\u732b\u6c50\u5c14\u00b7\u6eaf\u5f71",
+                        "name": "\u732b\u6c50\u5c14-\u6eaf\u5f71",
                         "id": 3,
                         "star": "5",
                         "skin": [
@@ -675,6 +702,10 @@
                             {
                                 "name": "\u707c\u9633\u5047\u671f",
                                 "id": 2
+                            },
+                            {
+                                "name": "\u55b5\u6b65\u5de7\u8dc3",
+                                "id": 3
                             }
                         ]
                     }
@@ -685,7 +716,7 @@
                 "id": 16,
                 "category": [
                     {
-                        "name": "\u59ae\u5854\u00b7\u5bbf\u820d",
+                        "name": "\u59ae\u5854-\u5bbf\u820d",
                         "id": 1,
                         "star": "0",
                         "skin": [
@@ -696,7 +727,7 @@
                         ]
                     },
                     {
-                        "name": "\u59ae\u5854\u00b7\u56db\u624b",
+                        "name": "\u59ae\u5854-\u56db\u624b",
                         "id": 2,
                         "star": "4",
                         "skin": [
@@ -733,7 +764,7 @@
         "name": "\u97f3\u4e50/\u97f3\u6548",
         "list": [
             {
-                "name": "music",
+                "name": "\u97f3\u4e50/\u97f3\u6548",
                 "id": 1
             }
         ]
