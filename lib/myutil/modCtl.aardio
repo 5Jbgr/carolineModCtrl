@@ -44,9 +44,10 @@ disable_mod=function(path,ext=".pak"){
 }
 
 remove_mod=function(path,install,trash){
-	..console.log(path,install,trash);
+	//..console.log(path,install,trash);
 	if(path and ..io.exist(path,6)){
 		if(trash){
+			fsys.createParentDir(trash,false);
 			fsys.hardlink.create(trash,path);
 		}
 		fsys.delete(path);

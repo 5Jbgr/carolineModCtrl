@@ -336,7 +336,7 @@ modList.delete_plus.oncommand = function(id,event){
 			var install_path=io.joinpath(_config.path.install,mod.id++"_P.pak");
 			var mod_path=io.joinpath(_config.path.data,mod.category(),mod.id+"_"+mod.name+".pak");
 			var trash_path=io.joinpath(_config.path.trash,mod.id+"_"+mod.name+".pak");
-			fsys.createParentDir(trash_path);
+			//fsys.createParentDir(trash_path);
 			myutil.modCtl.remove_mod(mod_path,install_path,trash_path);
 			_db.delete_mod(mod);
 		};
