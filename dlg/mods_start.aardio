@@ -25,7 +25,7 @@ var _now_mod=null;
 var img = modsStart.image_custom.loadForm("\dlg\mod_image.aardio");
 var tree = modsStart.tree_custom.loadForm("\dlg\category_tree.aardio");
 var modtable = modsStart.table_custom.loadForm("\dlg\modList.aardio");
-modtable.setColumns({"enabled";"id";"category";"describe"},{0.11;0.11;0.3;-1});
+modtable.setColumns({"enabled";"id";"category";"name";"describe"},{0.1;0.1;0.2;0.2;-1});
 modtable.setTable(_table);
 
 modsStart.splitter.split(modsStart.tree_custom,modsStart.table_custom);

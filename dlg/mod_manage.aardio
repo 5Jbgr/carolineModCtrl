@@ -33,7 +33,7 @@ table.mix(_lang_other,{
 });
 
 
-modtable.setColumns({"id";"category";"tags";"describe"},{0.11;0.2;0.3;-1});
+modtable.setColumns({"id";"category";"name";"tags";"describe"},{0.1;0.2;0.2;0.1,-1});
 modtable.setTable(_table);
 
 modManage.splitter.split(modManage.custom,modManage.tab);
