@@ -3,18 +3,42 @@ import win.ui;
 import myutil.config;
 import fsys.dlg.dir;
 import console;
+import myutil.dlg;
 /*DSG{{*/
 var settings = win.form(text="设置";right=759;bottom=469)
 settings.add(
-client_combobox={cls="combobox";left=152;top=152;right=560;bottom=176;dl=1;dr=1;dt=1;edge=1;items={};mode="dropdown";z=6};
-client_static={cls="static";text="客户端类型：";left=24;top=152;right=152;bottom=178;align="right";center=1;dl=1;dt=1;font=LOGFONT(h=-14);notify=1;transparent=1;z=7};
+about_button={cls="button";text="关于";left=648;top=432;right=728;bottom=456;db=1;dr=1;z=11};
+client_combobox={cls="combobox";left=448;top=128;right=608;bottom=152;aw=1;dr=1;dt=1;edge=1;items={};mode="dropdown";z=6};
+client_static={cls="static";text="客户端类型：";left=320;top=128;right=448;bottom=154;align="right";center=1;dl=1;dr=1;dt=1;font=LOGFONT(h=-14);notify=1;transparent=1;z=7};
+copy2_radiobutton={cls="radiobutton";text="复制";left=80;top=264;right=152;bottom=288;db=1;dl=1;z=16};
+copy_radiobutton={cls="radiobutton";text="复制";left=80;top=200;right=152;bottom=224;dl=1;dt=1;z=13};
 game_static={cls="static";text="游戏目录：";left=24;top=48;right=152;bottom=74;align="right";center=1;dl=1;dt=1;font=LOGFONT(h=-14);transparent=1;z=2};
 gamepath_plus={cls="plus";left=152;top=48;right=560;bottom=74;align="right";border={bottom=1;color=-6908266};dl=1;dr=1;dt=1;editable=1;font=LOGFONT(h=-13);textPadding={top=6;bottom=2};z=1};
-language_combobox={cls="combobox";left=152;top=104;right=560;bottom=128;dl=1;dr=1;dt=1;edge=1;items={};mode="dropdown";z=5};
-language_static={cls="static";text="语言：";left=24;top=104;right=152;bottom=130;align="right";center=1;dl=1;dt=1;font=LOGFONT(h=-14);notify=1;transparent=1;z=4};
-open_plus={cls="plus";text="打开";left=568;top=48;right=632;bottom=74;autohscroll=false;autovscroll=false;bgcolor=16775408;color=3947580;dr=1;dt=1;font=LOGFONT(h=-13);iconStyle={align="left";font=LOGFONT(h=-13;name='FontAwesome');padding={left=7;top=2}};iconText='\uF07C';notify=1;textPadding={left=18};z=3}
+hardlink_radiobutton={cls="radiobutton";text="硬链接";left=168;top=200;right=248;bottom=224;dl=1;dt=1;z=14};
+language_combobox={cls="combobox";left=152;top=128;right=312;bottom=152;aw=1;dl=1;dt=1;edge=1;items={};mode="dropdown";z=5};
+language_static={cls="static";text="语言：";left=24;top=128;right=152;bottom=154;align="right";center=1;dl=1;dt=1;font=LOGFONT(h=-14);notify=1;transparent=1;z=4};
+modctl_groupbox={cls="groupbox";text="模组管理";left=72;top=176;right=256;bottom=232;dl=1;dt=1;edge=1;z=12};
+modim_groupbox={cls="groupbox";text="模组导入";left=72;top=240;right=256;bottom=296;db=1;dl=1;edge=1;z=15};
+move_radiobutton={cls="radiobutton";text="移动";left=168;top=264;right=248;bottom=288;db=1;dl=1;z=17};
+open_plus={cls="plus";text="打开";left=568;top=48;right=632;bottom=74;autohscroll=false;autovscroll=false;bgcolor=16775408;color=3947580;dr=1;dt=1;font=LOGFONT(h=-13);iconStyle={align="left";font=LOGFONT(h=-13;name='FontAwesome');padding={left=7;top=2}};iconText='\uF07C';notify=1;textPadding={left=18};z=3};
+zip_info_checkbox={cls="checkbox";text="显示解压信息";left=80;top=304;right=224;bottom=320;db=1;dl=1;z=18};
+zip_open_plus={cls="plus";text="打开";left=568;top=88;right=632;bottom=114;autohscroll=false;autovscroll=false;bgcolor=16775408;color=3947580;dr=1;dt=1;font=LOGFONT(h=-13);iconStyle={align="left";font=LOGFONT(h=-13;name='FontAwesome');padding={left=7;top=2}};iconText='\uF07C';notify=1;textPadding={left=18};z=10};
+zip_path_plus={cls="plus";left=152;top=88;right=560;bottom=114;align="right";border={bottom=1;color=-6908266};dl=1;dr=1;dt=1;editable=1;font=LOGFONT(h=-13);textPadding={top=6;bottom=2};z=8};
+zip_static={cls="static";text="7z目录：";left=24;top=88;right=152;bottom=114;align="right";center=1;dl=1;dt=1;font=LOGFONT(h=-14);notify=1;transparent=1;z=9}
 )
 /*}}*/
+
+var cs_w=settings.client_static.width;
+var cs_percent=(settings.client_static.right)/settings.width;
+settings.adjust = function( cx,cy,wParam ) {
+/*
+	console.log(cx,cy);
+	console.log(settings.right,settings.left);console.log(cs_percent);
+	console.log(settings.client_static.right,settings.client_static.left);
+*/
+	settings.client_static.right=settings.width*cs_percent+6;
+	settings.client_static.left=6+settings.width*cs_percent-cs_w*(settings.dpiScaleX:1);
+};
 
 var langs=table.array();
 var _config = myutil.config.get_config(); 
@@ -24,9 +48,37 @@ _lang.load_lang("settings",settings,{
 	open_plus="text";
 	language_static="text";
 	client_static="text";
+	zip_open_plus="text";
+	zip_static="text";
+	about_button="text";
+	modctl_groupbox="text";
+	modim_groupbox="text";
+	copy_radiobutton="text";
+	copy2_radiobutton="text";
+	move_radiobutton="text";
+	hardlink_radiobutton="text";
+	zip_info_checkbox="text";
+});
+table.mix(_config.ui,{
+	manage="copy";
+	"import"="copy";
+	show_unzip_info=true;
 });
 
 settings.gamepath_plus.text=_config.path.game;
+settings.zip_path_plus.text=_config.path.zip;
+if(_config.ui[["import"]]==="copy"){
+	settings.copy2_radiobutton.checked=true;
+}else {
+	settings.move_radiobutton.checked=true;
+}
+if(_config.ui[["manage"]]==="copy"){
+	settings.copy_radiobutton.checked=true;
+}else {
+	settings.hardlink_radiobutton.checked=true;
+}
+settings.zip_info_checkbox.checked=_config.ui.show_unzip_info;
+
 
 fsys.enum( _config.path.language, "*.*",
 	function(dir,filename,fullpath,findData){ 
@@ -70,6 +122,61 @@ settings.client_combobox.onOk = function(){
 		_config.path.install=io.joinpath(_config.path.game,_config.path.mod);
 		fsys.createDir(_config.path.install,false);
 	}
+}
+
+/*
+settings.zip_open_plus.skin(
+	background = { 
+		hover = "/res/images/btn-hover.png";
+		focus = "/res/images/btn-focus.jpg";
+		active = "/res/images/btn-active.png";
+		disabled = "/res/images/btn-disabled.png"; 
+	}
+)
+*/
+
+settings.zip_open_plus.oncommand = function(id,event){
+	var path = fsys.dlg.open("7z.exe|*.exe",'请选择目录')
+	if(path){
+		settings.zip_path_plus.text = path;
+		_config.path.zip=path;
+	}
+}
+
+settings.about_button.oncommand = function(id,event){	
+	var frmChild = settings.loadForm("\dlg\about.aardio");
+	frmChild.show();
+}
+
+settings.copy_radiobutton.oncommand = function(id,event){
+	table.assign(_config.ui,{
+		manage="copy";
+	});
+}
+
+settings.hardlink_radiobutton.oncommand = function(id,event){
+	table.assign(_config.ui,{
+		manage="hardlink";
+	});
+	var r=_lang.get_other("settings");
+	table.mix(r,{ask_hardlink="使用硬链接请确保本软件和游戏在同意磁盘中！"});
+	myutil.dlg.info_dlg(r.ask_hardlink);
+}
+
+settings.copy2_radiobutton.oncommand = function(id,event){
+	table.assign(_config.ui,{
+		"import"="copy";
+	});
+}
+
+settings.move_radiobutton.oncommand = function(id,event){
+	table.assign(_config.ui,{
+		"import"="move";
+	});
+}
+
+settings.zip_info_checkbox.oncommand = function(id,event){
+	_config.ui.show_unzip_info=owner.checked;
 }
 
 settings.show();

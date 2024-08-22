@@ -15,14 +15,21 @@ namespace myutil.config{
             	language="/config/language";//语言文件目录
             	trash="/trash";//删除文件目录
             	image="/image";//图片文件目录
+            	zip="";//7z压缩软件目录
+            	temp="/temp"
 	    	);
 	    	self.configs.ui.mix(
 	    		language="zh_cn";//界面语言，默认中文
-	    		now_client="default/official";
+	    		language_download={
+	    		    "zh_cn"="chinese";
+	    		    "en"="english";
+	    		};
+	    		now_client="Default/Official";
 	    		client={
 	    		    {name="Epic/Steam";path="\Game\Content\Paks\~mod";};
 	    		    {name="Default/Official";path="\data\game\Game\Content\Paks\~mod";};
 	    		}
+	    		category_version="";
 	    	);
 	    	self.configs.db.mix(
 	    		bace_mod_template={
@@ -63,7 +70,7 @@ namespace myutil.config{
 	        if(..io.exist(npath)){
 	        	_lang_table=..fsys.config(npath);
 	        }else {
-	        	_lang_table=..fsys.config(fsys.joinpath(path,"zh_cn"));
+	        	_lang_table=..fsys.config(..fsys.joinpath(path,"zh_cn"));
 	        }
 	        var _lang_other=_lang_table["other"];
 		};
@@ -105,6 +112,7 @@ namespace myutil.config{
 	    		}else {
 	        		_lang_table=..fsys.config(fsys.joinpath(path,"zh_cn"));
 	    		}
+	    		_lang_other=_lang_table["other"];
 	    		for(k,v in allform){
 	    		    //console.log(k);
 	    		    for(k1,v1 in v){

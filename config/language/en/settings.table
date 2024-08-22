@@ -1,8 +1,18 @@
 ﻿{
-game_static="Game Directory: ";
 open_plus="Open";
-afterLoad=null;
+modim_groupbox="Import Mod";
+game_static="Game Directory: ";
+copy_radiobutton="Copy";
+modctl_groupbox="Mod Manage";
+move_radiobutton="Move";
+about_button="About";
 language_static="Language: ";
+afterLoad=null;
+copy2_radiobutton="Copy";
+zip_static="7z Directory: ";
+client_static="Client Type: ";
+zip_info_checkbox="Show unzip info";
 beforeSave=null;
-client_static="Client Type: "
+zip_open_plus="Open";
+hardlink_radiobutton="Hardlink"
 }

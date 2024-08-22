@@ -32,8 +32,23 @@ table.mix(_lang_other,{
 	add_success="注册成功";
 });
 
+table.mix(_config.ui,{
+	mod_manage_display={
+		{"id",1,30};
+	    {"enabled",0,60};
+		{"name",1,60};
+	    {"category",1,60};
+	    {"tags",1,60};
+	    {"describe",1,60};
+	    {"version",0,60};
+	    {"author",0,60};
+	    {"URL",0,60};
+	    {"hash",0,60};
+	    {"image",0,60};
+	};
+})
 
-modtable.setColumns({"id";"category";"name";"tags";"describe"},{0.1;0.2;0.2;0.1,-1});
+modtable.setColumns(_config.ui.mod_manage_display);
 modtable.setTable(_table);
 
 modManage.splitter.split(modManage.custom,modManage.tab);
@@ -74,10 +89,29 @@ modtable.updateTable=function(id){
 	if(not id){
 		update_table();
 	}else {
-		var result=_db.search_mod_byid(id)
+		var result=_db.search_mod_byid(id);
 		return result; 
 	}
 }
+
+//更改显示列
+modtable.changeDisplayColumn=function(value){
+	var index=table.find(_config.ui.mod_manage_display,lambda(v) v[1]===value);
+	_config.ui.mod_manage_display[index][2]=!_config.ui.mod_manage_display[index][2];
+	modtable.setColumns(_config.ui.mod_manage_display);
+	update_table();
+}
+
+//销毁前保存列布局
+modManage.onDestroy = function(hwnd,message,wParam,lParam){
+    for(k,v in modtable.eachColumnWidth()){
+    	var index=table.find(_config.ui.mod_manage_display,lambda(_v) _v[1]===k);
+    	_config.ui.mod_manage_display[index][3]=v;
+    }
+    
+}
+
+
 //显示信息
 modtable.showInfo=function(mod){
 	_now_mod=mod;

@@ -25,7 +25,23 @@ var _now_mod=null;
 var img = modsStart.image_custom.loadForm("\dlg\mod_image.aardio");
 var tree = modsStart.tree_custom.loadForm("\dlg\category_tree.aardio");
 var modtable = modsStart.table_custom.loadForm("\dlg\modList.aardio");
-modtable.setColumns({"enabled";"id";"category";"name";"describe"},{0.1;0.1;0.2;0.2;-1});
+
+table.mix(_config.ui,{
+	mod_start_display={
+	    {"enabled",1,60};
+		{"id",1,30};
+	    {"category",1,60};
+		{"name",1,60};
+	    {"tags",0,60};
+	    {"describe",1,60};
+	    {"version",0,60};
+	    {"author",0,60};
+	    {"URL",0,60};
+	    {"hash",0,60};
+	    {"image",0,60};
+	};
+})
+modtable.setColumns(_config.ui.mod_start_display);
 modtable.setTable(_table);
 
 modsStart.splitter.split(modsStart.tree_custom,modsStart.table_custom);
@@ -76,6 +92,23 @@ modtable.updateTable=function(id){
 		var result=_db.search_mod_byid(id)
 		return result; 
 	}
+}
+
+//更改显示列
+modtable.changeDisplayColumn=function(value){
+	var index=table.find(_config.ui.mod_start_display,lambda(v) v[1]===value);
+	_config.ui.mod_start_display[index][2]=!_config.ui.mod_start_display[index][2];
+	modtable.setColumns(_config.ui.mod_start_display);
+	update_table();
+}
+
+//销毁前保存列布局
+modsStart.onDestroy = function(hwnd,message,wParam,lParam){
+    for(k,v in modtable.eachColumnWidth()){
+    	var index=table.find(_config.ui.mod_start_display,lambda(_v) _v[1]===k);
+    	_config.ui.mod_start_display[index][3]=v;
+    }
+    
 }
 
 modtable.showInfo=function(mod){

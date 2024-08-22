@@ -1,9 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<project ver="10" name="卡罗琳mod管理器" libEmbed="true" icon="卡罗琳.ico" ui="win" output="卡罗琳mod管理器.exe" CompanyName="单位名称" FileDescription="卡罗琳mod管理器" LegalCopyright="Copyright (C) 作者 2024" ProductName="卡罗琳mod管理器" InternalName="卡罗琳mod管理器" FileVersion="0.0.0.58" ProductVersion="0.0.0.58" publishDir="/dist/" dstrip="false" local="false" ignored="false">
+<project ver="10" name="卡罗琳mod管理器" libEmbed="true" icon="卡罗琳.ico" ui="win" output="卡罗琳mod管理器.exe" CompanyName="单位名称" FileDescription="卡罗琳mod管理器" LegalCopyright="Copyright (C) 作者 2024" ProductName="卡罗琳mod管理器" InternalName="卡罗琳mod管理器" FileVersion="0.0.0.96" ProductVersion="0.0.0.96" publishDir="/dist/" dstrip="false" local="false" ignored="false">
 	<file name="main.aardio" path="main.aardio" comment="main.aardio"/>
 	<folder name="资源文件" path="res" embed="true" local="false" ignored="false"/>
 	<folder name="窗体文件" path="dlg" comment="目录" embed="true" local="false" ignored="false">
-		<file name="warning.aardio" path="dlg\warning.aardio" comment="dlg\warning.aardio"/>
 		<file name="modList.aardio" path="dlg\modList.aardio" comment="dlg\mod_listview.aardio"/>
 		<file name="mod_info.aardio" path="dlg\mod_info.aardio" comment="dlg\mod_info.aardio"/>
 		<file name="category_tree.aardio" path="dlg\category_tree.aardio" comment="dlg\category_tree.aardio"/>
@@ -11,14 +10,28 @@
 		<file name="mods_start.aardio" path="dlg\mods_start.aardio" comment="dlg\mods_start.aardio"/>
 		<file name="mod_manage.aardio" path="dlg\mod_manage.aardio" comment="dlg\mod_manage.aardio"/>
 		<file name="settings.aardio" path="dlg\settings.aardio" comment="dlg\settings.aardio"/>
+		<file name="about.aardio" path="dlg\about.aardio" comment="dlg\about.aardio"/>
 	</folder>
 	<folder name="config" path="config" embed="true" comment="目录" local="false" ignored="false">
+		<file name="category.json" path="config\category.json" comment="config\category.json"/>
+		<file name="category_en.json" path="config\category_en.json" comment="config\category_en.json"/>
 		<file name="db.table" path="config\db.table" comment="config\db.table"/>
 		<file name="path.table" path="config\path.table" comment="config\path.table"/>
-		<file name="ui.table" path="config\ui.table" comment="config\ui.table"/>
-		<folder name="language" path="config\language" comment="config\language">
-			<folder name="zh_cn" path="config\language\zh_cn" comment="config\language\zh_cn">
+		<file name="save_config.table" path="config\save_config.table" comment="config\save_config.table"/>
+		<folder name="language" path="config\language" comment="config\language" local="false" embed="false" ignored="false">
+			<folder name="en" path="config\language\en" comment="config\language\en">
+				<file name="category_tree.table" path="config\language\en\category_tree.table" comment="config\language\en\category_tree.table"/>
+				<file name="modList.table" path="config\language\en\modList.table" comment="config\language\en\modList.table"/>
+				<file name="mod_info.table" path="config\language\en\mod_info.table" comment="config\language\en\mod_info.table"/>
+				<file name="other.table" path="config\language\en\other.table" comment="config\language\en\other.table"/>
+				<file name="settings.table" path="config\language\en\settings.table" comment="config\language\en\settings.table"/>
+			</folder>
+			<folder name="zh_cn" path="config\language\zh_cn" comment="config\language\zh_cn" local="false" embed="false" ignored="false">
+				<file name="category_tree.table" path="config\language\zh_cn\category_tree.table" comment="config\language\zh_cn\category_tree.table"/>
+				<file name="modList.table" path="config\language\zh_cn\modList.table" comment="config\language\zh_cn\modList.table"/>
 				<file name="mod_info.table" path="config\language\zh_cn\mod_info.table" comment="config\language\zh_cn\mod_info.table"/>
+				<file name="other.table" path="config\language\zh_cn\other.table" comment="config\language\zh_cn\other.table"/>
+				<file name="settings.table" path="config\language\zh_cn\settings.table" comment="config\language\zh_cn\settings.table"/>
 			</folder>
 		</folder>
 	</folder>

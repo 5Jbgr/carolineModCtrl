@@ -18,30 +18,27 @@ var skin={
 	background={
 		default=0x668FB2B0;
 		disabled=0xFFCCCCCC;
-		hover=0xFF928BB3
+		hover=0xFF93d5dc
 	};
 	color={
 		default=0xFF000000;
 		disabled=0xFF6D6D6D
 	}
 };
-category_tree.clear_plus.skin(skin);
-category_tree.selectall_plus.skin(skin);
-category_tree.search_plus.skin(skin);
 
 var tabs = win.ui.tabs(
-category_tree.clear_plus,
-category_tree.selectall_plus,
-category_tree.search_plus
+	category_tree.clear_plus,
+	category_tree.selectall_plus,
+	category_tree.search_plus
 ); 
 tabs.dropButton.skin({   
 	color = { 
-		hover = 0xff99ffcc;
+		hover = 0xff93d5dc;
 		active = 0xffff6666; 
 		default = 0xff333333; 
 	}
 });
-
+tabs.skin(skin);
 
 //搜索选中的种类
 category_tree.searchCategory=null;

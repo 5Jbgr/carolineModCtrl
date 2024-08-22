@@ -1,0 +1,96 @@
+﻿//my7zip 模组解压
+namespace my7zip;
+
+import process.popen;
+import fsys;
+import myutil.config;
+import myutil.dlg;
+
+_config=myutil.config.get_config();
+
+tempPath=..io.fullpath(_config.path.temp);
+
+_lang_config=myutil.config.get_langconfig().get_other("my7zip");
+
+..table.mix(_lang_config,{
+	path_error="压缩包路径错误";
+	path_7z_error="未设置7z路径，请前往设置";
+	unzip_error='解压出错：\n';
+})
+
+processZip=function(path){
+	var err=false;
+	if(type(path)==type.string){
+		if(fsys.isFile(path)){
+			err=self.extract(path,tempPath,_config.ui.show_unzip_info,,"-ir!*.pak");
+		}
+		else {
+			//myutil.dlg.error_dlg("#");
+		}
+	}else {
+		for(k,v in path){
+			if(fsys.isFile(v)){
+				err=self.extract(v,tempPath,_config.ui.show_unzip_info,,"-ir!*.pak");
+				if(err)break;
+			}
+			else {
+				//myutil.dlg.error_dlg("#");
+			}
+		}
+	}
+	var files={};
+	fsys.enum( tempPath, "*.pak",
+		function(dir,filename,fullpath,findData){ 
+			if(filename){ 
+	           	//..io.print("发现文件："+filename,"完整路径："+fullpath,"当前目录完整路径"+dir)
+	           	..table.push(files,fullpath);
+			}
+			else{
+				//..io.print( "发现目录，目录名称（非完整路径）：" + dir )
+			}
+		} 
+		,true/*如果此参数为false则忽略子目录*/
+	);
+	return files,err; 
+}
+
+zip_ext={".zip",".rar"};
+isZip=function(path){
+	var ext=..string.lower(..io.splitpath(path).ext);
+	return true && ..table.find(zip_ext,ext);
+}
+
+testZip=function(path){
+	
+}
+
+clearTemp=function(){
+	fsys.createDir(tempPath,true);
+}
+
+
+
+extract = function(src,dst,proc,password, ...){
+    if( ! ..io.exist(src) ){error(_lang_config.path_error,2);return true;}
+    var zPath  = ..io.fullpath(_config.path.zip);
+    if(! ..io.exist(zPath)){myutil.dlg.error_dlg(_lang_config.path_7z_error);return true;}
+    var prcs = ..process.popen(zPath,
+        ' x "'  + ..io.fullpath(src) + '" ' //x命令表示解压
+        + ' -o"' + ..io.fullpath(dst) + '" ' //o设置输出目录,注意后面没有空格
+        + ' -aoa' //直接覆盖现有文件 
+        + ( password? "-p"+password : "" )
+        ++ ..string.concat(" ", ...)
+        )
+    var e=false;
+    for( all,out,err in prcs.each() ){
+       //..console.log(all);out++(err:"")
+       if(proc) myutil.dlg.info_dlg(all);
+       if(err){ e=true;myutil.dlg.error_dlg(_lang_config.unzip_error++err);}
+    } 
+    prcs.close();
+    return e; 
+}  
+
+/**intellisense(sevenZip.cmd)
+extract(.("压缩文件路径","解压目录",回显函数,密码,其他命令参数) = 解压缩\n回显函数,密码都是可选参数
+end intellisense**/

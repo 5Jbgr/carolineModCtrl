@@ -5,6 +5,7 @@ import web.json;
 import myutil.dlg;
 import myutil.config;
 _lang_config=null;
+_config=null;
 _get_lang=function(){
 	if(not _lang_config){
 		_lang_config=myutil.config.get_langconfig().get_other("modCtl");
@@ -14,6 +15,12 @@ _get_lang=function(){
 	}
 	return _lang_config;
 }
+_get_config=function(){
+	if(not _lang_config){
+		_config=myutil.config.get_config();
+	}
+	return _config;
+}
 
 //启用模组
 enable_mod=function(from ,to ,ext=".pak"){
@@ -22,8 +29,12 @@ enable_mod=function(from ,to ,ext=".pak"){
 	        if(..io.exist(to++ext,6)){
 	            fsys.delete(to++ext);
 	        }
-	        fsys.hardlink.create(to++ext,from);
-	        return true;
+	        if(_config.ui[["manage"]]==="hardlink"){
+	        	fsys.hardlink.create(to++ext,from);
+	        	return true;
+	        }else {
+	        	return fsys.copy(from,to++ext);
+	        }
 	    }
 		myutil.dlg.error_dlg(..string.format(_get_lang().path_not_found_error,from));
 		return false; 
@@ -34,7 +45,6 @@ disable_mod=function(path,ext=".pak"){
 	if(path){
 		true_path=path++ext;
 		if(..io.exist(true_path)){
-			
 			return fsys.delete(true_path);
 		}else {
 			myutil.dlg.error_dlg(..string.format(_get_lang().path_not_found_error,true_path));
@@ -57,6 +67,15 @@ remove_mod=function(path,install,trash){
 	}
 	return true; 
 }
+
+add_mod=function(from ,to ){
+	if(_config.ui[["import"]]==="move"){
+		return fsys.move(from,to);
+	}else {
+		return fsys.copy(from,to);
+	}
+}
+
 
 _category=null;
 get_category=function(){

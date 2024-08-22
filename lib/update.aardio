@@ -1,0 +1,48 @@
+﻿//update 更新模块
+namespace update;
+
+import web.rest.jsonLiteClient;
+import config;
+
+check_info_update=function(){
+	var http=web.rest.jsonLiteClient();
+	var data=null;
+	for(i=1;3;1){
+		data=http.get(config.__api_category.main);
+		if(data)break;
+	}
+	return data; 
+}
+
+check_app_update=function(){
+	var http=web.rest.jsonLiteClient();
+	var data=null;
+	for(i=1;3;1){
+		data=http.get(config.__api);
+		if(data)break;
+	}
+	return data;
+}
+
+download_info=function(version,language){
+	//import console;
+	import crypt.bin;
+	
+	//console.open();
+	var address=..string.format(config.__api_category.download,language,version);
+	var http=web.rest.jsonLiteClient();
+	var data = null;
+	for(i=1;3;1){
+		data=http.get(address);
+		if(data)break;
+	}
+	if(data){
+		//console.log(data.content);
+		result=crypt.bin.decodeBase64(data.content);
+		//console.log(result);
+		return ..string.save("\config\category.json",result);
+	}else {
+		return false; 
+	}
+}
+

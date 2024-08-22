@@ -5,8 +5,16 @@ config  = fsys.config("/config/");
 
 //不需要序列化的配置名字前请添加下划线
 namespace config {
-	__appName = "卡罗琳mod管理器";
+	__appName = '卡罗琳模组管理器';
+	__appName_en = 'Caroline Mod Manager';
 	__website = "https://github.com/5Jbgr/carolineModCtrl";
+	__website_category="https://github.com/5Jbgr/SBCinfo";
+	__version = "0.4.0";
+	__api="https://api.github.com/repos/5Jbgr/carolineModCtrl/releases";
+	__api_category={
+		main="https://api.github.com/repos/5Jbgr/SBCinfo/branches/main";
+		download="https://api.github.com/repos/5Jbgr/SBCinfo/contents/%s%%2Fcategory.json?ref=%s"
+	};
 }
 
 /**intellisense(config)
