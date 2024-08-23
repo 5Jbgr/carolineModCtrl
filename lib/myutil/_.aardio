@@ -10,10 +10,10 @@ namespace myutil{
 		return ""; 
 	}
 	
-	img_list={".jpg",".png",".jpeg","bmp"}
+	img_list={".jpg",".png",".jpeg",".bmp"}
 	check_image=function(img){
-		var ext=io.splitpath(img).ext;
-		return ..table.indexOf(img_list,string.lower(ext)):false; 
+		var ext=..io.splitpath(img).ext;
+		return ..table.indexOf(img_list,..string.lower(ext)):false; 
 	}
 	
 	import modSQL;
@@ -26,7 +26,7 @@ namespace myutil{
 				var path=..io.splitpath(v);
 				var id=_db.add_image({hash=hash;ext=path.ext});
 				//console.log(id);
-				..fsys.move(v,io.joinpath(p,id++path.ext));
+				..fsys.move(v,..io.joinpath(p,id++path.ext));
 				..table.push(ims,id++path.ext);
 			}
 		}
