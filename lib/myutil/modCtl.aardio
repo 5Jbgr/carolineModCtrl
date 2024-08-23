@@ -29,7 +29,7 @@ enable_mod=function(from ,to ,ext=".pak"){
 	        if(..io.exist(to++ext,6)){
 	            fsys.delete(to++ext);
 	        }
-	        if(_config.ui[["manage"]]==="hardlink"){
+	        if(_get_config().ui[["manage"]]==="hardlink"){
 	        	fsys.hardlink.create(to++ext,from);
 	        	return true;
 	        }else {
@@ -69,7 +69,7 @@ remove_mod=function(path,install,trash){
 }
 
 add_mod=function(from ,to ){
-	if(_config.ui[["import"]]==="move"){
+	if(_get_config().ui[["import"]]==="move"){
 		return fsys.move(from,to);
 	}else {
 		return fsys.copy(from,to);

@@ -229,7 +229,7 @@ modList.setColumns=function(columns){
 	var n=1;
 	for(k,v in _columns){
 		modList.listview.setColumnText(k,translate[v]:" ");
-		if(k=="enabled"){
+		if(v==="enabled"){
 			_enabled_index=k;
 		}
 		display_popmenu.check(pop_id[v]);
