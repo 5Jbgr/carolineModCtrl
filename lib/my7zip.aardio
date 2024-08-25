@@ -18,8 +18,13 @@ _lang_config=myutil.config.get_langconfig().get_other("my7zip");
 	unzip_error='解压出错：\n';
 })
 
+if(not ..io.exist(tempPath)){
+	fsys.createDir(tempPath);
+}
+
 processZip=function(path){
 	var err=false;
+
 	if(type(path)==type.string){
 		if(fsys.isFile(path)){
 			err=self.extract(path,tempPath,_config.ui.show_unzip_info,,"-ir!*.pak");
@@ -74,7 +79,7 @@ extract = function(src,dst,proc,password, ...){
     if( ! ..io.exist(src) ){error(_lang_config.path_error,2);return true;}
     var zPath  = ..io.fullpath(_config.path.zip);
     if(! ..io.exist(zPath)){myutil.dlg.error_dlg(_lang_config.path_7z_error);return true;}
-    var prcs = ..process.popen(zPath,
+    var prcs,e_info,e_code = ..process.popen(zPath,
         ' x "'  + ..io.fullpath(src) + '" ' //x命令表示解压
         + ' -o"' + ..io.fullpath(dst) + '" ' //o设置输出目录,注意后面没有空格
         + ' -aoa' //直接覆盖现有文件 
@@ -82,12 +87,17 @@ extract = function(src,dst,proc,password, ...){
         ++ ..string.concat(" ", ...)
         )
     var e=false;
-    for( all,out,err in prcs.each() ){
-       //..console.log(all);out++(err:"")
-       if(proc) myutil.dlg.info_dlg(all);
-       if(err){ e=true;myutil.dlg.error_dlg(_lang_config.unzip_error++err);}
-    } 
-    prcs.close();
+    if(not prcs){
+    	myutil.dlg.error_dlg(_lang_config.unzip_error++e_info+"("+e_code+")");
+    	e=true;
+    }else {
+    	for( all,out,err in prcs.each() ){
+    		//..console.log(all);out++(err:"")
+    		if(proc) myutil.dlg.info_dlg(all);
+    		if(err){ e=true;myutil.dlg.error_dlg(_lang_config.unzip_error++err);}
+    	} 
+    	prcs.close();
+    }
     return e; 
 }  
 

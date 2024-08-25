@@ -28,6 +28,7 @@ namespace myutil.config{
 	    		client={
 	    		    {name="Epic/Steam";path="\Game\Content\Paks\~mod";};
 	    		    {name="Default/Official";path="\data\game\Game\Content\Paks\~mod";};
+	    		    {name="NewOfficial/SeasunGame";path="\Game\cbjq\game\Game\Content\Paks\~mod";};
 	    		}
 	    		category_version="";
 	    	);
