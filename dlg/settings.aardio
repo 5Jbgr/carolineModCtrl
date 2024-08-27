@@ -136,7 +136,7 @@ settings.zip_open_plus.skin(
 */
 
 settings.zip_open_plus.oncommand = function(id,event){
-	var path = fsys.dlg.open("7z.exe|*.exe",'请选择目录')
+	var path = fsys.dlg.open("7z.exe|7z.exe",'请选择目录')
 	if(path){
 		settings.zip_path_plus.text = path;
 		_config.path.zip=path;
