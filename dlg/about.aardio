@@ -78,7 +78,7 @@ import console;
 console.open();
 */
 
-var manage = thread.manage(2);
+var manage = thread.manage(3);
 
 
 check_app_update=function(about,loding,fail){
@@ -138,7 +138,7 @@ manage.create(
 		var lang=__config.ui.language_download[__config.ui.language];
 		a,b = about.about_richedit.findText(v_text,,b,-1);
 		about.about_richedit.setsel(a,b);
-		about.about_richedit.replaceText(,string.format("%s(%s)",v_text,u_text));
+		about.about_richedit.replaceText(v_text,string.format("%s(%s)",v_text,u_text));
 		manage.create(download,version,lang).onEnd = function(r,...){
 			if(!about.about_richedit)return;
 			a,b = about.about_richedit.findText(ci_text,,1,-1);
@@ -146,14 +146,14 @@ manage.create(
 			about.about_richedit.setsel(a,b);
 			if(r){
 				var s_text = _lang_other.about_richedit.update_success;
-				about.about_richedit.replaceText(,s_text);
+				about.about_richedit.replaceText(u_text,s_text);
 				__config.ui.category_version=version;
 			}else {
 				var f_text = _lang_other.about_richedit.fail; 
-				about.about_richedit.replaceText(,s_text);
+				about.about_richedit.replaceText(u_text,s_text);
 			}
 		};
-		manage.waitOne();
+		manage.waitClose();
 	}
 };
 
@@ -173,6 +173,6 @@ about.download_button.oncommand = function(id,event){
 }
 
 about.show();
-win.loopMessage();
 manage.waitClose();
+win.loopMessage();
 return about;
