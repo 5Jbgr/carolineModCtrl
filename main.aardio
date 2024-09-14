@@ -53,17 +53,28 @@ table.mix(_other,{
 	modsetting="设置";
 });
 
-tbs.addItems({{text=_other.modctl;},{text=_other.modmanage;},{text=_other.modsetting;}});
 
-tbs.loadForm(1,"\dlg\mods_start.aardio");
-tbs.loadForm(2,"\dlg\mod_manage.aardio");
-tbs.loadForm(3,"\dlg\settings.aardio");
-if(not _config.path.game or _config.path.game==""){
-	tbs.selIndex=3;
-}else {
-	tbs.selIndex=1;
+init=function(){
+	tbs.addItems({{text=_other.modctl;},{text=_other.modmanage;},{text=_other.modsetting;}});
+
+	tbs.loadForm(1,"\dlg\mods_start.aardio");
+	tbs.loadForm(2,"\dlg\mod_manage.aardio");
+	tbs.loadForm(3,"\dlg\settings.aardio");
+	if(not _config.path.game or _config.path.game==""){
+		tbs.selIndex=3;
+	}else {
+		tbs.selIndex=1;
+	}
 }
 
+init();
+
+import myutil.modCtl;
+
+myutil.modCtl.reset_category_callback=function(){
+	tbs.clear();
+	init();
+}
 
 
 

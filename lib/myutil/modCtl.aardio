@@ -77,16 +77,18 @@ add_mod=function(from ,to ){
 }
 
 
-_category=null;
+category=null;
 get_category=function(){
-	if(not _category){
-		_category=mod_category();
+	if(not category){
+		category=mod_category();
 	}
-	return _category; 
+	return category; 
 }
 
+reset_category_callback=null;
 reset_category=function(){
-	_category=mod_category();
+	category=mod_category();
+	if(reset_category_callback)reset_category_callback();
 }
 
 
