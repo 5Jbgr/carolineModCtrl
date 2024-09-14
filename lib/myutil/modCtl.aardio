@@ -85,6 +85,11 @@ get_category=function(){
 	return _category; 
 }
 
+reset_category=function(){
+	_category=mod_category();
+}
+
+
 get_path=function(cat){
 	return string.replace(cat,"-","\");
 }

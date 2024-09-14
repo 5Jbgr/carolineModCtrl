@@ -1,5 +1,6 @@
 import win.ui;
 import myutil.config;
+import myutil.modCtl;
 import config;
 import thread.manage;
 import thread.semaphore;
@@ -156,6 +157,7 @@ manage.create(
 				var s_text = _lang_other.about_richedit.update_success;
 				about.about_richedit.replaceText(u_text,s_text);
 				__config.ui.category_version=version;
+				myutil.modCtl.reset_category();
 			}else {
 				var f_text = _lang_other.about_richedit.fail; 
 				about.about_richedit.replaceText(u_text,s_text);
@@ -173,6 +175,7 @@ about.download_button.oncommand = function(id,event){
 		if(about.about_richedit){
 			if(r){
 				about.download_button.text=_lang_other.redownload+"("+_lang_other.about_richedit.update_success+")";
+				myutil.modCtl.reset_category();
 			}else {
 				about.download_button.text=_lang_other.redownload+"("+_lang_other.about_richedit.fail+")"
 			}
