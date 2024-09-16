@@ -5,6 +5,7 @@ import process.popen;
 import fsys;
 import myutil.config;
 import myutil.dlg;
+//import console;
 
 _config=myutil.config.get_config();
 
@@ -94,7 +95,7 @@ extract = function(src,dst,proc,password, ...){
     	for( all,out,err in prcs.each() ){
     		//..console.log(all);out++(err:"")
     		if(proc) myutil.dlg.info_dlg(all);
-    		if(err){ e=true;myutil.dlg.error_dlg(_lang_config.unzip_error++err);}
+    		if(err&&err!==""){ e=true;myutil.dlg.error_dlg(_lang_config.unzip_error++err);}
     	} 
     	prcs.close();
     }
