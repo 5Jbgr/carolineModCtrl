@@ -1,6 +1,7 @@
 //水平选项卡
 import fonts.fontAwesome;
 import win.ui;
+import debug.log;
 import myutil.config;
 /*DSG{{*/
 var mainForm = win.form(text="卡罗琳模组管理器";right=1100;bottom=623)
@@ -11,6 +12,9 @@ nav2={cls="plus";left=149;top=0;right=299;bottom=32;border={bottom=1;color=-1674
 navEnd={cls="bkplus";left=-2;top=31;right=1096;bottom=32;bgcolor=32768;border=1;disabled=1;dl=1;dr=1;dt=1;z=1}
 )
 /*}}*/
+
+debug.log.setPath("/log.log");
+debug.log.checkSize(0x200000);
 
 import win.ui.tabs;
 var tbs = win.ui.tabs(mainForm.nav1,mainForm.nav2);
@@ -94,3 +98,6 @@ frmChild.show();
 win.loopMessage();
 
 myutil.config.save_config();
+
+import modSQL;
+modSQL.back_up_db();

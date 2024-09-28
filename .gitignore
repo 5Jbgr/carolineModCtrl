@@ -10,4 +10,6 @@ tools/category.json
 trash/*
 .build/*
 *.bak
+bak/*
+*.log
 build_error_log.txt

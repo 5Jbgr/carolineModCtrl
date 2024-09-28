@@ -28,6 +28,31 @@ namespace modSQL{
 		return _translate; 
 	}
 	
+	//数据库文件备份
+	back_up_db=function(){
+		import fsys;
+		import time;
+		import debug.log;
+		var t=time.now();
+		t.format="%Y-%m-%d-%H-%M-%S";
+		fsys.createDir("/bak",false);
+		fsys.enum( "/bak", "*.bak",
+			function(dir,filename,fullpath,findData){ 
+				if(filename){ 
+		           	var tm=time(filename);
+		           	if(..math.abs(t.diffday(tm))>10){
+		           	    fsys.delete(fullpath);
+		           	}
+				}
+			} 
+			,false/*如果此参数为false则忽略子目录*/
+		);
+		var bak=..string.format("/bak/modinfo.db-%s.bak",tostring(t))
+		fsys.copy("/modinfo.db",bak);
+		debug.log.print(..string.format("[%s]:backup modinfo.db to %s",tostring(time.now()),bak));
+	}
+	
+	
 	//import myutil;
 	import myutil.dlg;
 
