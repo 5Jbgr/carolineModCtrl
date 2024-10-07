@@ -5,6 +5,7 @@ import process.popen;
 import fsys;
 import myutil.config;
 import myutil.dlg;
+import debug.log;
 //import console;
 
 _config=myutil.config.get_config();
@@ -90,12 +91,17 @@ extract = function(src,dst,proc,password, ...){
     var e=false;
     if(not prcs){
     	myutil.dlg.error_dlg(_lang_config.unzip_error++e_info+"("+e_code+")");
+    	debug.log.printf("[unzip]:Can not open pipe with error code %d",e_code);
     	e=true;
     }else {
     	for( all,out,err in prcs.each() ){
     		//..console.log(all);out++(err:"")
     		if(proc) myutil.dlg.info_dlg(all);
-    		if(err&&err!==""){ e=true;myutil.dlg.error_dlg(_lang_config.unzip_error++err);}
+    		if(err&&err!==""){
+    			e=true;
+    			myutil.dlg.error_dlg(_lang_config.unzip_error++err);
+    			debug.log.printf("[unzip]:%s,%s",all,err)
+    		}
     	} 
     	prcs.close();
     }

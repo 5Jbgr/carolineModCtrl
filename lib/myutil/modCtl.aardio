@@ -57,6 +57,7 @@ remove_mod=function(path,install,trash){
 	//..console.log(path,install,trash);
 	if(path and ..io.exist(path,6)){
 		if(trash){
+			if(..io.exist(trash,6)){fsys.delete(trash);}
 			fsys.createParentDir(trash,false);
 			fsys.hardlink.create(trash,path);
 		}

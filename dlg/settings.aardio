@@ -3,6 +3,7 @@ import win.ui;
 import myutil.config;
 import fsys.dlg.dir;
 import console;
+import debug.log;
 import myutil.dlg;
 /*DSG{{*/
 var settings = win.form(text="设置";right=759;bottom=469)
@@ -17,6 +18,7 @@ gamepath_plus={cls="plus";left=152;top=48;right=560;bottom=74;align="right";bord
 hardlink_radiobutton={cls="radiobutton";text="硬链接";left=168;top=200;right=248;bottom=224;dl=1;dt=1;z=14};
 language_combobox={cls="combobox";left=152;top=128;right=312;bottom=152;aw=1;dl=1;dt=1;edge=1;items={};mode="dropdown";z=5};
 language_static={cls="static";text="语言：";left=24;top=128;right=152;bottom=154;align="right";center=1;dl=1;dt=1;font=LOGFONT(h=-14);notify=1;transparent=1;z=4};
+localization={cls="checkbox";text="小开关";left=80;top=336;right=217;bottom=359;db=1;dl=1;z=19};
 modctl_groupbox={cls="groupbox";text="模组管理";left=72;top=176;right=256;bottom=232;dl=1;dt=1;edge=1;z=12};
 modim_groupbox={cls="groupbox";text="模组导入";left=72;top=240;right=256;bottom=296;db=1;dl=1;edge=1;z=15};
 move_radiobutton={cls="radiobutton";text="移动";left=168;top=264;right=248;bottom=288;db=1;dl=1;z=17};
@@ -58,6 +60,7 @@ _lang.load_lang("settings",settings,{
 	move_radiobutton="text";
 	hardlink_radiobutton="text";
 	zip_info_checkbox="text";
+	localization="text";
 });
 table.mix(_config.ui,{
 	manage="copy";
@@ -78,6 +81,25 @@ if(_config.ui[["manage"]]==="copy"){
 	settings.hardlink_radiobutton.checked=true;
 }
 settings.zip_info_checkbox.checked=_config.ui.show_unzip_info;
+
+check_localization=function(root){
+	if(not root or root==""){settings.localization.disabled=true;return;};
+	var p=fsys.searchFile("localization.txt",root,true);
+	if(p){
+		var s=string.load(p);
+		var state=string.match(s,"<localization>\s*?=\s*?(\d)");
+		settings.localization.disabled=false;
+		if(tonumber(state)==0){
+			settings.localization.checked=false;
+		}else {
+			settings.localization.checked=true;
+		}
+	}else {
+		debug.log.printf("[settings]:Can not find localization.txt at %s",p);
+	}
+}
+
+check_localization(_config.path.game);
 
 
 fsys.enum( _config.path.language, "*.*",
@@ -101,21 +123,25 @@ settings.client_combobox.selText=_config.ui.now_client;
 settings.open_plus.oncommand =function(id,event){
 	var path = fsys.dlg.dir(,,'请选择目录')
 	if(path){
+		debug.log.printf("[settings]:Change game path to %s",path);
 		settings.gamepath_plus.text = path;
 		_config.path.game=path;
 		_config.path.install=io.joinpath(path,_config.path.mod);
 		fsys.createDir(_config.path.install,false);
+		check_localization(path);
 	}	
 }
 
 settings.language_combobox.onOk = function(){ 
 	var language=settings.language_combobox.selText;
+	debug.log.printf("[settings]:Change language to %s",language);
 	_config.ui.language=language;
 	_lang.reset_lang();
 }
 
 settings.client_combobox.onOk = function(){ 
 	var index=settings.client_combobox.selIndex;
+	debug.log.printf("[settings]:Change client to %s",_config.ui.client[index].name);
 	_config.ui.now_client=settings.client_combobox.selText;
 	_config.path.mod=_config.ui.client[index].path;
 	if(_config.path.game and _config.path.game!=""){
@@ -159,7 +185,7 @@ settings.hardlink_radiobutton.oncommand = function(id,event){
 		manage="hardlink";
 	});
 	var r=_lang.get_other("settings");
-	table.mix(r,{ask_hardlink="使用硬链接请确保本软件和游戏在同意磁盘中！"});
+	table.mix(r,{ask_hardlink="使用硬链接请确保本软件和游戏在同一磁盘中！"});
 	myutil.dlg.info_dlg(r.ask_hardlink);
 }
 
@@ -177,6 +203,24 @@ settings.move_radiobutton.oncommand = function(id,event){
 
 settings.zip_info_checkbox.oncommand = function(id,event){
 	_config.ui.show_unzip_info=owner.checked;
+}
+
+settings.localization.oncommand = function(id,event){
+	if(settings.localization.disabled)return;
+	var p=fsys.searchFile("localization.txt",_config.path.game,true);
+	if(p){
+		var s=string.load(p);
+		if(settings.localization.checked){
+			s=string.replace(s,"^(.*?)(<localization>\s*?=\s*?)(\d)(.*?)$","\1\21\4");
+		}else {
+			s=string.replace(s,"^(.*?)(<localization>\s*?=\s*?)(\d)(.*?)$","\1\20\4");
+		}
+		debug.log.printf('[settings]:Change localization to %d \n\t%s',settings.localization.checked?1:0,s);
+		string.save(p,s);
+	}else {
+		settings.localization.checked=!settings.localization.checked;
+		debug.log.printf("[settings]:Can not find localization.txt at %s",p);
+	}
 }
 
 settings.show();

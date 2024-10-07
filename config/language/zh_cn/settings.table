@@ -11,8 +11,9 @@ afterLoad=null;
 copy2_radiobutton="复制";
 zip_static="7z目录：";
 client_static="客户端类型：";
-zip_info_checkbox="显示解压信息";
 beforeSave=null;
+zip_info_checkbox="显示解压信息";
+localization="小开关";
 zip_open_plus="打开";
 game_static="游戏目录："
 }

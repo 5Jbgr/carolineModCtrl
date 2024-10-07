@@ -29,18 +29,24 @@ namespace modSQL{
 	}
 	
 	//数据库文件备份
+	import debug.log;
+	import time;
 	back_up_db=function(){
 		import fsys;
-		import time;
-		import debug.log;
 		var t=time.now();
+		var newest=null;
+		var path = null; 
 		t.format="%Y-%m-%d-%H-%M-%S";
 		fsys.createDir("/bak",false);
 		fsys.enum( "/bak", "*.bak",
 			function(dir,filename,fullpath,findData){ 
-				if(filename){ 
+				if(filename){
 		           	var tm=time(filename);
-		           	if(..math.abs(t.diffday(tm))>10){
+					if(!newest or tm>newest){
+						newest,tm=tm,newest;
+						path,fullpath=fullpath,path;
+					}
+					if(tm and ..math.abs(t.diffday(tm))>30){
 		           	    fsys.delete(fullpath);
 		           	}
 				}
@@ -49,7 +55,7 @@ namespace modSQL{
 		);
 		var bak=..string.format("/bak/modinfo.db-%s.bak",tostring(t))
 		fsys.copy("/modinfo.db",bak);
-		debug.log.print(..string.format("[%s]:backup modinfo.db to %s",tostring(time.now()),bak));
+		debug.log.printf("backup modinfo.db to %s",bak);
 	}
 	
 	
@@ -60,6 +66,7 @@ namespace modSQL{
 		var data = _db.getTable("SELECT * FROM [mod总表] ");
 		var _insert=_db.prepare("INSERT INTO [mods] VALUES (NULL,@name,@version,@author,@URL,
 		@category,@tags,@describe,@hash,0,@image);");
+		debug.log.printf("update db from version %d to version %d",old_version,new_version);
 		var mod = {
             name="";//模组文件名
             author="";//作者
@@ -82,11 +89,13 @@ namespace modSQL{
 			if(#mod.hash==32){
 				_insert.step(mod);
 				var id=_db.lastInsertRowid();
-				..fsys.move(..io.joinpath("/mods",data[i].id,mod.name+".pak"),..io.joinpath("/mods","99/1",id+"_"+mod.name+".pak"));
+				var r=..fsys.move(..io.joinpath("/mods",data[i].id,mod.name+".pak"),..io.joinpath("/mods","99/1",id+"_"+mod.name+".pak"));
+				if(not r){debug.log.printf("[update db]:move file %s fail,error code=[%d]",mod.name,..fsys.opError);}
 			}else {
 				..table.push(err_mod,data[i].id);
 			}
 		}
+		debug.log.printf("[update db]:finish")
 		if(#err_mod>0){
 			myutil.dlg.error_dlg(..string.format("以下文件转换失败(convert field):id=%s", ..table.tostring(err_mod)));
 		}else{
@@ -167,6 +176,7 @@ namespace modSQL{
 			import sqlite;
 			var _db = sqlite(path);
 			if( not _db.existsTable("mods") ) { 
+				debug.log.print("[db]:table [mods] not exist");
 	    		_db.exec( "CREATE TABLE [mods](
 	      			id INTEGER PRIMARY KEY NOT NULL,
 	    			name VARCHAR(200),
@@ -201,7 +211,8 @@ namespace modSQL{
 			}
 			var _insert_image=_db.prepare("INSERT INTO [images] VALUES (NULL,@ext,@hash);");
 			var _delete_image=_db.prepare("DELETE FROM [images] WHERE id=@id;");
-			if( not _db.existsTable("version") ) {  
+			if( not _db.existsTable("version") ) {
+				debug.log.print("[db]:table [version] not exist");
 	    		_db.exec( "CREATE TABLE [version]( 
 	    			id INTEGER PRIMARY KEY NOT NULL,
 	    			version VARCHAR(10));" );

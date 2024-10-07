@@ -16,6 +16,17 @@ navEnd={cls="bkplus";left=-2;top=31;right=1096;bottom=32;bgcolor=32768;border=1;
 debug.log.setPath("/log.log");
 debug.log.checkSize(0x200000);
 
+global.onError = function( err,over ){ 
+    if(!over){
+        import debug;
+        var stack = debug.traceback(,"调用栈",3);
+        debug.log.write(stack,'\n',err)
+    }
+    
+    if( _STUDIO_INVOKED ) return err;
+}
+
+
 import win.ui.tabs;
 var tbs = win.ui.tabs(mainForm.nav1,mainForm.nav2);
 tbs.clear(); //清除模板
