@@ -218,10 +218,10 @@ mod_info.category_combobox.onEditChange = function(){
     	var items = null;
     	if(lang_config.get_now_lang()=="zh_cn"){
     		items = table.filter(itemData,function(v,index){
-    			return string.startWith(v,text) or string.startWith(itemData_pinyin[index],text); 
+    			return string.indexOf(v,text) or string.indexOf(itemData_pinyin[index],string.lower(text)); 
     		});
     	}else {
-    		items = table.filter(itemData, lambda(v,k) string.startWith(v,text));
+    		items = table.filter(itemData, lambda(v,k) string.indexOf(string.lower(v),string.lower(text)));
     	}
     	mod_info.category_combobox.autoComplete(#items?items:itemData);
     	timer=null;
@@ -339,9 +339,13 @@ mod_info.onDropFiles = function(files){
 	if(mod_info.enable_edit.checked){
 		if(not files)return;
 		if(table.isArray(files) and #files==1){
-			mod_info.filename_edit.text=files[1];
+			files=files[1];
 		}
-		elseif(type(files)==type.string){
+		if(type(files)==type.string and string.endWith(files,".pak",true)){
+			var info=table.map(info_now,function(v,k,result){
+				if(table.find({"category","author","URL","describe"},k))return v;
+			})
+			mod_info.set_info(info);
 			mod_info.filename_edit.text=files;
 		}else myutil.dlg.info_dlg(lang_config_other.only_one_pak);
 	}else {
