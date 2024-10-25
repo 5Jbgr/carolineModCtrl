@@ -142,7 +142,7 @@ var enable_mod=function(mod){
 	//console.log(mod_path,install_path);
 	if(myutil.modCtl.enable_mod(mod_path,install_path)){
 		_db.update_mod({enabled=true},mod.id);
-		mod.enabled[1]="√";mod.enabled[2]=true;
+		mod.enabled.value=true;
 	}else {
 		myutil.dlg.error_dlg(string.format(_lang_other.enable_mod_error,mod.name, mod.id));
 	}
@@ -153,7 +153,7 @@ var disable_mod=function(mod){
 		var install_path=string.format("%s\%d_P",fsys.path.canonicalize(_config.path.install),mod.id);
 		myutil.modCtl.disable_mod(install_path);
 		_db.update_mod({enabled=false},mod.id);
-		mod.enabled[1]="×";mod.enabled[2]=false;
+		mod.enabled.value=false;
 	}
 }
 
@@ -170,7 +170,7 @@ modList.listview.onDoubleClick = function(item,subItem,nmListView){
 			enable_mod(mod);
 		}
 		if(_enabled_index){
-			modList.listview.setItemText(mod.enabled[1],item,_enabled_index);
+			modList.listview.setItemText(tostring(mod.enabled),item,_enabled_index);
 		}
 	}
 }
@@ -189,6 +189,9 @@ modList.listview.onClick = function(item,subItem,nmListView){
 	if(item===0 and modList.showInfo){
 		modList.showInfo();
 		_focus_id=null;
+	}elseif(!(nmListView.uNewState & nmListView.uOldState & 1) and item>0 and !_focus_id and modList.showInfo){
+		_focus_id=_table[item].id;
+		modList.showInfo(_table[item]);
 	}
 }
 
@@ -253,11 +256,17 @@ modList.setTable=function(t){
 			};
 		};
 		v.enabled={
-				v.enabled?"√":"×";
 				not not v.enabled;
+				v.enabled?"√":"×";
 				@{
-					_tostring=lambda() owner[1];
-					_call=lambda() owner[2];
+					_tostring=lambda() owner[2];
+					_call=lambda() owner[1];
+					_set=function(k,v,ownerAttr){
+						if(k==="value"){
+							owner[[1]]=not not v;
+							owner[[2]]=owner[[1]]?"√":"×";
+						}
+					}	
 				}
 		};
 		if(_focus_id and v.id ==_focus_id){
@@ -274,6 +283,17 @@ modList.setTable=function(t){
 //清空内容
 modList.clearList=modList.listview.clear;
 
+//对对应列排序
+grid.onSortColumn = function(column,desc){
+	var name = _table.fields[column];
+	if(name==="enabled" or name==="category"){
+		table.sort(_table,desc ? (lambda(next) owner[name][2] > next[name][2]) : (lambda(next) owner[name][2] < next[name][2]));
+	}else{
+		table.sort(_table,desc ? (lambda(next) owner[name] > next[name]) : (lambda(next) owner[name] < next[name]));
+	} 
+	grid.setTable( _table);
+	return true; //返回 true 允许当前列排序
+}
 
 //启用模组
 modList.enable_plus.oncommand = function(id,event){
@@ -283,7 +303,7 @@ modList.enable_plus.oncommand = function(id,event){
 		var mod=_table[v];
 		enable_mod(mod);
 		if(_enabled_index){
-			modList.listview.setItemText(mod.enabled[1],v,_enabled_index);
+			modList.listview.setItemText(tostring(mod.enabled),v,_enabled_index);
 		}
 	}
 	owner.disabled=false;
@@ -297,7 +317,7 @@ modList.disable_plus.oncommand = function(id,event){
 		var mod=_table[v];
 		disable_mod(mod);
 		if(_enabled_index){
-			modList.listview.setItemText(mod.enabled[1],v,_enabled_index);
+			modList.listview.setItemText(tostring(mod.enabled),v,_enabled_index);
 		}
 	}
 	owner.disabled=false;
@@ -369,6 +389,7 @@ modList.add_plus.oncommand = function(id,event){
 			if(modList.showInfo){
 				if(#new_select==1 and focus){
 					modList.listview.selIndex=focus;
+					modList.listview.ensureVisible();
 					modList.showInfo(_table[focus]);
 				}else {modList.showInfo();}
 			}

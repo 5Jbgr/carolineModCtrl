@@ -14,6 +14,13 @@ treeview={cls="treeview";left=0;top=24;right=256;bottom=552;acceptfiles=1;asel=f
 )
 /*}}*/
 
+/*
+import win.imageList;
+
+var l=win.imageList(50,50);
+l.addIcon("E:\code\aardio\carolineModCtrl\卡罗琳.ico")
+*/
+
 var skin={
 	background={
 		default=0x668FB2B0;
@@ -47,6 +54,17 @@ var a=myutil.modCtl.get_category().get_tree();
 category_tree.treeview.insertItem(a);
 category_tree.treeview.expand(category_tree.treeview.getFirst());
 //console.log(table.tostring(a));
+
+/*
+category_tree.treeview.setImageList(l,0);
+
+var root = category_tree.treeview.getFirst();
+root=category_tree.treeview.getItem(root);
+root.iImage=2;
+root.iSelectedImage=2;
+
+category_tree.treeview.setItem(root);
+*/
 
 var _config=myutil.config.get_langconfig();
 _config.load_lang("category_tree",category_tree,{
