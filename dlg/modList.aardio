@@ -387,7 +387,7 @@ modList.add_plus.oncommand = function(id,event){
 				}
 			}
 			if(modList.showInfo){
-				if(#new_select==1 and focus){
+				if(#new_select>=1 and focus){
 					modList.listview.selIndex=focus;
 					modList.listview.ensureVisible();
 					modList.showInfo(_table[focus]);
