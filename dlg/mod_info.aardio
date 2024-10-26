@@ -2,6 +2,7 @@ import fonts.fontAwesome;
 import win.ui;
 import win.inputBox;
 import win.ui.menu;
+import win.clip;
 import console;
 import myutil.config;
 import modSQL;
@@ -94,6 +95,8 @@ table.mix(lang_config_other,{
 	no_image="暂无预览图";
 	please_enable_edit="请先启用编辑模式";
 	only_one_pak="只能拖入一个pak文件";
+	add_from_clip="添加自剪切板";
+	clip_no_img="剪贴板没有图像";
 });
 lang_config.load_lang("mod_info",mod_info,{
 	filename_static="text";
@@ -127,6 +130,18 @@ var set_image=function(path){
 set_image();
 
 
+var update_all_image=function(){
+	all_image=_db.all_image();
+	//console.dumpTable(all_image);
+	for(i=1;#all_image;1){
+		var v=all_image[i];
+		all_image[i]=v.id++v.ext;
+	}
+	mod_info.all_img_combobox.items=all_image;
+}
+update_all_image();
+
+
 //弹出菜单
 mod_info.popmenu = win.ui.popmenu(mod_info);
 mod_info.popmenu.add(lang_config_other.use_this_image,function(){
@@ -153,21 +168,28 @@ mod_info.popmenu.add(lang_config_other.delete_this_image,function(){
 		}
 	}else set_image();
 });
+mod_info.popmenu.add(lang_config_other.add_from_clip,function(id){
+	var hBmp = win.clip.readBitmap();
+	if(!hBmp){
+		return myutil.dlg.error_dlg(lang_config_other.clip_no_img);
+	}
+	com.picture.fromBitmap(hBmp).Save("/clip.jpg");
+	var imgs=myutil.add_image(_config.path.image,{"/clip.jpg"});
+	update_all_image();
+	if(info_now){
+		mod_info.mod_img_combobox.insert(v);
+		mod_info.mod_img_combobox.selIndex=1;
+		mod_info.all_img_combobox.selIndex=null;
+		set_image(mod_info.mod_img_combobox.selText);
+	}else{
+		mod_info.all_img_combobox.selIndex=#all_image;
+		set_image(mod_info.all_img_combobox.selText);
+	}
+});
 
 mod_info.category_combobox.minVisible = 12;//设置可见项数量
 mod_info.category_combobox.items=itemData;//设置下拉框选项
 //console.dumpTable(itemData_pinyin);
-
-var update_all_image=function(){
-	all_image=_db.all_image();
-	//console.dumpTable(all_image);
-	for(i=1;#all_image;1){
-		var v=all_image[i];
-		all_image[i]=v.id++v.ext;
-	}
-	mod_info.all_img_combobox.items=all_image;
-}
-update_all_image();
 
 
 //设置数据显示
@@ -316,20 +338,40 @@ mod_info.save_plus.oncommand = function(id,event){
 //右键图片弹出菜单
 mod_info.image_plus.onRightMouseDown = function(wParam,lParam){
     var x,y = win.getMessagePos(lParam);
-    if(_now_img and mod_info.enable_edit.checked){
-    	mod_info.popmenu.popup();
+    if(mod_info.enable_edit.checked){
+        if(_now_img){
+            mod_info.popmenu.enable(1);
+            mod_info.popmenu.enable(2);
+        }else {
+            mod_info.popmenu.enable(1,false);
+            mod_info.popmenu.enable(2,false);
+        }    	
+        mod_info.popmenu.popup();
     }
     return null; 
 }
 
 mod_info.image_plus.onDropFiles = function(files){
+	var imgs=null;
 	if(mod_info.enable_edit.checked){
 		if(not files)return;
 		if(table.isArray(files)){
-			myutil.add_image(_config.path.image,files);
+			imgs=myutil.add_image(_config.path.image,files);
 		}
-		else myutil.add_image(_config.path.image,{files});
+		else imgs=myutil.add_image(_config.path.image,{files});
+		imgs=string.split(imgs,';');
 		update_all_image();
+		if(info_now){
+			for(k,v in imgs){
+				mod_info.mod_img_combobox.insert(v);
+			}
+			mod_info.mod_img_combobox.selIndex=1;
+			mod_info.all_img_combobox.selIndex=null;
+			set_image(mod_info.mod_img_combobox.selText);
+		}else{
+			mod_info.all_img_combobox.selIndex=#all_image;
+			set_image(mod_info.all_img_combobox.selText);
+		}
 	}else {
 		myutil.dlg.info_dlg(lang_config_other.please_enable_edit);
 	}
