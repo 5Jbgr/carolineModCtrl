@@ -1,4 +1,5 @@
 ﻿{
+modCtl={path_not_found_error="路径不存在:{%s}"};
 category_tree={title="模组类别"};
 about={warningText='模组是作者的一片心血，请大家不要随意分享，\r\n也请大家不要去官方以及社区分享这些信息！！！\r\n不要把MOD截图发到官群和公开平台,否则会导致封号和MOD被堵死';redownload="重新下载角色信息";title="关于";about_richedit={web='\r\n网址：';update_success="更新成功";version='\r\n版本：';newest_version='\r\n最新版本：';loding="获取中";updating="更新中";character_info='\r\n角色信息';fail="获取失败"}};
 modList={enable_mod_error="%s启用失败[id=%d]";update_info="(需要/只能)选择一条记录!";hash_error="文件[%s]计算Hash失败";ask_for_delete="确认删除文件[%s]?

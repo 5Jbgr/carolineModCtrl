@@ -11,9 +11,11 @@ afterLoad=null;
 copy2_radiobutton="Copy";
 zip_static="7z Directory: ";
 client_static="Client Type: ";
+db_static1="days";
 beforeSave=null;
-zip_info_checkbox="Show unzip info";
+db_static="Keep database backup for ";
 localization="Localization";
+zip_info_checkbox="Show unzip info";
 zip_open_plus="Open";
 game_static="Game Directory: "
 }

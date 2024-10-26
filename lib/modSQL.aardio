@@ -33,9 +33,11 @@ namespace modSQL{
 	import time;
 	back_up_db=function(){
 		import fsys;
+		import myutil.config;
 		var t=time.now();
 		var newest=null;
-		var path = null; 
+		var path = null;
+		var brt=myutil.config.get_config().db.backup_retention_time;
 		t.format="%Y-%m-%d-%H-%M-%S";
 		fsys.createDir("/bak",false);
 		fsys.enum( "/bak", "*.bak",
@@ -46,16 +48,18 @@ namespace modSQL{
 						newest,tm=tm,newest;
 						path,fullpath=fullpath,path;
 					}
-					if(tm and ..math.abs(t.diffday(tm))>30){
+					if(tm and ..math.abs(t.diffday(tm))>brt){
 		           	    fsys.delete(fullpath);
 		           	}
 				}
 			} 
 			,false/*如果此参数为false则忽略子目录*/
 		);
-		var bak=..string.format("/bak/modinfo.db-%s.bak",tostring(t))
-		fsys.copy("/modinfo.db",bak);
-		debug.log.printf("backup modinfo.db to %s",bak);
+		if(brt){
+			var bak=..string.format("/bak/modinfo.db-%s.bak",tostring(t))
+			fsys.copy("/modinfo.db",bak);
+			debug.log.printf("backup modinfo.db to %s",bak);
+		}
 	}
 	
 	

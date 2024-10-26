@@ -11,9 +11,11 @@ afterLoad=null;
 copy2_radiobutton="复制";
 zip_static="7z目录：";
 client_static="客户端类型：";
+db_static1="天";
 beforeSave=null;
-zip_info_checkbox="显示解压信息";
+db_static="数据库备份保留：";
 localization="小开关";
+zip_info_checkbox="显示解压信息";
 zip_open_plus="打开";
 game_static="游戏目录："
 }

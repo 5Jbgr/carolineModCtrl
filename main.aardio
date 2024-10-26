@@ -20,7 +20,7 @@ global.onError = function( err,over ){
     if(!over){
         import debug;
         var stack = debug.traceback(,"调用栈",3);
-        debug.log.write(stack,'\n',err)
+        debug.log.print(stack,'\n',err)
     }
     
     if( _STUDIO_INVOKED ) return err;

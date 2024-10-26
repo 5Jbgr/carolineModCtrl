@@ -45,6 +45,7 @@ namespace myutil.config{
                 	hash="";//哈希校验
                 	enabled=false;//是否已启用
             	};
+            	backup_retention_time=30;
 	    	);
 	    }
 	    return self.configs; 
