@@ -177,7 +177,7 @@ mod_info.popmenu.add(lang_config_other.add_from_clip,function(id){
 	var imgs=myutil.add_image(_config.path.image,{"/clip.jpg"});
 	update_all_image();
 	if(info_now){
-		mod_info.mod_img_combobox.insert(v);
+		mod_info.mod_img_combobox.insert(imgs);
 		mod_info.mod_img_combobox.selIndex=1;
 		mod_info.all_img_combobox.selIndex=null;
 		set_image(mod_info.mod_img_combobox.selText);
