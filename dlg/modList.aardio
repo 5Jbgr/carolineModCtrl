@@ -287,7 +287,7 @@ modList.clearList=modList.listview.clear;
 grid.onSortColumn = function(column,desc){
 	var name = _table.fields[column];
 	if(name==="enabled" or name==="category"){
-		table.sort(_table,desc ? (lambda(next) owner[name][2] > next[name][2]) : (lambda(next) owner[name][2] < next[name][2]));
+		table.sort(_table,desc ? (lambda(next) owner[name][2] < next[name][2]) : (lambda(next) owner[name][2] > next[name][2]));
 	}else{
 		table.sort(_table,desc ? (lambda(next) owner[name] > next[name]) : (lambda(next) owner[name] < next[name]));
 	} 
@@ -450,7 +450,7 @@ modList.update_plus.oncommand = function(id,event){
 		var new_mod_path=io.joinpath(_config.path.data,mod.category(),mod.id+"_"+mod.name+".pak");
 		myutil.modCtl.add_mod(path,new_mod_path);
 		if(mod.enabled()){
-			myutil.modCtl.enable_mod(new_mod_path,install_path);
+			myutil.modCtl.enable_mod(new_mod_path,install_path,'');
 		}
 		mod.hash=hash;
 		_db.update_mod({name=mod.name,hash=hash},mod.id);
