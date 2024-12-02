@@ -277,6 +277,8 @@ modList.setTable=function(t){
 	modList.listview.setTable(_table);
 	if(focus_index){
 		modList.listview.selIndex=focus_index;
+		modList.listview.ensureVisible();
+		modList.listview.setFocus();
 	}else{if(modList.showInfo)modList.showInfo();}
 	
 }
@@ -391,6 +393,7 @@ modList.add_plus.oncommand = function(id,event){
 					modList.listview.selIndex=focus;
 					modList.listview.ensureVisible();
 					modList.showInfo(_table[focus]);
+					modList.listview.setFocus();
 				}else {modList.showInfo();}
 			}
 		}

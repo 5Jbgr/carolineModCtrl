@@ -61,7 +61,7 @@ processZip=function(path){
 	return files,err; 
 }
 
-zip_ext={".zip",".rar"};
+zip_ext={".zip",".rar",".7z"};
 isZip=function(path){
 	var ext=..string.lower(..io.splitpath(path).ext);
 	return true && ..table.find(zip_ext,ext);
