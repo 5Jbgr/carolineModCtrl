@@ -70,7 +70,7 @@ about.about_richedit.appendText({
 	point=6;
 	mask=1;
 });
-about.about_richedit.appendText(string.slice(__config.ui.category_version,1,10));
+about.about_richedit.appendText(string.slice(#__config.ui.category_version?__config.ui.category_version:"unknown",1,10));
 about.about_richedit.appendText(_lang_other.about_richedit.newest_version);
 about.about_richedit.appendText(_lang_other.about_richedit.loding);
 about.about_richedit.appendText(_lang_other.about_richedit.web);
@@ -141,23 +141,24 @@ manage.create(
 	semaphore
 ).onEnd=function(version){
 	if(version and __config.ui.category_version!==version){
-		var v_text=string.slice(__config.ui.category_version,1,10);
+		var v_text=string.slice(#__config.ui.category_version?__config.ui.category_version:"unknown",1,10);
 		var ci_text=string.trim(_lang_other.about_richedit.character_info);
 		var u_text=_lang_other.about_richedit.updating;
 		var a,b = about.about_richedit.findText(ci_text,,1,-1);
 		var lang=__config.ui.language_download[__config.ui.language];
 		a,b = about.about_richedit.findText(v_text,,b,-1);
 		about.about_richedit.setsel(a,b);
-		about.about_richedit.replaceText(v_text,string.format("%s(%s)",v_text,u_text));
+		var v_loding_text=string.format("%s(%s)",v_text,u_text);
+		about.about_richedit.replaceText(v_text,v_loding_text);
 		manage.create(download,version,lang).onEnd = function(r,...){
 			if(!about.about_richedit)return;
 			semaphore.wait();
 			a,b = about.about_richedit.findText(ci_text,,1,-1);
-			a,b = about.about_richedit.findText(u_text,,b,-1);
+			a,b = about.about_richedit.findText(v_loding_text,,b,-1);
 			about.about_richedit.setsel(a,b);
 			if(r){
 				var s_text = _lang_other.about_richedit.update_success;
-				about.about_richedit.replaceText(u_text,s_text);
+				about.about_richedit.replaceText(v_loding_text,string.format("%s->%s(%s)",v_text,string.slice(version,1,10),s_text));
 				__config.ui.category_version=version;
 				myutil.modCtl.reset_category();
 			}else {
