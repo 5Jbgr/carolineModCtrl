@@ -132,6 +132,7 @@ set_image();
 
 var update_all_image=function(){
 	all_image=_db.all_image();
+	table.reverse(all_image);
 	//console.dumpTable(all_image);
 	for(i=1;#all_image;1){
 		var v=all_image[i];
