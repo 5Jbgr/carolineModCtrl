@@ -70,7 +70,7 @@ tree.searchCategory=function(categorys){
 	}elseif(type(categorys)==type.string){
 		update_table=function(){
 			_table=_db.search_mod(categorys);
-			modtable.setTable(_table);
+			modtable.setTable(_table,(not string.endWith(categorys,'-'))?categorys:null);
 		}
 		modtable.updateTable();
 	}elseif(table.isArray(categorys)){

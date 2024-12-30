@@ -51,8 +51,9 @@ var _db=modSQL.get_mod_sql();
 var _config=myutil.config.get_config();
 var _table=null;
 var _columns=null;
-var _enabled_index=null;
+var _enabled_column=null;
 var _focus_id=null;
+var _category=null; 
 var _lang_other=myutil.config.get_langconfig().get_other("modList");
 var mod_template=table.clone(_config.db.bace_mod_template);
 var grid = win.ui.grid(modList.listview); 
@@ -169,8 +170,8 @@ modList.listview.onDoubleClick = function(item,subItem,nmListView){
 		}else {
 			enable_mod(mod);
 		}
-		if(_enabled_index){
-			modList.listview.setItemText(tostring(mod.enabled),item,_enabled_index);
+		if(_enabled_column){
+			modList.listview.setItemText(tostring(mod.enabled),item,_enabled_column);
 		}
 	}
 }
@@ -233,7 +234,7 @@ modList.setColumns=function(columns){
 	for(k,v in _columns){
 		modList.listview.setColumnText(k,translate[v]:" ");
 		if(v==="enabled"){
-			_enabled_index=k;
+			_enabled_column=k;
 		}
 		display_popmenu.check(pop_id[v]);
 	}
@@ -241,10 +242,15 @@ modList.setColumns=function(columns){
 }
 
 //设置显示的列表
-modList.setTable=function(t){
+modList.setTable=function(t,category="99-1"){
 	_table=t;
 	var cat=myutil.modCtl.get_category().get_ids();
 	var focus_index=null;
+	_category={
+		[2]=category;
+		@{_call=lambda() string.replace(owner[2],"-","\");}
+	};
+	
 	for(k,v in _table){
 		var kk=table.find(cat,lambda(va) va.id===v["category"]);
 		_table[k]["category"]={
@@ -304,8 +310,8 @@ modList.enable_plus.oncommand = function(id,event){
 	for(k,v in selected){
 		var mod=_table[v];
 		enable_mod(mod);
-		if(_enabled_index){
-			modList.listview.setItemText(tostring(mod.enabled),v,_enabled_index);
+		if(_enabled_column){
+			modList.listview.setItemText(tostring(mod.enabled),v,_enabled_column);
 		}
 	}
 	owner.disabled=false;
@@ -318,8 +324,8 @@ modList.disable_plus.oncommand = function(id,event){
 	for(k,v in selected){
 		var mod=_table[v];
 		disable_mod(mod);
-		if(_enabled_index){
-			modList.listview.setItemText(tostring(mod.enabled),v,_enabled_index);
+		if(_enabled_column){
+			modList.listview.setItemText(tostring(mod.enabled),v,_enabled_column);
 		}
 	}
 	owner.disabled=false;
@@ -338,10 +344,7 @@ modList.add_plus.oncommand = function(id,event){
 	}
 	if(#path>0){
 		var selected=modList.listview.selected;
-		var category={
-			[2]="99-1";
-			@{_call=lambda() "99\1";}
-		};
+		var category=_category;
 		if(#selected>0){
 			var mod=_table[selected[1]];
 			category=mod.category;
