@@ -9,11 +9,14 @@ namespace config {
 	__appName_en = 'Caroline Mod Manager';
 	__website = "https://github.com/5Jbgr/carolineModCtrl";
 	__website_category="https://github.com/5Jbgr/SBCinfo";
-	__version = "0.4.9";
-	__api="https://api.github.com/repos/5Jbgr/carolineModCtrl/releases";
+	__version = "0.4.10";
+	__api={"https://api.github.com/repos/5Jbgr/carolineModCtrl/releases";
+		   "https://gcore.jsdelivr.net/gh/5Jbgr/carolineModCtrl@main/"};
 	__api_category={
-		main="https://api.github.com/repos/5Jbgr/SBCinfo/branches/main";
-		download="https://api.github.com/repos/5Jbgr/SBCinfo/contents/%s%%2Fcategory.json?ref=%s"
+		main="https://raw.githubusercontent.com/5Jbgr/SBCinfo/main/%s/update-info";
+		main_jsdeliver="https://gcore.jsdelivr.net/gh/5Jbgr/SBCinfo@main/%s/update-info";
+		download="https://api.github.com/repos/5Jbgr/SBCinfo/contents/%s/category.json";
+		download_jsdeliver="https://gcore.jsdelivr.net/gh/5Jbgr/SBCinfo@main/%s/category.json"
 	};
 }
 

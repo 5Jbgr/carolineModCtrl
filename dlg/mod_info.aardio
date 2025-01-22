@@ -110,6 +110,7 @@ lang_config.load_lang("mod_info",mod_info,{
 	enable_edit="text";
 	save_plus="text";
 })
+mod_info.all_img_combobox.minVisible=12;
 mod_info.all_img_combobox.setCueBannerText(lang_config_other.all_img_tip);//所有图片提示
 mod_info.mod_img_combobox.setCueBannerText(lang_config_other.mod_img_tip);//当前图片提示
 mod_info.text=lang_config_other.title;//标题
