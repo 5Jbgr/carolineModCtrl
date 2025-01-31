@@ -51,7 +51,7 @@ download_info=function(version,language){
 	import crypt.bin;
 	
 	//console.open();
-	var address=..string.format(config.__api_category.download,language,version);
+	var address=..string.format(config.__api_category.download,language);
 	var http=web.rest.jsonLiteClient();
 	var data = null;
 	var result = null; 
