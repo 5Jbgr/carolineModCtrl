@@ -2,11 +2,11 @@
 modCtl={path_not_found_error="Path does not exist:{%s}"};
 mainForm={modsetting="Settings";modctl="Mod Control";modmanage="Mod Management"};
 about={warningText="Mods are the author's hard work, please do not share them casually,also please do not share this information on the official and community platforms!!!Do not post MOD screenshots to the official group and public platforms, otherwise it will lead to account bans and MODs being blocked";redownload="Re-Download Character Info";title="about";about_richedit={web='\r\nWeb: ';update_success="update success";version='\r\nVersion: ';newest_version='\r\nLatest version: ';loding="loding";updating="updating";character_info='\r\nCharacter Info';fail="load fail"}};
-modList={enable_mod_error="Enable failed for mod %s {id=%d}";sql_move_error="Failed to register or move file, please check the database and file location
-[path=%s]";hash_error="Failed to calculate Hash for file[%s]";ask_for_delete="Confirm to delete file[%s]?
-[%s]";display="display";have_same_file="Mod file already exists[id=%d]";use_category_or_not="Use category[%s] or not?";update_info="(Need/Can only) select one record!"};
+modList={enable_mod_error="Enable failed for mod %s {id=%d}";use_category_or_not="Use category[%s] or not?";update_info="(Need/Can only) select one record!";ask_for_delete="Confirm to delete file[%s]?
+[%s]";display="display";have_same_file="Mod file already exists[id=%d]";sql_move_error="Failed to register or move file, please check the database and file location
+[path=%s]";hash_error="Failed to calculate Hash for file[%s]"};
 modManage={have_same_file="Mod file already exists[id=%d]";sql_move_error="Failed to register or move file, please check the database and file location\n[path=%s]";add_success="Registration successful"};
-settings={ask_hardlink="Please ensure that this software and the game are on the same disk when using hard links!"};
+settings={ask_symbolicLink="Please note that this method is not recommended. Before continuing, please make sure you are clear about what you are doing!";can_not_find_file="File %s not found";ask_hardlink="Please ensure that this software and the game are on the same disk when using hard links!"};
 mod_image={clip_no_img="No image in clipboard";delete_img="Delete";add_from_clip="Add from clipboard";title="Mod Preview Image";no_image="No preview image available"};
 db={hash="Hash";URL="URL";id="ID";author="Author";image="Image";name="Filename";category="Category";describe="Description";version="Version";tags="Tags";enabled="Enabled"};
 mod_info={do_not_have_file="No file added";all_img_tip="All registered preview images";please_enable_edit="Please enable edit mode first";only_one_pak="Only one pak file can be dragged in";mod_img_tip="Current mod preview image";clip_no_img="No image in clipboard";title="Mod Information";add_from_clip="Add from clipboard";delete_this_image="Delete from preview images";use_this_image="Use this image as the preview image";no_image="No preview image available"};

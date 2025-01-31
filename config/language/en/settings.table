@@ -1,10 +1,13 @@
 ﻿{
+mods_checkbox="Beautify mods folder";
 open_plus="Open";
 modim_groupbox="Import Mod";
+symbolicLink2_radiobutton="Symbolic Link";
 hardlink_radiobutton="Hardlink";
 copy_radiobutton="Copy";
 modctl_groupbox="Mod Manage";
 move_radiobutton="Move";
+beforeSave=null;
 about_button="About";
 language_static="Language: ";
 afterLoad=null;
@@ -12,9 +15,9 @@ copy2_radiobutton="Copy";
 zip_static="7z Directory: ";
 client_static="Client Type: ";
 db_static1="days";
-beforeSave=null;
-db_static="Keep database backup for ";
 localization="Localization";
+db_static="Keep database backup for ";
+symbolicLink_radiobutton="Symbolic Link";
 zip_info_checkbox="Show unzip info";
 zip_open_plus="Open";
 game_static="Game Directory: "
