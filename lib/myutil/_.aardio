@@ -1,6 +1,7 @@
 ﻿//myutil 工具库
 
 namespace myutil{
+	import debug.log;
 	import crypt;
 	hash_file=function(path){
 		if(..io.exist(path,4)){
@@ -31,5 +32,49 @@ namespace myutil{
 			}
 		}
 		return ..string.join(ims,';'); 
+	}
+	
+	before_quit=null;
+	
+	quit=null;
+	
+	_quit=function(){
+		if(before_quit) before_quit();
+		if(quit) quit();
+	}
+	
+	import process.admin;
+/*
+	check_admin=..table.array();
+	register_admin=function(f){
+		debug.log.print("[myutil]:register admin function f:");
+		debug.log.dump(f);
+		if(type(f)===type.function) table.append(check_admin,f);
+		else if(type(f)===type.boolean) table.append(check_admin,lambda() f);
+		else{
+			debug.log.print("[myutil]:register admin function fail");
+			assert(false,"管理员检查函数注册失败");
+		}
+	}
+*/
+	check_admin={
+		function(){
+			import myutil.config;
+			var ui=myutil.config.get_config().ui;
+			return ui[["manage"]]=="symbolicLink" or ui[["import"]]=="symbolicLink"; 
+		}	
+	}
+	set_admin=function(useAdmin=false){
+		if(process.admin.isRunAs()) return false;
+		for(k,v in check_admin){
+			useAdmin=useAdmin or v();
+			if(useAdmin) break;
+		}
+		if(useAdmin){
+			process.admin.runas();
+			_quit();
+			return true;
+		}
+		return false;
 	}
 }
