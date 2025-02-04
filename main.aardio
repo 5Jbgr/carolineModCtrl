@@ -28,17 +28,6 @@ global.onError = function( err,over ){
     if( _STUDIO_INVOKED ) return err;
 }
 
-//检查并设置管理员模式
-myutil.quit=function(){
-	win.loopMessage();
-	mainForm.close();
-}
-myutil.before_quit=function(){
-	myutil.config.save_config();
-	modSQL.back_up_db();
-}
-myutil.set_admin();
-
 import win.ui.tabs;
 var tbs = win.ui.tabs(mainForm.nav1,mainForm.nav2);
 tbs.clear(); //清除模板
@@ -111,7 +100,16 @@ tbs.onSelchange = function(idx,strip,form){
 	}
 }
 
-
+//检查并设置管理员模式
+myutil.quit=function(){
+	mainForm.close();
+	win.loopMessage();
+}
+myutil.before_quit=function(){
+	myutil.config.save_config();
+	modSQL.back_up_db();
+}
+myutil.set_admin();
 
 mainForm.show();
 

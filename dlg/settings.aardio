@@ -5,6 +5,7 @@ import fsys.dlg.dir;
 import console;
 import debug.log;
 import myutil.dlg;
+import myutil;
 /*DSG{{*/
 var settings = win.form(text="设置";right=759;bottom=469)
 settings.add(
@@ -52,6 +53,7 @@ settings.refresh_plus.skin(skin);
 var langs=table.array();
 var _config = myutil.config.get_config(); 
 var _lang = myutil.config.get_langconfig();
+var _lang_other=_lang.get_other("settings");
 var localization_path = null; 
 _lang.load_lang("settings",settings,{
 	game_static="text";
@@ -81,6 +83,12 @@ table.mix(_config.ui,{
 	show_unzip_info=true;
 	set_mods_LocalizedResourceName=false;
 });
+table.mix(_lang_other,{
+	ask_hardlink="使用硬链接请确保本软件和游戏在同一磁盘中!!";
+	ask_admin="使用符号链接需要管理员权限，请确认启用!!";
+	ask_symbolicLink="请注意，这种方法不被推荐。在继续之前，请确保你清楚自己在做什么!!";
+	can_not_find_file="未找到文件%s";
+})
 
 settings.modctl_groupbox.group();
 settings.modim_groupbox.group();
@@ -92,7 +100,7 @@ settings.zip_path_plus.text=_config.path.zip;
 //模组导入
 if(_config.ui[["import"]]==="copy"){
 	settings.copy2_radiobutton.checked=true;
-}else if(_config.ui[["import"]]==="move"){
+}elseif(_config.ui[["import"]]==="move"){
 	settings.move_radiobutton.checked=true;
 }else{
 	settings.symbolicLink2_radiobutton.checked=true;
@@ -101,7 +109,7 @@ if(_config.ui[["import"]]==="copy"){
 //模组控制
 if(_config.ui[["manage"]]==="copy"){
 	settings.copy_radiobutton.checked=true;
-}else if(_config.ui[["manage"]]==="hardlink") {
+}elseif(_config.ui[["manage"]]==="hardlink") {
 	settings.hardlink_radiobutton.checked=true;
 }else{
 	settings.symbolicLink_radiobutton.checked=true;
@@ -250,15 +258,23 @@ settings.hardlink_radiobutton.oncommand = function(id,event){
 	table.assign(_config.ui,{
 		manage="hardlink";
 	});
-	var r=_lang.get_other("settings");
-	table.mix(r,{ask_hardlink="使用硬链接请确保本软件和游戏在同一磁盘中！"});
-	myutil.dlg.info_dlg(r.ask_hardlink);
+	myutil.dlg.info_dlg(_lang_other.ask_hardlink);
 }
 
 settings.symbolicLink_radiobutton.oncommand = function(id,event){
-	table.assign(_config.ui,{
-		manage="symbolicLink";
-	});
+	if(myutil.dlg.ask_dlg(_lang_other.ask_admin)){
+		table.assign(_config.ui,{
+			manage="symbolicLink";
+		});
+		myutil.set_admin(true);
+	}else {
+		settings.symbolicLink_radiobutton.checked=false;
+		if(_config.ui[["manage"]]=="hardlink"){
+			settings.hardlink_radiobutton.checked=true;
+		}else {
+			settings.copy_radiobutton.checked=true;
+		}
+	}
 }
 
 settings.copy2_radiobutton.oncommand = function(id,event){
@@ -274,12 +290,12 @@ settings.move_radiobutton.oncommand = function(id,event){
 }
 
 settings.symbolicLink2_radiobutton.oncommand = function(id,event){
-	var r=_lang.get_other("settings");
-	table.mix(r,{ask_symbolicLink="请注意，这种方法不被推荐。在继续之前，请确保你清楚自己在做什么!"});
-	if(myutil.dlg.ask_dlg(r.ask_symbolicLink)){
+	if(myutil.dlg.ask_dlg(_lang_other.ask_symbolicLink) and
+		myutil.dlg.ask_dlg(_lang_other.ask_admin)){
 		table.assign(_config.ui,{
 			"import"="symbolicLink";
 		});
+		myutil.set_admin(true);
 	}else {
 		settings.symbolicLink2_radiobutton.checked=false;
 		if(_config.ui[["import"]]=="move"){
@@ -347,9 +363,7 @@ settings.open_localization_plus.oncommand = function(id,event){
 	if(io.exist(localization_path))
 		process.exploreSelect(localization_path);
 	else {
-		var r=_lang.get_other("settings");
-		table.mix(r,{can_not_find_file="未找到文件%s"});
-		myutil.dlg.info_dlg(string.format(r.can_not_find_file,"localization.txt"));
+		myutil.dlg.info_dlg(string.format(_lang_other.can_not_find_file,"localization.txt"));
 	}
 }
 

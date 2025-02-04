@@ -2,7 +2,7 @@
 import fsys.config;
 namespace myutil.config{
 	configs=null;
-	langconfig=null;
+	langconfig=null;	
 	get_config=function(path="/config/"){
 	    if(not self.configs){
 	    	self.configs=..fsys.config(path);

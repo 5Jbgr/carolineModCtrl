@@ -3,6 +3,7 @@ import modSQL;
 import myutil;
 import myutil.modCtl;
 import myutil.config;
+import debug.log;
 /*DSG{{*/
 var modManage = win.form(text="模组管理";right=839;bottom=535)
 modManage.add(
@@ -108,7 +109,7 @@ modManage.onDestroy = function(hwnd,message,wParam,lParam){
     	var index=table.find(_config.ui.mod_manage_display,lambda(_v) _v[1]===k);
     	_config.ui.mod_manage_display[index][3]=v;
     }
-    
+    debug.log.print("[modManage]:ColumnWidth has been export");
 }
 
 

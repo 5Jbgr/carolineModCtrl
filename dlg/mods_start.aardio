@@ -2,7 +2,7 @@ import fonts.fontAwesome;
 import win.ui;
 import win.ui.minmax;
 import win.ui.tabs;
-import console;
+import debug.log;
 import myutil;
 import myutil.config;
 import modSQL;
@@ -108,7 +108,7 @@ modsStart.onDestroy = function(hwnd,message,wParam,lParam){
     	var index=table.find(_config.ui.mod_start_display,lambda(_v) _v[1]===k);
     	_config.ui.mod_start_display[index][3]=v;
     }
-    
+    debug.log.print("[modStart]:ColumnWidth has been export");
 }
 
 modtable.showInfo=function(mod){
