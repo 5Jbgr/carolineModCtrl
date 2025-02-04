@@ -172,7 +172,7 @@ info.create_info=function(_info){
 		_info.hash=myutil.hash_file(_info.name);
 		var result=_db.test_modhash(_info.hash);
 		if(#result!=0){
-			myutil.dlg.info_dlg(string.format(_lang_other.have_same_file,result[1].id));
+			myutil.dlg.info_dlg(_lang_other.have_same_file,result[1].id);
 			return ;
 		}
 		var path=_info.name;
@@ -184,9 +184,9 @@ info.create_info=function(_info){
 		mod_path=io.joinpath(mod_path,_id+"_"+_info.name+".pak");
 		if(n>0 and fsys.move(path,mod_path)){
 			tree.searchCategory(_info.categoty);
-			myutil.dlg.success_dlg(string.format(_lang_other.add_success));
+			myutil.dlg.success_dlg(_lang_other.add_success);
 		}else {
-			myutil.dlg.info_dlg(string.format(_lang_other.sql_move_error,v));
+			myutil.dlg.info_dlg(_lang_other.sql_move_error,v);
 		}
 		update_table();
 	}

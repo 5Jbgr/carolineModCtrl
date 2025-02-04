@@ -1,7 +1,9 @@
 ﻿//dlg 弹出窗口库
 import win.dlg.message;
+import myutil.config;
 namespace myutil.dlg{
 	dlg=null;
+	lang=null;
 	init=function(phwnd){
 	    if(not self.dlg){
 	    	self.dlg=..win.dlg.message(phwnd);
@@ -29,22 +31,31 @@ namespace myutil.dlg{
 	    	}
 	    	//self.dlg.iconColor=..gdi.RGB(20,20,20);
 	    }
+	    if(self.lang==..myutil.config.get_config().ui[["language"]])return;
+	    self.lang=..myutil.config.get_config().ui[["language"]];
+	    if(lang=="zh_cn"){
+	        self.dlg.okLabel='\uF00C 确认';
+	        self.dlg.cancelLabel='\uF00D 取消';
+	    }else {
+	    	self.dlg.okLabel='\uF00C OK';
+	    	self.dlg.cancelLabel='\uF00D NO';
+	    }
 	}
-	error_dlg=function(msg){
+	error_dlg=function(msg,...){
 		init();
-	    self.dlg.err(msg);
+	    self.dlg.err(msg,,...);
 	}
-	info_dlg=function(msg){
+	info_dlg=function(msg,...){
 		init();
-	    self.dlg.info(msg);
+	    self.dlg.info(msg,,...);
 	}
-	success_dlg=function(msg){
+	success_dlg=function(msg,...){
 		init();
-	    self.dlg.ok(msg);
+	    self.dlg.ok(msg,,...);
 	}
-	ask_dlg=function(msg){
+	ask_dlg=function(msg,...){
 		init();
-	    return self.dlg.ask(msg); 
+	    return self.dlg.ask(msg,,...); 
 	}
 	    
 }

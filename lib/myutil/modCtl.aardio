@@ -16,7 +16,7 @@ _get_lang=function(){
 	return _lang_config;
 }
 _get_config=function(){
-	if(not _lang_config){
+	if(not _config){
 		_config=myutil.config.get_config();
 	}
 	return _config;

@@ -363,7 +363,7 @@ settings.open_localization_plus.oncommand = function(id,event){
 	if(io.exist(localization_path))
 		process.exploreSelect(localization_path);
 	else {
-		myutil.dlg.info_dlg(string.format(_lang_other.can_not_find_file,"localization.txt"));
+		myutil.dlg.info_dlg(_lang_other.can_not_find_file,"localization.txt");
 	}
 }
 

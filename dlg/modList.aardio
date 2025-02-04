@@ -5,6 +5,7 @@ import win.ui.grid;
 import win.ui.menu;
 import console;
 import modSQL;
+import myutil.dlg;
 import myutil.config;
 import myutil.modCtl;
 import myutil;
@@ -145,7 +146,7 @@ var enable_mod=function(mod){
 		_db.update_mod({enabled=true},mod.id);
 		mod.enabled.value=true;
 	}else {
-		myutil.dlg.error_dlg(string.format(_lang_other.enable_mod_error,mod.name, mod.id));
+		myutil.dlg.error_dlg(_lang_other.enable_mod_error,mod.name, mod.id);
 	}
 }
 
@@ -348,9 +349,7 @@ modList.add_plus.oncommand = function(id,event){
 		if(#selected>0){
 			var mod=_table[selected[1]];
 			category=mod.category;
-			var v = myutil.dlg.ask_dlg(
-			string.format(_lang_other.use_category_or_not,mod.category[1])
-			);
+			var v = myutil.dlg.ask_dlg(_lang_other.use_category_or_not,mod.category[1]);
 			if(not v){
 				owner.disabled=false;
 				return ; 
@@ -362,12 +361,12 @@ modList.add_plus.oncommand = function(id,event){
 			mod_template.category=category[2];
 			mod_template.hash=myutil.hash_file(v);
 			if(#mod_template.hash!=32){
-				myutil.dlg.info_dlg(string.format(_lang_other.hash_error,filename[k]));
+				myutil.dlg.info_dlg(_lang_other.hash_error,filename[k]);
 				continue;
 			}
 			var result=_db.test_modhash(mod_template.hash);
 			if(#result!=0){
-				myutil.dlg.info_dlg(string.format(_lang_other.have_same_file,result[1].id));
+				myutil.dlg.info_dlg(_lang_other.have_same_file,result[1].id);
 				continue;
 			}
 			var mod_path=io.joinpath(_config.path.data,category());
@@ -442,7 +441,7 @@ modList.update_plus.oncommand = function(id,event){
 		var mod = _table[selected[1]];
 		var hash=myutil.hash_file(path);
 		if(#mod.hash!=32){
-				myutil.dlg.info_dlg(string.format(_lang_other.hash_error,filename[k]));
+				myutil.dlg.info_dlg(_lang_other.hash_error,filename[k]);
 				owner.disabled=false;
 				return ; 
 		}
