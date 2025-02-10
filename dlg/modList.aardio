@@ -356,9 +356,16 @@ modList.add_plus.oncommand = function(id,event){
 			}
 		}
 		var new_select=table.array();
+		var cat=myutil.modCtl.get_category().get_ids();
 		for(k,v in path){
+			var new_category = category;
+			if(_config.ui.auto_classification){
+				var new = myutil.get_classification(v);
+				if(table.find(cat,lambda(va) va.id===new))
+					new_category = {[2]=new;@{_call=lambda() string.replace(owner[2],"-","\");}};
+			}
 			mod_template.name=io.splitpath(v).name;
-			mod_template.category=category[2];
+			mod_template.category=new_category[2];
 			mod_template.hash=myutil.hash_file(v);
 			if(#mod_template.hash!=32){
 				myutil.dlg.info_dlg(_lang_other.hash_error,filename[k]);
@@ -369,7 +376,7 @@ modList.add_plus.oncommand = function(id,event){
 				myutil.dlg.info_dlg(_lang_other.have_same_file,result[1].id);
 				continue;
 			}
-			var mod_path=io.joinpath(_config.path.data,category());
+			var mod_path=io.joinpath(_config.path.data,new_category());
 			fsys.createDir(mod_path,false);
 			var n,_id=_db.add_mod(mod_template);
 			var add_r=myutil.modCtl.add_mod(v,string.format("%s/%d_%s.pak",mod_path,_id,mod_template.name));

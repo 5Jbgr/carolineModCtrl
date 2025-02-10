@@ -10,6 +10,7 @@ import myutil;
 var settings = win.form(text="设置";right=759;bottom=469)
 settings.add(
 about_button={cls="button";text="关于";left=648;top=432;right=728;bottom=456;db=1;dr=1;z=11};
+auto_classification_checkbox={cls="checkbox";text="模组自动分类";left=80;top=400;right=200;bottom=424;db=1;dl=1;z=28};
 client_combobox={cls="combobox";left=448;top=128;right=608;bottom=152;aw=1;dr=1;dt=1;edge=1;items={};mode="dropdown";z=6};
 client_static={cls="static";text="客户端类型：";left=350;top=128;right=447;bottom=154;align="right";center=1;dr=0.41;dt=1;font=LOGFONT(h=-14);transparent=1;z=7};
 copy2_radiobutton={cls="radiobutton";text="复制";left=80;top=264;right=136;bottom=288;dl=1;dt=1;z=16};
@@ -20,6 +21,7 @@ db_static1={cls="static";text="天";left=616;top=176;right=651;bottom=198;dr=1;d
 game_static={cls="static";text="游戏目录：";left=21;top=48;right=149;bottom=74;align="right";center=1;dl=1;dt=1;font=LOGFONT(h=-14);transparent=1;z=2};
 gamepath_plus={cls="plus";left=152;top=48;right=560;bottom=74;align="right";border={bottom=1;color=-6908266};dl=1;dr=1;dt=1;font=LOGFONT(h=-13);textPadding={top=6;bottom=2};z=1};
 hardlink_radiobutton={cls="radiobutton";text="硬链接";left=148;top=200;right=212;bottom=224;dl=1;dt=1;z=14};
+import_plus={cls="plus";text="批量导入";left=216;top=400;right=320;bottom=423;bgcolor=-5197169;db=1;dl=1;font=LOGFONT(h=-13);iconStyle={align="left";font=LOGFONT(h=-14;name='FontAwesome');padding={left=3;top=3}};iconText='\uF07C';notify=1;textPadding={left=18};z=29};
 language_combobox={cls="combobox";left=152;top=128;right=312;bottom=152;aw=1;dl=1;dt=1;edge=1;items={};mode="dropdown";z=5};
 language_static={cls="static";text="语言：";left=21;top=128;right=149;bottom=154;align="right";center=1;dl=1;dt=1;font=LOGFONT(h=-14);transparent=1;z=4};
 localization={cls="checkbox";text="小开关";left=80;top=336;right=217;bottom=359;db=1;dl=1;z=19};
@@ -43,12 +45,17 @@ var skin={
 	background={
 		active=0xFFD3E0BC;
 		default=0x638FB2B0;
-		disabled=0xDA6D6D6D;
+		disabled=0xA96D6D6D;
 		hover=0xFF92CEB3		
+	}
+	color={
+		default=0xFF000000;
+		disabled=0xFF6D6D6D		
 	}
 };
 settings.open_localization_plus.skin(skin);
 settings.refresh_plus.skin(skin);
+settings.import_plus.skin(skin);
 
 var langs=table.array();
 var _config = myutil.config.get_config(); 
@@ -75,13 +82,16 @@ _lang.load_lang("settings",settings,{
 	zip_info_checkbox="text";
 	localization="text";
 	db_static="text";
-	db_static1="text"
+	db_static1="text";
+	auto_classification_checkbox="text";
+	import_plus="text";
 });
 table.mix(_config.ui,{
 	manage="copy";
 	"import"="copy";
 	show_unzip_info=true;
 	set_mods_LocalizedResourceName=false;
+	auto_classification=false;
 });
 table.mix(_lang_other,{
 	ask_hardlink="使用硬链接请确保本软件和游戏在同一磁盘中!!";
@@ -116,6 +126,10 @@ if(_config.ui[["manage"]]==="copy"){
 }
 settings.zip_info_checkbox.checked=_config.ui.show_unzip_info;
 settings.mods_checkbox.checked=_config.ui.set_mods_LocalizedResourceName;
+settings.auto_classification_checkbox.checked=_config.ui.auto_classification;
+
+if(not _config.ui.auto_classification) settings.import_plus.disabled=true;
+
 
 check_localization=function(root){
 	settings.localization.disabled=true;
@@ -365,6 +379,67 @@ settings.open_localization_plus.oncommand = function(id,event){
 	else {
 		myutil.dlg.info_dlg(_lang_other.can_not_find_file,"localization.txt");
 	}
+}
+
+settings.auto_classification_checkbox.oncommand = function(id,event){
+	if(settings.auto_classification_checkbox.checked){
+		_config.ui.auto_classification=true;
+		settings.import_plus.disabled=false;
+	}else {
+		_config.ui.auto_classification=false;
+		settings.import_plus.disabled=true;
+	}
+}
+
+settings.import_plus.oncommand = function(id,event){
+	import myutil.modCtl;
+	import modSQL;
+	var path = fsys.dlg.dir();
+	if(not path) return ;
+	var mod_template = table.clone(_config.db.bace_mod_template);
+	var _db = modSQL.get_mod_sql();
+	var cat=myutil.modCtl.get_category().get_ids();
+	fsys.enum( path, "*.pak",
+		function(dir,filename,fullpath,findData){ 
+			if(filename){
+				var v = fullpath; 
+	           	var new_category = {[2]="99-1";@{_call=lambda() string.replace(owner[2],"-","\");}};
+				if(_config.ui.auto_classification){
+					var new = myutil.get_classification(v);
+					if(table.find(cat,lambda(va) va.id===new))
+						new_category = {[2]=new;@{_call=lambda() string.replace(owner[2],"-","\");}};
+				}
+				mod_template.name=io.splitpath(v).name;
+				mod_template.category=new_category[2];
+				mod_template.hash=myutil.hash_file(v);
+				if(#mod_template.hash!=32){
+					return;
+				}
+				var result=_db.test_modhash(mod_template.hash);
+				if(#result!=0){
+					return;
+				}
+				var mod_path=io.joinpath(_config.path.data,new_category());
+				fsys.createDir(mod_path,false);
+				var n,_id=_db.add_mod(mod_template);
+				var add_r=myutil.modCtl.add_mod(v,string.format("%s/%d_%s.pak",mod_path,_id,mod_template.name));
+				if(n>0 and add_r){
+					for(k,v in myutil.img_list){
+						var p = dir++mod_template.name++v;
+						if(io.exist(p,4)){
+							var hash=myutil.hash_file(p);
+							var path=io.splitpath(p);
+							var id=_db.add_image({hash=hash;ext=path.ext});
+							fsys.copy(p,..io.joinpath(_config.path.image,id++path.ext));
+							_db.update_mod({image=id++path.ext},_id);
+							break;
+						}
+					}
+				}
+			}
+		} 
+		,true/*如果此参数为false则忽略子目录*/
+	);
 }
 
 settings.show();

@@ -1,6 +1,8 @@
 ﻿{
 mods_checkbox="模组文件夹美化";
 open_plus="打开";
+auto_classification_checkbox="模组自动分类";
+import_plus="批量导入";
 modim_groupbox="模组导入";
 symbolicLink2_radiobutton="符号链接";
 hardlink_radiobutton="硬链接";

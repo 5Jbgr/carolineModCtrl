@@ -1,6 +1,8 @@
 ﻿{
 mods_checkbox="Beautify mods folder";
 open_plus="Open";
+auto_classification_checkbox="Mod auto classify";
+import_plus="Batch Import";
 modim_groupbox="Import Mod";
 symbolicLink2_radiobutton="Symbolic Link";
 hardlink_radiobutton="Hardlink";
@@ -15,9 +17,9 @@ copy2_radiobutton="Copy";
 zip_static="7z Directory: ";
 client_static="Client Type: ";
 db_static1="days";
-localization="Localization";
-db_static="Keep database backup for ";
 symbolicLink_radiobutton="Symbolic Link";
+db_static="Keep database backup for ";
+localization="Localization";
 zip_info_checkbox="Show unzip info";
 zip_open_plus="Open";
 game_static="Game Directory: "
