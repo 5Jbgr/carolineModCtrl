@@ -64,6 +64,7 @@ namespace myutil{
 			return ui[["manage"]]=="symbolicLink" or ui[["import"]]=="symbolicLink"; 
 		}	
 	}
+	
 	set_admin=function(useAdmin=false){
 		if(process.admin.isRunAs()) return false;
 		for(k,v in check_admin){
@@ -77,4 +78,30 @@ namespace myutil{
 		}
 		return false;
 	}
+	
+	import myutil.modCtl;
+	import pakParser.PakFileReader;
+	//解析pak并尝试获取其类别
+	get_classification=function(path){
+		if(not ..io.exist(path,4)) return null;
+		var f = pakParser.PakFileReader(path);
+		var r = f.Mount();
+		var all = myutil.modCtl.get_category().get_feature();
+		var count = {};
+		var max = null; 
+		for(k,_ in r){
+			var cla = ..string.match(k,"<girl\d\d\d[a-z]?><_\d\d[a-z]?>?[_/\\]?=");
+			if(cla and type(all[[cla]])!=type.null){
+				var c = all[[cla]];
+				count[c] = count[c]:0 + 1;
+				if(max){
+					if(count[c] > count[max]) max=c;
+				}else max = c;
+			}
+			//..console.log(cla,all[[cla]]);
+		}
+		//..console.dump(count,..table.keys(r));
+		return max; 
+	}
+
 }
