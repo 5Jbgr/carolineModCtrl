@@ -1,4 +1,4 @@
-//modCtl 模组控制库
+﻿//modCtl 模组控制库
 namespace myutil.modCtl;
 import fsys.hardlink;
 import web.json;
@@ -137,15 +137,16 @@ class mod_category {
 	    var _cat = null; 
 	    var _tree = null; 
 	    var _ids = null; 
+	    var _feature = null; 
 	    if(..io.exist(path)){	
 	    	_cat=..web.json.parse(..string.load(path));
 	    }else {
-	    	myutil.dlg.error_dlg("");
+	    	myutil.dlg.error_dlg("no category.json");
 	    	return ; 
 	    }
 	}
 	
-	_gen_tree=function(table_,cat_,root){
+	_gen_tree=function(table_,cat_,root,feature_){
 	    for(k,v in table_){
 	    	var node={text=v.name;data=v;flag=cat_+'-'+v["id"]};
 	    	//console.log(..table.tostring(node));
@@ -153,9 +154,12 @@ class mod_category {
 	    	var a,b = ..table.find(v,lambda(val) ..table.isArray(val));
 	    	//console.log(a,b)
 	    	if(b){
-	    		this._gen_tree(b,cat_+'-'+v["id"],node);
+	    		this._gen_tree(b,cat_+'-'+v["id"],node,(feature_:"")++(v.feature:""));
 	    	}else {
-	    		..table.push(_ids,{name=root.data.name+'-'+v.name;id=cat_+'-'+v["id"]});
+	    	    var nowid=cat_+'-'+v["id"];
+	    		..table.push(_ids,{name=root.data.name+'-'+v.name;id=nowid});
+	    		if(#feature_)
+	    			..table.assign(_feature,{[feature_++(v.feature:"")]=nowid});
 	    	}
 	    }
 	}
@@ -163,12 +167,14 @@ class mod_category {
 	init=function(){
 	    _tree = ..table.array();
 	    _ids = ..table.array();
+	    _feature = ..table.array();
 	    for(k,v in _cat){
 	    	var node = {text=v.name,data=v,flag=tostring(v.id)}; 
 	    	//console.log(..table.tostring(node));
 	    	..table.push(_tree,node);
-	    	this._gen_tree(v.list,tostring(v.id),node);
+	    	this._gen_tree(v.list,tostring(v.id),node,v.feature);
 	    }
+	    //..console.dump(_feature);
 	}
 	
 	
@@ -192,9 +198,12 @@ class mod_category {
 		return _cat;
 	}
 	
+	//{name:id}
+	get_feature=function(){
+		return _feature; 
+	}
 	
 	get_string=function(){
 	    return table.tostring(_cat); 
 	}
-
 } 
