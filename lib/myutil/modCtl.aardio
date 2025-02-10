@@ -1,9 +1,10 @@
-﻿//modCtl 模组控制库
+//modCtl 模组控制库
 namespace myutil.modCtl;
 import fsys.hardlink;
 import web.json;
 import myutil.dlg;
 import myutil.config;
+import debug.log;
 _lang_config=null;
 _config=null;
 _get_lang=function(){
@@ -26,28 +27,43 @@ _get_config=function(){
 enable_mod=function(from ,to ,ext=".pak"){
 	if(from&&to){
 	    if(..io.exist(from,4)){
-	        if(..io.exist(to++ext,6)){
+	        if(..io.exist(to++ext)){
 	            fsys.delete(to++ext);
 	        }
 	        if(_get_config().ui[["manage"]]==="hardlink"){
 	        	fsys.hardlink.create(to++ext,from);
 	        	return true;
+	        }elseif(_get_config().ui[["manage"]]==="symbolicLink"){
+	        	import process.popen;
+	        	var prcs,e,ec = process.popen.cmd({"mklink",to++ext,from});
+	        	if(e or ec){
+	        		debug.log.printf("[modCtl]:[enable] could not create pipe with error:%s; error code:%d",e,ec);
+	        		myutil.dlg.error_dlg("%s %d",e,ec);
+	        		return false; 
+	        	}else {
+	        	    var r=true;
+	        		for( all,out,err in prcs.each() ){
+	        	    	debug.log.printf("[modCtl]:[enable] create symbolicLink response:%s",all);
+	        	    	if(err&&err!==""){r=false;myutil.dlg.error_dlg("%s",e);}
+	        		}
+	        		return r; 
+	        	}
 	        }else {
 	        	return fsys.copy(from,to++ext);
 	        }
 	    }
-		myutil.dlg.error_dlg(..string.format(_get_lang().path_not_found_error,from));
+		myutil.dlg.error_dlg(_get_lang().path_not_found_error,from);
 		return false; 
 	}
 }
 //禁用模组
 disable_mod=function(path,ext=".pak"){
 	if(path){
-		true_path=path++ext;
+		var true_path=path++ext;
 		if(..io.exist(true_path)){
 			return fsys.delete(true_path);
 		}else {
-			myutil.dlg.error_dlg(..string.format(_get_lang().path_not_found_error,true_path));
+			myutil.dlg.error_dlg(_get_lang().path_not_found_error,true_path);
 		}
 	}
 	return false; 
@@ -55,15 +71,15 @@ disable_mod=function(path,ext=".pak"){
 
 remove_mod=function(path,install,trash){
 	//..console.log(path,install,trash);
-	if(path and ..io.exist(path,6)){
+	if(path and ..io.exist(path)){
 		if(trash){
-			if(..io.exist(trash,6)){fsys.delete(trash);}
+			if(..io.exist(trash)){fsys.delete(trash);}
 			fsys.createParentDir(trash,false);
 			fsys.hardlink.create(trash,path);
 		}
 		fsys.delete(path);
 	}
-	if(install and ..io.exist(install,6)){
+	if(install and ..io.exist(install)){
 		fsys.delete(install);
 	}
 	return true; 
@@ -72,6 +88,21 @@ remove_mod=function(path,install,trash){
 add_mod=function(from ,to ){
 	if(_get_config().ui[["import"]]==="move"){
 		return fsys.move(from,to);
+	}elseif(_get_config().ui[["import"]]==="symbolicLink"){
+	    import process.popen;
+	    var prcs,e,ec = process.popen.cmd({"mklink",to,from});
+	    if(e or ec){
+	        debug.log.printf("[modCtl]:[add] could not create pipe with error:%s; error code:%d",e,ec);
+	        myutil.dlg.error_dlg("%s %d",e,ec);
+	        return false; 
+	    }else {
+	        var r=true;
+	        for( all,out,err in prcs.each() ){
+	        	debug.log.printf("[modCtl]:[add] create symbolicLink response:%s",all);
+	        	if(err&&err!==""){r=false;myutil.dlg.error_dlg("%s",e);}
+	        }
+	        return r; 
+	    }
 	}else {
 		return fsys.copy(from,to);
 	}
