@@ -1,0 +1,82 @@
+﻿//FPakInfo pak文件基础信息
+import pakParser;
+import pakParser.Reader;
+class pakParser.FPakInfo {
+	ctor(FReader){
+		this.magic = 0;
+		this.version = 0;
+		this.IsSubVersion = false;
+		this.IndexOffset = 0;
+		this.IndexSize = 0;
+		this.IndexHash = "";
+		this.EncryptedIndex = 0;
+		this.IndexIsFrozen = 0;
+		this.EncryptionKeyGuid = 0;
+		
+		FReader.seek("end");
+		var Br = ..pakParser.Reader.BReader(FReader.readback(300));
+		var offset=..raw.indexOf(Br.buffer,300,self.Magic);
+		if(offset==null)return;
+		Br.seek(offset-1);
+		var length=300-(offset+17);
+		
+		this.EncryptedIndex = Br.readByte();
+		this.magic = Br.readInt();
+
+		if(this.magic != PAK_FILE_MAGIC) return;
+		this.version = Br.readInt();
+		this.IsSubVersion = Version == self.EPakFileVersion.FNameBasedCompressionMethod and length == 221;
+		this.IndexOffset = Br.readInt64();
+		this.IndexSize = Br.readInt64();
+		this.IndexHash = Br.readHash();
+		if(this.version == self.EPakFileVersion.FrozenIndex){
+			this.IndexIsFrozen = Br.readByte() != 0;
+		}
+		
+		if (this.version < self.EPakFileVersion.FNameBasedCompressionMethod)
+        {
+            this.CompressionMethods = {0,1,2,3,4,5};
+        }
+        else
+        {
+            var m = ..string.split(
+            			..string.replace(
+            				..string.trimright(
+            					..string.slice(
+            						Br.buffer,Br.offset),'\0'),"\z+",'\0'),'\0',6);
+            var mm = ..table.map(m,lambda(v,k) ..pakParser.CompressionMethod[[..string.lower(v)]]:..pakParser.CompressionMethod.unknown)
+            ..table.unshift(mm,..pakParser.CompressionMethod.none);
+            this.CompressionMethods=mm;
+        }
+	
+		if (this.version < EPakFileVersion.IndexEncryption)
+        {
+            this.EncryptedIndex = 0;
+        }
+
+        if (this.version < EPakFileVersion.EncryptionKeyGuid)
+        {
+            this.EncryptionKeyGuid = 0;
+        }
+	};
+}
+
+namespace pakParser.FPakInfo{
+	Magic = '\xE1\x12\x6F\x5A';
+	PAK_FILE_MAGIC = 0x5A6F12E1;
+	COMPRESSION_METHOD_NAME_LEN = 32;
+	EPakFileVersion = {
+        Initial = 1;
+        NoTimestamps = 2;
+        CompressionEncryption = 3;
+        IndexEncryption = 4;
+        RelativeChunkOffsets = 5;
+        DeleteRecords = 6;
+        EncryptionKeyGuid = 7;
+        FNameBasedCompressionMethod = 8;
+        FrozenIndex = 9;
+        PathHashIndex = 10;
+        Fnv64BugFix = 11;
+        Latest = 11;
+    }
+}

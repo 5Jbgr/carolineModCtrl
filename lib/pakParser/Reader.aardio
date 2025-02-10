@@ -1,0 +1,116 @@
+﻿//Reader 文件读取工具
+namespace pakParser.Reader;
+import io;
+import raw;
+import string;
+class FReader {
+	ctor(path){
+		this=..io.file(path,"rb");
+	};
+}
+
+class BReader {
+	ctor(str){
+		//..console.dump(#str,..raw.sizeof(str));
+		this.buffer = str;
+		this.offset = 1;
+		this.length = #str+1;
+	}; 
+	
+	checkReadSize=function(len){
+		//..console.log(len,this.offset,this.length);
+		if(len<0)return false;
+		if(this.offset+len>this.length)return false;
+		return true;
+	};
+	
+	seek=function(len){
+		if(len<0)return null,-1;
+		if(len>this.length) return null,-2; 
+		this.offset=len;
+		return true; 
+	};
+	
+	read=function(struct,len){
+		//..console.dump(len,struct);
+		if(not this.checkReadSize(len)) return 0;
+		var r=..raw.convert(this.buffer,struct,this.offset-1);
+		this.offset+=len;
+		//..console.dump(r);
+		return r;  
+	};
+	
+	readHash=function(){
+		var result = ..string.slice(this.buffer,this.offset,this.offset+19);
+		if(result and result != ""){this.offset+=20 ;result=..string.hex(result,"");}
+		//..console.log(#result,result);
+		return result;
+	};
+	
+	readInt=function(){
+		return this.read({INT val;},4).val:0;
+	};
+	
+	readInt64=function(){
+		return this.read({LONG64 val;},8).val;
+	}
+	
+	readByte=function(){
+		if(not this.checkReadSize(1)) return 0; 
+		var r=this.buffer[this.offset];
+		this.offset+=1;
+		return r;
+	}
+	
+	readBytes=function(len){
+		if(not this.checkReadSize(len)) return ""; 
+		var r=..string.slice(this.buffer,this.offset,this.offset+len-1);
+		this.offset+=len;
+		return r;
+	}
+	
+	readArray=function(struct,len){
+		var l = ..raw.sizeof(struct)*len;
+		var a = ..raw.toarray(len,"struct","v");
+		a.v = {struct};
+		//..console.dump(a);
+		return l > 0 ? this.read(a,l).v : ..table.array(); 
+	}
+	
+	readFCompressedChunkInfo=function(){
+		return this.read({LONG64 CompressedSize; LONG64 UncompressedSize},16); 
+	}
+	
+	readFPakCompressedBlock=function(){
+		var len = this.read({int val},4).val:0; 
+		return this.readArray({LONG64 CompressedStart; LONG64 CompressedEnd},len); 
+	}
+	
+	readFString=function(){
+		var len = this.readInt();
+		if(len<=0 or not this.checkReadSize(len)) return null;
+		var r = ..string.slice(this.buffer,this.offset,this.offset+len-1);
+		this.offset+=len;
+		//..console.log(len,#r,r);
+		return ..string.str(r); 
+	}
+	
+}
+
+/*****intellisense()
+pakParser.Reader.BReader = buffer reader;
+pakParser.Reader.BReader() = buffer reader;
+!fcci.CompressedSize = CompressedSize
+!fcci.UncompressedSize = UncompressedSize
+!fpcb.CompressedStart = CompressedStart
+!fpcb.CompressedEnd = CompressedEnd
+!breader.seek( = seek
+!breader.readHash() = Hash
+!breader.readInt() = uint
+!breader.readInt64() = ulong
+!breader.readByte() = ubyte
+!breader.readFString() = uint+string
+!breader.readFCompressedChunkInfo() = FCompressedChunkInfo\n!fcci.
+!breader.readFPakCompressedBlock() = FPakCompressedBlock\n!fpcb.
+pakParser.Reader.BReader() = !breader.
+end intellisense*****/

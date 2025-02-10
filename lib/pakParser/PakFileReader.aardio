@@ -1,0 +1,260 @@
+﻿//PakFileReader pak文件读取器
+import pakParser;
+import pakParser.Reader;
+import pakParser.FPakInfo;
+import pakParser.FPakEntry;
+class pakParser.PakFileReader{
+	ctor(path){
+		this.Ar = ..pakParser.Reader.FReader(path);
+		this.length = this.Ar.size();
+		this.Info = ..pakParser.FPakInfo(this.Ar);
+		this.IsEncrypted = this.Info.EncryptedIndex;
+		this.EncryptedFileCount=0;
+		if(not this.Info or this.Info.version > ..pakParser.FPakInfo.EPakFileVersion.Latest){
+			return ; 
+		}
+	}; 
+	
+	Mount = function(){
+		if(this.IsEncrypted) return ;
+		if (this.Info.version >= ..pakParser.FPakInfo.EPakFileVersion.PathHashIndex)
+            this.ReadIndexUpdated();
+        elseif (this.Info.IndexIsFrozen)
+            this.ReadFrozenIndex();
+        else
+            this.ReadIndexLegacy();
+        return this.Files; 
+	};
+	
+	ReadIndexUpdated=function(){
+		this.Ar.seek("set",this.Info.IndexOffset);
+		//..console.log(this.Ar.size(),this.Ar.seek());
+		var primaryIndex = ..pakParser.Reader.BReader(this.Ar.read(this.Info.IndexSize));
+		var fileCount = 0;
+    	this.EncryptedFileCount = 0;
+		var mountPoint = primaryIndex.readFString();
+		mountPoint = this.ValidateMountPoint(mountPoint);
+		this.MountPoint = mountPoint;
+		this.fileCount = primaryIndex.readInt();
+		primaryIndex.seek(primaryIndex.offset+8);
+		if (!primaryIndex.readInt()==1)return ;//No path hash index
+		primaryIndex.seek(primaryIndex.offset+36);
+		if (!primaryIndex.readInt()==1)return ;//No directory index
+		var directoryIndexOffset = primaryIndex.readInt64();
+        var directoryIndexSize = primaryIndex.readInt64();
+        primaryIndex.seek(primaryIndex.offset+20); // Directory Index hash
+        var encodedPakEntriesSize = primaryIndex.readInt();
+        var encodedPakEntries = ..pakParser.Reader.BReader(primaryIndex.readBytes(encodedPakEntriesSize));
+        if (primaryIndex.read({int val},4).val < 0)return ;//Corrupt pak PrimaryIndex detected
+        this.Ar.seek("set",directoryIndexOffset);
+        var directoryIndex = ..pakParser.Reader.BReader(this.Ar.read(directoryIndexSize));
+        var directoryIndexLength = directoryIndex.readInt();
+        var files = {};
+        for(i=1;directoryIndexLength;1)
+        {
+            var dir = directoryIndex.readFString();
+            var dirDictLength = directoryIndex.readInt();
+            
+            for(i=1;dirDictLength;1){
+            	var name = directoryIndex.readFString();
+                var path = ..io.joinpath(mountPoint,dir,name);
+
+                var offset = directoryIndex.read({int val},4);
+                if (offset.val == -2147483648) continue;
+
+                var entry = ..pakParser.FPakEntry();
+                entry.init(this.Info, path, encodedPakEntries , offset.val);
+                if (entry.IsEncrypted())
+                    this.EncryptedFileCount++;
+                if (false){}
+                    //files[path.ToLowerInvariant()] = entry;
+                else
+                    files[path] = entry;
+            }
+        }
+        this.Files = files;
+	};
+	
+	ReadFrozenIndex=function(){
+		this.Ar.seek("set",this.Info.IndexOffset);
+        var Ar = ..pakParser.Reader.BReader(this.Ar.ReadBytes(this.Info.IndexSize));
+
+        var mountPoint = Ar.readFString();
+        mountPoint = this.ValidateMountPoint(mountPoint);
+        this.MountPoint = mountPoint;
+
+        var entries = self.readArray(function(){
+        	var r=..pakParser.FPakEntry(this.Info, Ar);
+        	r.init(this.Info, Ar);
+        	return r; 
+        });
+        var fileCount = ..table.len(entries);
+        var files = ..table.array();
+
+        // read TMap<FString, TMap<FString, int32>>
+        var index = self.ReadTMap(Ar,
+            lambda() Ar.readFString(),
+            lambda() self.ReadTMap(Ar,
+                lambda() Ar.ReadFString(),
+                lambda() Ar.readInt(),
+                16, 4
+            ),
+            16, 56
+        );
+        
+        for(dir, dirContents in index){
+        	for(name, fileIndex in dirContents){
+        	    var path = ..io.joinpath(mountPoint, dir, name);
+        		
+                var entry = entries[fileIndex];
+                entry.Path = path;
+
+                if (entry.IsDeleted() and not entry.Size)
+                    continue;
+                if (entry.IsEncrypted())
+                    EncryptedFileCount++;
+                if (false){}
+                    //files[path.ToLowerInvariant()] = entry;
+                else
+                    files[path] = entry;
+        	}
+        }
+        
+
+        this.Files = files;
+	};
+	
+	ReadIndexLegacy=function(){
+		this.Ar.seek("set",this.Info.IndexOffset);
+		var index = ..pakParser.Reader.BReader(this.Ar.read(this.Info.IndexSize));
+		var mountPoint = index.readFString();
+		mountPoint = this.ValidateMountPoint(mountPoint);
+		this.MountPoint = mountPoint;
+		var fileCount = index.readInt();
+        var files = {};
+        //..console.dump(this);
+        for(i=1;fileCount;1){
+        	var path = ..io.joinpath(mountPoint, index.readFString());
+        	var entry = ..pakParser.FPakEntry();
+        	entry.init(this.Info, path, index);
+        	if (entry.IsDeleted() and not entry.Size)
+                continue;
+            if (entry.IsEncrypted())
+                this.EncryptedFileCount+=1;
+            if (false){}
+                //files[path.ToLowerInvariant()] = entry;
+            else
+                files[path] = entry;
+        }
+        this.Files = files;
+	};
+	
+	ValidateMountPoint =function(mountPoint){
+		var badMountPoint = not ..string.startWith(mountPoint,"../../..");
+        mountPoint = ..string.replace(mountPoint,"^<@../../..@>","",1);
+
+        if (mountPoint[[1]] != '/' or ( (#mountPoint > 1) and (mountPoint[[2]] == '.') ))
+            badMountPoint = true;
+
+        if (badMountPoint) return "";
+        
+        return ..string.slice(mountPoint,1);
+	};
+}
+
+
+namespace pakParser.PakFileReader{
+	Align = function(ptr,alignment){
+		return ptr + alignment - 1 & ~(alignment - 1); 
+	}
+	
+	
+	readArray = function(Ar,getter){
+		var initialPos = Ar.offset;
+        var dataPtr = self.FFrozenMemoryImagePtr(Ar);
+        var arrayNum = Ar.readInt();
+        var arrayMax = Ar.readInt();
+        assert(arrayNum == arrayMax,"Num ({arrayNum}) != Max ({arrayMax})");
+        
+        if (arrayNum == 0) return {};
+        
+        var continuePos = Ar.offset;
+        Ar.seek(initialPos + dataPtr.OffsetFromThis);
+        var data = ..table.array();
+        for(i=1;arrayNum;1){
+        	..table.append(data,getter());
+        	Ar.seek((Ar.offset + 7) & ~(7));
+        }
+        Ar.seek(continuePos);
+        return data;
+	}
+	
+	FFrozenMemoryImagePtr = function(Ar){
+		var a = Ar.readInt64();
+    	var b = (a & 1) != 0;
+    	var c = a >> 1;
+		return {_packed = a;IsFrozen = b;OffsetFromThis = c;};
+	}
+	
+	ReadTMap = function(Ar,keyGetter,valueGetter,keyStructSize,valueStructSize){
+		var pairs = ReadTSet(Ar,function(){
+			var k=keyGetter();
+			var v=valueGetter();
+			return {[k]:v;}; 
+		},
+		Align(keyStructSize + valueStructSize,8));
+        return pairs;
+	}
+	
+	ReadTSet = function(Ar,elementGetter,elementStructSize){
+		var elements = ReadTSparseArray(elementGetter, elementStructSize + 4 + 4); // Add HashNextId and HashIndex from TSetElement
+        Ar.seek(Ar.offset+12); // skip Hash and HashSize
+        return elements;
+	}
+	
+	ReadTSparseArray = function(Ar,elementGetter,elementStructSize){
+		var initialPos = Ar.offset;
+        var dataPtr = FFrozenMemoryImagePtr(Ar);
+        var dataNum = Ar.readInt();
+        var dataMax = Ar.readInt();
+        var allocationFlags = ReadTBitArray(Ar);
+        Ar.seek(Ar.offset+8);  // skip FirstFreeIndex and NumFreeIndices
+        if (dataNum == 0) return ..table.create(); 
+
+        var continuePos = Ar.offset;
+        Ar.seek(initialPos + dataPtr.OffsetFromThis);
+        var data = ..table.array();
+        for(i=1;dataNum;1){
+        	var start = Ar.offset;
+            if (allocationFlags[i])
+            {
+                ..table.append(data,elementGetter());
+            }
+            Ar.seek(start + elementStructSize);
+        }
+
+        Ar.seek(continuePos);
+        return data;
+	}
+	
+	ReadTBitArray = function(Ar){
+		var initialPos = Ar.offset;
+        var dataPtr = FFrozenMemoryImagePtr(Ar);
+        var numBits = Ar.readInt();
+        var maxBits = Ar.readInt();
+        if (numBits == 0) return null; 
+
+        var continuePos = Ar.offset;
+        Ar.seek(initialPos + dataPtr.OffsetFromThis);
+        var data = Ar.readArray({BYTE val},..math.floor((numBits+31)/32)*4);
+        data = ..table.map(data,function(v,k,result){
+            for(i=7;0;-1){
+            	..table.append(result,(v.val & 1<<i != 0))
+            }
+        })
+		Ar.seek(continuePos);
+        return ..table.slice(data,,numBits);
+	}
+	
+
+}

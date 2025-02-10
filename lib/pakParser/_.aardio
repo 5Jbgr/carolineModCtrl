@@ -1,0 +1,75 @@
+﻿//pakParser pak文件解析库
+//解析方法来自：https://github.com/FabianFG/CUE4Parse
+namespace pakParser{
+	CompressionMethod = {
+        none = 0;
+        zlib = 1;
+        gzip = 2; 
+        custom = 3;
+        oodle = 4;
+        lz4 = 5;
+        zstd = 6;
+        unknown = 7;
+    }
+    
+	ECompressionFlags = {
+        /* No compression*/
+        None = 0x00,
+
+        /* Compress with ZLIB - DEPRECATED, USE FNAME*/
+        ZLIB = 0x01,
+
+        /* Compress with GZIP - DEPRECATED, USE FNAME*/
+        GZIP = 0x02,
+
+        /* Compress with user defined callbacks - DEPRECATED, USE FNAME */
+        Custom = 0x04,
+
+        /* Joint of the previous ones to determine if old flags are being used*/
+        DeprecatedFormatFlagsMask = 0xF,
+
+
+        /* No flags specified /	*/
+        NoFlags = 0x00,
+
+        /* Prefer compression that compresses smaller (ONLY VALID FOR COMPRESSION)*/
+        BiasMemory = 0x10,
+        BiasSize = BiasMemory,
+
+        /* Prefer compression that compresses faster (ONLY VALID FOR COMPRESSION)*/
+        BiasSpeed = 0x20,
+
+        /* Is the source buffer padded out	(ONLY VALID FOR UNCOMPRESS)	*/
+        SourceIsPadded = 0x80,
+
+        /* Set of flags that are options are still allowed*/
+        OptionsFlagsMask = 0xF0,
+
+        /* Indicate this compress call is for Packaging (pak/iostore) */
+        ForPackaging = 0x100,
+        ForPurposeMask = 0x100,
+    }
+}
+/*****intellisense(pakParser)
+CompressionMethod.none = 0;
+CompressionMethod.zlib = 1;
+CompressionMethod.gzip = 2; 
+CompressionMethod.custom = 3;
+CompressionMethod.oodle = 4;
+CompressionMethod.lz4 = 5;
+CompressionMethod.zstd = 6;
+CompressionMethod.unknown = 7;
+ECompressionFlags.None = 0x00;
+ECompressionFlags.ZLIB = 0x01,
+ECompressionFlags.GZIP = 0x02,
+ECompressionFlags.Custom = 0x04,
+ECompressionFlags.DeprecatedFormatFlagsMask = 0xF,
+ECompressionFlags.NoFlags = 0x00,
+ECompressionFlags.BiasMemory = 0x10,
+ECompressionFlags.BiasSize = BiasMemory,
+ECompressionFlags.BiasSpeed = 0x20,
+ECompressionFlags.SourceIsPadded = 0x80,
+ECompressionFlags.OptionsFlagsMask = 0xF0,
+ECompressionFlags.ForPackaging = 0x100,
+ECompressionFlags.ForPurposeMask = 0x100,
+end intellisense*****/
