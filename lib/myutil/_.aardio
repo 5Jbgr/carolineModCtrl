@@ -86,6 +86,7 @@ namespace myutil{
 		if(not ..io.exist(path,4)) return null;
 		var f = pakParser.PakFileReader(path);
 		var r = f.Mount();
+		f.close_file();
 		var all = myutil.modCtl.get_category().get_feature();
 		var count = {};
 		var max = null; 

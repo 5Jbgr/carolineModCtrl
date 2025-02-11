@@ -149,7 +149,7 @@ class pakParser.PakFileReader{
         this.Files = files;
 	};
 	
-	ValidateMountPoint =function(mountPoint){
+	ValidateMountPoint = function(mountPoint){
 		var badMountPoint = not ..string.startWith(mountPoint,"../../..");
         mountPoint = ..string.replace(mountPoint,"^<@../../..@>","",1);
 
@@ -159,6 +159,10 @@ class pakParser.PakFileReader{
         if (badMountPoint) return "";
         
         return ..string.slice(mountPoint,1);
+	};
+	
+	close_file = function(){
+		this.Ar.close();
 	};
 }
 

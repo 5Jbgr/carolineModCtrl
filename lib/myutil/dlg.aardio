@@ -43,7 +43,8 @@ namespace myutil.dlg{
 	}
 	error_dlg=function(msg,...){
 		init();
-	    self.dlg.err(msg,,...);
+		if(...) msg=..string.format(msg,...);
+	    self.dlg.err(msg);
 	}
 	info_dlg=function(msg,...){
 		init();
@@ -51,11 +52,13 @@ namespace myutil.dlg{
 	}
 	success_dlg=function(msg,...){
 		init();
-	    self.dlg.ok(msg,,...);
+		if(...) msg=..string.format(msg,...);
+	    self.dlg.ok(msg);
 	}
 	ask_dlg=function(msg,...){
 		init();
-	    return self.dlg.ask(msg,,...); 
+		if(...) msg=..string.format(msg,...);
+	    return self.dlg.ask(msg); 
 	}
 	    
 }

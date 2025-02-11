@@ -384,7 +384,7 @@ modList.add_plus.oncommand = function(id,event){
 				//modList.listview.clear();
 				table.push(new_select,_id);
 			}else {
-				myutil.dlg.info_dlg(string.format(_lang_other.sql_move_error,v)++'\n'++n+" "+add_r);
+				myutil.dlg.info_dlg(string.format(_lang_other.sql_move_error++'\nn=%d,add_r=%d,error code=%d',v,n,add_r?1:0,add_r?fsys.opError));
 			}
 		}
 		if(#new_select>0 and modList.updateTable){
