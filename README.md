@@ -18,6 +18,7 @@
 依靠程序读取pak文件内封游戏资源文件名，通过字符匹配的方式获取对应其对应角色编号，通过编号对应表确定其所属类别。因此此分类器仅支持角色对应模组，非角色模组分类将失效或可能误报。
 自动分类功能拥有最高优先级，仅当自动分类无法判断时才会使用用户指定的类别。
 pak文件内封资源名解析代码翻译自项目[CUE4Parse](https://github.com/FabianFG/CUE4Parse)。
+**由于样本不足无法测试到全部代码，如果出现问题请提出[issue](https://github.com/5Jbgr/carolineModCtrl/issues)并附带对应问题文件或者将问题以及文件[发到邮箱](mailto:whkq668220@outlook.com)。**
 
 ## 开发计划
 
