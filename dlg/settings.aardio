@@ -425,7 +425,7 @@ settings.import_plus.oncommand = function(id,event){
 				var add_r=myutil.modCtl.add_mod(v,string.format("%s/%d_%s.pak",mod_path,_id,mod_template.name));
 				if(n>0 and add_r){
 					for(k,v in myutil.img_list){
-						var p = dir++mod_template.name++v;
+						var p = dir++..string.match(mod_template.name,".*?<_[pP]>?=")++v;
 						if(io.exist(p,4)){
 							var hash=myutil.hash_file(p);
 							var path=io.splitpath(p);
