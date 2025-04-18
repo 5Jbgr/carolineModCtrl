@@ -91,9 +91,9 @@ namespace myutil{
 		var count = {};
 		var max = null; 
 		for(k,_ in r){
-			var cla = ..string.match(k,"<girl\d\d\d[a-z]?><_\d\d[a-z]?>?[_/\\]?=");
+			var cla = ..string.match(k,"<[gG]irl\d\d\d[a-z]?><_\d\d[a-z]?>?[_/\\\.]?=");
 			if(cla and type(all[[cla]])!=type.null){
-				var c = all[[cla]];
+				var c = all[[..string.lower(cla)]];
 				count[c] = count[c]:0 + 1;
 				if(max){
 					if(count[c] > count[max]) max=c;
