@@ -140,7 +140,7 @@ modList.popmenu.add(_lang_other.display,display_popmenu);
 var enable_mod=function(mod){
 	//console.dumpTable(mod);
 	var mod_path=string.format("%s\%s\%d_%s.pak", fsys.path.canonicalize(_config.path.data),mod.category(),mod.id,mod.name);
-	var install_path=string.format("%s\%d_P",fsys.path.canonicalize(_config.path.install),mod.id);
+	var install_path=string.format("%s\%d",fsys.path.canonicalize(_config.path.install),mod.id);
 	//console.log(mod_path,install_path);
 	if(myutil.modCtl.enable_mod(mod_path,install_path)){
 		_db.update_mod({enabled=true},mod.id);
@@ -152,7 +152,7 @@ var enable_mod=function(mod){
 
 var disable_mod=function(mod){
 	if(mod.enabled()){
-		var install_path=string.format("%s\%d_P",fsys.path.canonicalize(_config.path.install),mod.id);
+		var install_path=string.format("%s\%d",fsys.path.canonicalize(_config.path.install),mod.id);
 		myutil.modCtl.disable_mod(install_path);
 		_db.update_mod({enabled=false},mod.id);
 		mod.enabled.value=false;
@@ -419,7 +419,7 @@ modList.delete_plus.oncommand = function(id,event){
 		var mod=_table[v];
 		var msg=string.format(_lang_other.ask_for_delete,mod.name,table.tostring(mod));
 		if(myutil.dlg.ask_dlg(msg)){
-			var install_path=io.joinpath(_config.path.install,mod.id++"_P.pak");
+			var install_path=io.joinpath(_config.path.install,mod.id++"_100_P.pak");
 			var mod_path=io.joinpath(_config.path.data,mod.category(),mod.id+"_"+mod.name+".pak");
 			var trash_path=io.joinpath(_config.path.trash,mod.id+"_"+mod.name+".pak");
 			//fsys.createParentDir(trash_path);

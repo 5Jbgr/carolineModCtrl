@@ -24,7 +24,7 @@ _get_config=function(){
 }
 
 //启用模组
-enable_mod=function(from ,to ,ext=".pak"){
+enable_mod=function(from ,to ,ext="_100_P.pak"){
 	if(from&&to){
 	    if(..io.exist(from,4)){
 	        if(..io.exist(to++ext)){
@@ -57,7 +57,7 @@ enable_mod=function(from ,to ,ext=".pak"){
 	}
 }
 //禁用模组
-disable_mod=function(path,ext=".pak"){
+disable_mod=function(path,ext="_100_P.pak"){
 	if(path){
 		var true_path=path++ext;
 		if(..io.exist(true_path)){
