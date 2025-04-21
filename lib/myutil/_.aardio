@@ -92,8 +92,9 @@ namespace myutil{
 		var max = null; 
 		for(k,_ in r){
 			var cla = ..string.match(k,"<[gG]irl\d\d\d[a-z]?><_\d\d[a-z]?>?[_/\\\.]?=");
+			cla = cla?..string.lower(cla);
 			if(cla and type(all[[cla]])!=type.null){
-				var c = all[[..string.lower(cla)]];
+				var c = all[[cla]];
 				count[c] = count[c]:0 + 1;
 				if(max){
 					if(count[c] > count[max]) max=c;
