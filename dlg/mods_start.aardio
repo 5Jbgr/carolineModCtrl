@@ -73,7 +73,7 @@ tree.searchCategory=function(categorys){
 			modtable.setTable(_table,(not string.endWith(categorys,'-'))?categorys:null);
 		}
 		modtable.updateTable();
-	}elseif(table.isArray(categorys)){
+	}elseif(table.isArrayLike(categorys)){
 		if(#categorys > 0){
 			update_table=function(){
 				_table=_db.search_mod(table.unpack(categorys));
@@ -127,7 +127,7 @@ modtable.showInfo=function(mod){
 
 img.addNewImage=function(imgs){
 	if(_now_mod){
-		if(table.isArray(imgs)){
+		if(table.isArrayLike(imgs)){
 			_db.update_mod({image=string.trim(_now_mod.image+";"+myutil.add_image(_config.path.image,imgs),';')},_now_mod.id);
 		}else {
 			_db.update_mod({image=string.trim(_now_mod.image+";"+myutil.add_image(_config.path.image,{imgs}),';')},_now_mod.id);

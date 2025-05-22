@@ -151,7 +151,7 @@ class mod_category {
 	    	var node={text=v.name;data=v;flag=cat_+'-'+v["id"]};
 	    	//console.log(..table.tostring(node));
 	    	..table.push(root,node);
-	    	var a,b = ..table.find(v,lambda(val) ..table.isArray(val));
+	    	var a,b = ..table.find(v,lambda(val) ..table.isArrayLike(val));
 	    	//console.log(a,b)
 	    	if(b){
 	    		this._gen_tree(b,cat_+'-'+v["id"],node,(feature_:"")++(v.feature:""));
