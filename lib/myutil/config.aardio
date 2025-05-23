@@ -25,12 +25,34 @@ namespace myutil.config{
 	    		    "en"="english";
 	    		};
 	    		now_client="Default/Official";
-	    		client={
-	    		    {name="Epic/Steam";path="\Game\Content\Paks\~mod";};
-	    		    {name="Default/Official";path="\data\game\Game\Content\Paks\~mod";};
-	    		    {name="NewOfficial/SeasunGame";path="\Game\cbjq\game\Game\Content\Paks\~mod";};
-	    		}
+	    		client={};
 	    		category_version="";
+	    	);
+	    	..table.assign(self.configs.ui.client,
+	    		{
+	    	    	{name="Epic/Steam";path="\Game\Content\Paks\~mod";};
+	    			{name="Default/Official";path="\data\game\Game\Content\Paks\~mod";};
+	    			{name="NewOfficial/SeasunGame";path="\Game\cbjq\game\Game\Content\Paks\~mod";};
+	    			{name="Auto";
+	    		    	@{
+	    		        	_get=function(k){
+	    		        	    var relative_path="\Game\Content\Paks\~mod";
+	    		    			if(k==="path" and ..io.exist(self.configs.path.game)){
+	    		    			    import JSON;
+	    		    			    import fsys.path;
+	    		    			    var path = ..io.joinpath(self.configs.path.game,"preference.json");
+	    		    			    var data = JSON.load(path);
+	    		    			    return fsys.path.relative(..io.joinpath(data.dataPath,relative_path),self.configs.path.game); 
+	    		    			}	
+	    		    			else{
+	    		    			    import myutil.dlg;
+	    		    			    myutil.dlg.error_dlg('请先选择正确的游戏目录，然后再选择Auto!\nPlease select the correct game directory first, and then choose Auto!');
+	    		    				return null;
+	    		    			}
+	    		    		}
+	    		    	};
+	    			};
+	    		}
 	    	);
 	    	self.configs.db.mix(
 	    		bace_mod_template={
