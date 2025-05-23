@@ -357,7 +357,7 @@ mod_info.image_plus.onDropFiles = function(files){
 	var imgs=null;
 	if(mod_info.enable_edit.checked){
 		if(not files)return;
-		if(table.isArray(files)){
+		if(table.isArrayLike(files)){
 			imgs=myutil.add_image(_config.path.image,files);
 		}
 		else imgs=myutil.add_image(_config.path.image,{files});
@@ -382,7 +382,7 @@ mod_info.image_plus.onDropFiles = function(files){
 mod_info.onDropFiles = function(files){
 	if(mod_info.enable_edit.checked){
 		if(not files)return;
-		if(table.isArray(files) and #files==1){
+		if(table.isArrayLike(files) and #files==1){
 			files=files[1];
 		}
 		if(type(files)==type.string and string.endWith(files,".pak",true)){

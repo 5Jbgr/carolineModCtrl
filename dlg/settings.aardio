@@ -173,7 +173,7 @@ set_LocalizedResourceName=function(){
 				var r=null;
 				for(k,v in cat){
 					_,r=table.find(d,lambda(val)val.id==v);
-					_,d=table.find(r,lambda(val)table.isArray(val));
+					_,d=table.find(r,lambda(val)table.isArrayLike(val));
 				}
 				var fp=fsys.joinpath(fullpath,"desktop.ini");
 				debug.log.printf("[settings]:add desktop.ini to %s",fullpath);
