@@ -18,14 +18,14 @@ class pakParser.FPakInfo {
 		var offset=..raw.indexOf(Br.buffer,300,self.Magic);
 		if(offset==null)return;
 		Br.seek(offset-1);
-		var length=300-(offset+17);
+		var length=300-(offset-1)+17;
 		
 		this.EncryptedIndex = Br.readByte();
 		this.magic = Br.readInt();
 
 		if(this.magic != PAK_FILE_MAGIC) return;
 		this.version = Br.readInt();
-		this.IsSubVersion = Version == self.EPakFileVersion.FNameBasedCompressionMethod and length == 221;
+		this.IsSubVersion = this.version == self.EPakFileVersion.FNameBasedCompressionMethod and length == 221;
 		this.IndexOffset = Br.readInt64();
 		this.IndexSize = Br.readInt64();
 		this.IndexHash = Br.readHash();

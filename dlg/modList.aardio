@@ -351,6 +351,7 @@ modList.add_plus.oncommand = function(id,event){
 			category=mod.category;
 			var v = myutil.dlg.ask_dlg(_lang_other.use_category_or_not,mod.category[1]);
 			if(not v){
+				my7zip.clearTemp();
 				owner.disabled=false;
 				return ; 
 			}
