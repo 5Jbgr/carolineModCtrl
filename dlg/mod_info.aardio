@@ -339,7 +339,7 @@ mod_info.save_plus.oncommand = function(id,event){
 }
 //右键图片弹出菜单
 mod_info.image_plus.onRightMouseDown = function(wParam,lParam){
-    var x,y = win.getMessagePos(lParam);
+    //var x,y = win.getMessagePos(lParam);
     if(mod_info.enable_edit.checked){
         if(_now_img){
             mod_info.popmenu.enable(1);

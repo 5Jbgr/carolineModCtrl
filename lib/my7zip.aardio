@@ -102,7 +102,7 @@ extract = function(src,dst,proc,password, ...){
     			myutil.dlg.error_dlg(_lang_config.unzip_error++err);
     			debug.log.printf("[unzip]:%s,%s",all,err)
     		}
-    	} 
+    	}
     	prcs.close();
     }
     return e; 

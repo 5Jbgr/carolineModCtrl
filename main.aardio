@@ -4,8 +4,6 @@ import win.ui;
 import debug.log;
 import myutil.config;
 import myutil.dlg;
-import myutil;
-import modSQL;
 /*DSG{{*/
 var mainForm = win.form(text="卡罗琳模组管理器";right=1100;bottom=623)
 mainForm.add(
@@ -18,6 +16,9 @@ navEnd={cls="bkplus";left=-2;top=31;right=1096;bottom=32;bgcolor=32768;border=1;
 
 debug.log.setPath("/log.log");
 debug.log.checkSize(0x200000);
+
+import modSQL;
+import myutil;
 
 global.onError = function( err,over ){ 
     if(!over){

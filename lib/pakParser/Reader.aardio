@@ -14,13 +14,13 @@ class BReader {
 		//..console.dump(#str,..raw.sizeof(str));
 		this.buffer = str;
 		this.offset = 1;
-		this.length = #str+1;
+		this.length = #str;
 	}; 
 	
 	checkReadSize=function(len){
 		//..console.log(len,this.offset,this.length);
 		if(len<0)return false;
-		if(this.offset+len>this.length)return false;
+		if(this.offset+len-1>this.length)return false;
 		return true;
 	};
 	
@@ -87,12 +87,16 @@ class BReader {
 	}
 	
 	readFString=function(){
-		var len = this.readInt();
-		if(len<=0 or not this.checkReadSize(len)) return null;
+		var len = this.read({int val;},4).val:0;
+		var utf16 = false;
+		if(len < 0){
+			len = -len * 2;
+			utf16 = true;
+		}
 		var r = ..string.slice(this.buffer,this.offset,this.offset+len-1);
 		this.offset+=len;
-		//..console.log(len,#r,r);
-		return ..string.str(r); 
+		//..console.log(len,#r,utf16?..string.fromUtf16(r):r);
+		return utf16?..string.fromUtf16(r):r; 
 	}
 	
 }
