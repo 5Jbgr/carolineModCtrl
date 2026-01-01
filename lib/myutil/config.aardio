@@ -9,7 +9,7 @@ namespace myutil.config{
 	    	self.configs.path.mix(
 	    		data="/mods";//程序管理的模组目录位置
             	game="";//游戏目录
-            	mod="/data/game/Game/Content/Paks/~mod";//mod模组相对于游戏目录的位置
+            	mod="/data/game/Game/Content/Paks/~~mods";//mod模组相对于游戏目录的位置
             	install="";//安装模组的目录
             	db="/modinfo.db";//数据库路径
             	language="/config/language";//语言文件目录
@@ -30,13 +30,13 @@ namespace myutil.config{
 	    	);
 	    	..table.assign(self.configs.ui.client,
 	    		{
-	    	    	{name="Epic/Steam";path="\Game\Content\Paks\~mod";};
-	    			{name="Default/Official";path="\data\game\Game\Content\Paks\~mod";};
-	    			{name="NewOfficial/SeasunGame";path="\Game\cbjq\game\Game\Content\Paks\~mod";};
+	    	    	{name="Epic/Steam";path="\Game\Content\Paks\~~mods";};
+	    			{name="Default/Official";path="\data\game\Game\Content\Paks\~~mods";};
+	    			{name="NewOfficial/SeasunGame";path="\Game\cbjq\game\Game\Content\Paks\~~mods";};
 	    			{name="Auto";
 	    		    	@{
 	    		        	_get=function(k){
-	    		        	    var relative_path="\Game\Content\Paks\~mod";
+	    		        	    var relative_path="\Game\Content\Paks\~~mods";
 	    		    			if(k==="path" and ..io.exist(self.configs.path.game)){
 	    		    			    import JSON;
 	    		    			    import fsys.path;

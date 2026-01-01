@@ -23,6 +23,15 @@ _get_config=function(){
 	return _config;
 }
 
+get_ext = function(path,default = "_100_P.pak"){
+	//..debug.log.print(path);
+	var temp = ..string.match(path,"[.:]*?/?[^/]*?_(\d+)_[Pp]<\.pak>?$");
+	//..debug.log.dump(temp);
+	if(temp and #temp>0) return ..string.format("_%s_P.pak",temp);
+	else return default;
+}
+
+
 //启用模组
 enable_mod=function(from ,to ,ext="_100_P.pak"){
 	if(from&&to){
