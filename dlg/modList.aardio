@@ -14,12 +14,12 @@ import fsys.dlg.dir;
 /*DSG{{*/
 var modList = win.form(text="模组列表";right=663;bottom=550)
 modList.add(
-add_plus={cls="plus";text="添加";left=176;top=0;right=256;bottom=23;bgcolor=-5197169;dl=1;dt=1;font=LOGFONT(h=-13);iconStyle={align="left";font=LOGFONT(h=-13;name='FontAwesome');padding={left=10}};iconText='\uF0C5';notify=1;textPadding={left=10};z=4};
-delete_plus={cls="plus";text="删除";left=264;top=0;right=344;bottom=23;bgcolor=-5197169;dl=1;dt=1;font=LOGFONT(h=-13);iconStyle={align="left";font=LOGFONT(h=-13;name='FontAwesome');padding={left=10}};iconText='\uF1F8';notify=1;textPadding={left=10};z=5};
-disable_plus={cls="plus";text="禁用";left=88;top=0;right=168;bottom=23;bgcolor=-5197169;dl=1;dt=1;font=LOGFONT(h=-13);iconStyle={align="left";font=LOGFONT(h=-13;name='FontAwesome');padding={left=10}};iconText='\uF00D';notify=1;textPadding={left=10};z=3};
-enable_plus={cls="plus";text="启用";left=0;top=0;right=80;bottom=23;bgcolor=-5197169;dl=1;dt=1;font=LOGFONT(h=-13);iconStyle={align="left";font=LOGFONT(h=-13;name='FontAwesome');padding={left=12}};iconText='\uF00C';notify=1;textPadding={left=10};z=2};
+add_plus={cls="plus";text="添加";left=176;top=0;right=256;bottom=23;bgcolor=0xFFB0B28F;dl=1;dt=1;font=LOGFONT(h=-13);iconStyle={align="left";font=LOGFONT(h=-13;name='FontAwesome');padding={left=10}};iconText='\uF0C5';notify=1;textPadding={left=10};z=4};
+delete_plus={cls="plus";text="删除";left=264;top=0;right=344;bottom=23;bgcolor=0xFFB0B28F;dl=1;dt=1;font=LOGFONT(h=-13);iconStyle={align="left";font=LOGFONT(h=-13;name='FontAwesome');padding={left=10}};iconText='\uF1F8';notify=1;textPadding={left=10};z=5};
+disable_plus={cls="plus";text="禁用";left=88;top=0;right=168;bottom=23;bgcolor=0xFFB0B28F;dl=1;dt=1;font=LOGFONT(h=-13);iconStyle={align="left";font=LOGFONT(h=-13;name='FontAwesome');padding={left=10}};iconText='\uF00D';notify=1;textPadding={left=10};z=3};
+enable_plus={cls="plus";text="启用";left=0;top=0;right=80;bottom=23;bgcolor=0xFFB0B28F;dl=1;dt=1;font=LOGFONT(h=-13);iconStyle={align="left";font=LOGFONT(h=-13;name='FontAwesome');padding={left=12}};iconText='\uF00C';notify=1;textPadding={left=10};z=2};
 listview={cls="listview";left=0;top=24;right=664;bottom=552;db=1;dl=1;dr=1;dt=1;edge=1;z=1};
-update_plus={cls="plus";text="更新";left=352;top=0;right=432;bottom=23;bgcolor=-5197169;dl=1;dt=1;font=LOGFONT(h=-13);iconStyle={align="left";font=LOGFONT(h=-13;name='FontAwesome');padding={left=10}};iconText='\uF01E';notify=1;textPadding={left=10};z=6}
+update_plus={cls="plus";text="更新";left=352;top=0;right=432;bottom=23;bgcolor=0xFFB0B28F;dl=1;dt=1;font=LOGFONT(h=-13);iconStyle={align="left";font=LOGFONT(h=-13;name='FontAwesome');padding={left=10}};iconText='\uF01E';notify=1;textPadding={left=10};z=6}
 )
 /*}}*/
 
@@ -124,6 +124,7 @@ for(k,v in translate){
 	pop_id[k]=n;
 	n+=1;
 	display_popmenu.add(
+	{
 		text = v;
 		proc = function(id){
 			var check=display_popmenu.checked(id,0);
@@ -132,6 +133,7 @@ for(k,v in translate){
 				modList.changeDisplayColumn(k);
 			}
 		};
+	}
 	);
 }
 modList.popmenu.add(_lang_other.display,display_popmenu);
@@ -142,7 +144,7 @@ var enable_mod=function(mod){
 	var mod_path=string.format("%s\%s\%d_%s.pak", fsys.path.canonicalize(_config.path.data),mod.category(),mod.id,mod.name);
 	var install_path=string.format("%s\%d",fsys.path.canonicalize(_config.path.install),mod.id);
 	//console.log(mod_path,install_path);
-	if(myutil.modCtl.enable_mod(mod_path,install_path)){
+	if(myutil.modCtl.enable_mod(mod_path,install_path,myutil.modCtl.get_ext(mod.name))){
 		_db.update_mod({enabled=true},mod.id);
 		mod.enabled.value=true;
 	}else {
@@ -153,7 +155,7 @@ var enable_mod=function(mod){
 var disable_mod=function(mod){
 	if(mod.enabled()){
 		var install_path=string.format("%s\%d",fsys.path.canonicalize(_config.path.install),mod.id);
-		myutil.modCtl.disable_mod(install_path);
+		myutil.modCtl.disable_mod(install_path,myutil.modCtl.get_ext(mod.name));
 		_db.update_mod({enabled=false},mod.id);
 		mod.enabled.value=false;
 	}
@@ -420,7 +422,7 @@ modList.delete_plus.oncommand = function(id,event){
 		var mod=_table[v];
 		var msg=string.format(_lang_other.ask_for_delete,mod.name,table.tostring(mod));
 		if(myutil.dlg.ask_dlg(msg)){
-			var install_path=io.joinpath(_config.path.install,mod.id++"_100_P.pak");
+			var install_path=io.joinpath(_config.path.install,mod.id++myutil.modCtl.get_ext(mod.name));
 			var mod_path=io.joinpath(_config.path.data,mod.category(),mod.id+"_"+mod.name+".pak");
 			var trash_path=io.joinpath(_config.path.trash,mod.id+"_"+mod.name+".pak");
 			//fsys.createParentDir(trash_path);
@@ -454,7 +456,7 @@ modList.update_plus.oncommand = function(id,event){
 				return ; 
 		}
 		var old_file=mod.name;
-		var install_path=io.joinpath(_config.path.install,mod.id++"_P.pak");
+		var install_path=io.joinpath(_config.path.install,mod.id++myutil.modCtl.get_ext(mod.name));
 		var mod_path=io.joinpath(_config.path.data,mod.category(),mod.id+"_"+mod.name+".pak");
 		var trash_path=io.joinpath(_config.path.trash,mod.id+"_"+mod.name+".pak");
 		myutil.modCtl.remove_mod(mod_path,install_path,trash_path);
