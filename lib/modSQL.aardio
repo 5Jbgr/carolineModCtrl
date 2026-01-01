@@ -230,7 +230,9 @@ namespace modSQL{
 		};
 		
 		add_mod=function(mod){
-			_insert_mod.step(mod);
+			debug.log.dump("[db]insert mod:",mod);
+			var r = _insert_mod.step(mod);
+			if(r&&(r<100)) debug.log.printf('[db]insert fail:%s',sqlite.formatResult(r));
 			return _db.changes(),_db.lastInsertRowid();
 		};
 		update_mod=function(update_thing,id){
