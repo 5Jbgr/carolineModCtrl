@@ -11,6 +11,7 @@ import myutil.modCtl;
 import myutil;
 import my7zip;
 import fsys.dlg.dir;
+import process;
 /*DSG{{*/
 var modList = win.form(text="模组列表";right=663;bottom=550)
 modList.add(
@@ -46,6 +47,7 @@ modList.changeDisplayColumn=null;
 //重新设置列宽回调
 modList.getColumnWidth=null;
 
+modList.listview.enableDoubleBuffering();
 
 var translate = modSQL.get_translate();
 var _db=modSQL.get_mod_sql();
@@ -81,6 +83,10 @@ table.mix(_lang_other,{
 	ask_for_delete='确认删除文件[%s]?\n[%s]';
 	update_info="(需要/只能)选择一条记录!";
 	display="显示";
+	no_website="网址不存在!";
+	open_folder = "打开所在的文件夹";
+	open_url = "打开来源网址";
+	rename = "文件重命名";
 });
 
 tabs.dropButton.skin({   
@@ -137,6 +143,46 @@ for(k,v in translate){
 	);
 }
 modList.popmenu.add(_lang_other.display,display_popmenu);
+modList.popmenu.add(_lang_other.open_folder,function(){
+	var row = modList.listview.getFocused();
+	var mod = _table[row];
+	var path = string.format("%s\%s\%d_%s.pak", fsys.path.canonicalize(_config.path.data),mod.category(),mod.id,mod.name);
+	process.exploreSelect(path);
+});
+modList.popmenu.add(_lang_other.open_url,function(){
+	import inet.url;
+	var row = modList.listview.getFocused();
+	var url = _table[row]["URL"]:"";
+	if(inet.url.is(url,0x0/*_URLIS_URL*/)){
+		process.openUrl(url);
+	}elseif(string.find(url,"^\d+$")){
+		process.openUrl("https://www.nexusmods.com/snowbreakcontainmentzone/mods/"+url);
+	}else {
+		myutil.dlg.info_dlg(_lang_other.no_website);
+	}
+})
+modList.popmenu.add(_lang_other.rename,function(){
+	import win.inputBox;
+	var row = modList.listview.getFocused();
+	var mod = _table[row]
+	var old_name = mod["name"]:"";
+	var new_name = myutil.dlg.input_dlg(modList,_lang_other.rename,old_name + " ==>",old_name);
+	if (not new_name or new_name == "" or old_name == new_name) return ;
+	new_name = string.replace(new_name,"@.pak","");
+	if (old_name == new_name) return ;
+	var root = fsys.path.canonicalize(_config.path.data);
+	root = io.joinpath(root,_table[row].category());
+	if (myutil.modCtl.rename_mod(root,
+						myutil.get_true_mod_name(mod.name,mod.id),
+						myutil.get_true_mod_name(new_name,mod.id))){
+			_db.update_mod({name = new_name},mod.id);
+			if(modList.updateTable){
+				modList.updateTable();
+			}
+	}else{
+		myutil.dlg.error_dlg("Error");
+	}
+})
 
 
 var enable_mod=function(mod){
@@ -201,6 +247,15 @@ modList.listview.onClick = function(item,subItem,nmListView){
 
 //右键弹出菜单
 modList.listview.onRightClick = function(item,subItem,nmListView){
+	if(item > 0){
+		modList.popmenu.enable(2);
+		modList.popmenu.enable(3);
+		modList.popmenu.enable(4);
+	}else {
+		modList.popmenu.enable(2,false);
+		modList.popmenu.enable(3,false);
+		modList.popmenu.enable(4,false);
+	}
 	modList.popmenu.popup();
 }
 
@@ -451,9 +506,9 @@ modList.update_plus.oncommand = function(id,event){
 		var mod = _table[selected[1]];
 		var hash=myutil.hash_file(path);
 		if(#mod.hash!=32){
-				myutil.dlg.info_dlg(_lang_other.hash_error,filename[k]);
-				owner.disabled=false;
-				return ; 
+			myutil.dlg.info_dlg(_lang_other.hash_error,filename[k]);
+			owner.disabled=false;
+			return ; 
 		}
 		var old_file=mod.name;
 		var install_path=io.joinpath(_config.path.install,mod.id++myutil.modCtl.get_ext(mod.name));

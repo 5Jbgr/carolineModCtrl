@@ -1,0 +1,68 @@
+//ProgressBar 进度条
+import win.ui;
+
+class ProgressBar{
+	ctor(parent,tParam){
+	/*DSG{{*/
+	this = ..win.form(text="Processing";right=759;bottom=383;parent=parent)
+	this.add(
+	progress={cls="progress";left=16;top=16;right=744;bottom=46;edge=1;max=100;min=0;z=1};
+	richedit={cls="richedit";left=16;top=56;right=744;bottom=368;edge=1;hscroll=1;multiline=1;readonly=1;vscroll=1;z=2}
+	)
+	/*}}*/
+	
+	//设置字体大小
+	this.richedit.setFont(h=-15);
+	//设置进度条最大值
+	this.setmax=function(num){
+		this.progress.max=num;
+	}
+	//设置进度条范围
+	this.setrange=lambda(min,max) this.progress.setRange(min,max);
+	
+	//步进进度条
+	this.step=function(n=1){
+		this.progress.delta(n);
+		return this.progress.pos;
+	}
+	
+	//重置进度条
+	this.reset=function(){
+		this.progress.pos=this.progress.min;
+	}
+	
+	//添加信息
+	this.addInfo=function(info,color=0x010101,width=0,needFormat=true){
+		if(needFormat) info=..string.format('%-'+width+'s\t',info);
+		this.richedit.appendText({text=info,textColor=color});
+	}
+	
+	//进入下一行
+	this.nextLine=function(){
+		this.richedit.appendText('\n');
+		this.richedit.vScroll();
+	}
+	
+	this.writeLinef=lambda(color,str,...) this.addInfo(..string.format(str++'\n', ...),color,,false);
+	this.writeLine=lambda(str,color) this.addInfo(str++'\n',color,,false);
+	};
+}
+
+if( !owner ){
+	import win.timer;
+	var status=ProgressBar();
+	var i=0; 
+	timer=win.timer(status,50);
+	timer.onTimer = function(){
+		status.progress.delta(1);
+		status.addInfo('test_'++i);
+		i++;
+		status.nextLine();
+		if(status.progress.pos>=status.progress.max) timer.disable();
+	}
+	timer.enable();
+	status.doModal();
+} 
+/**intellisense()
+test() = 窗口类\n!winform.
+end intellisense**/

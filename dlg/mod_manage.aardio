@@ -182,7 +182,7 @@ info.create_info=function(_info){
 		fsys.createDir(mod_path,false);
 		var n,_id=_db.add_mod(_info);
 		mod_path=io.joinpath(mod_path,_id+"_"+_info.name+".pak");
-		if(n>0 and fsys.move(path,mod_path)){
+		if(n>0 and myutil.modCtl.addmod(path,mod_path)){
 			tree.searchCategory(_info.categoty);
 			myutil.dlg.success_dlg(_lang_other.add_success);
 		}else {
@@ -200,9 +200,7 @@ modManage.refresh=function(){
 
 
 
-tree.show();
 modtable.show();
-info.show();
 modManage.show();
 win.loopMessage();
 return modManage;

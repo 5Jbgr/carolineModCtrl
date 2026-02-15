@@ -3,6 +3,12 @@
 namespace myutil{
 	import debug.log;
 	import crypt;
+	
+	get_true_mod_name = function(name,id){
+		return ..string.format("%d_%s.pak", id, name);
+	}
+	
+	
 	hash_file=function(path){
 		if(..io.exist(path,4)){
 			var result,error_code=crypt().hashFile(path);
@@ -11,7 +17,7 @@ namespace myutil{
 		return ""; 
 	}
 	
-	img_list={".jpg",".png",".jpeg",".bmp"}
+	img_list={".jpg",".png",".jpeg",".bmp",".webp"}
 	check_image=function(img){
 		var ext=..io.splitpath(img).ext;
 		return ..table.indexOf(img_list,..string.lower(ext)):false; 
@@ -89,16 +95,14 @@ namespace myutil{
 		f.close_file();
 		var all = myutil.modCtl.get_category().get_feature();
 		var count = {};
-		var max = null; 
+		var max = null;
 		for(k,_ in r){
-			var cla = ..string.match(k,"<[gG]irl\d\d\d[a-z]?><_\d\d[a-z]?>?[_/\\\.]?=");
-			cla = cla?..string.lower(cla);
-			if(cla and type(all[[cla]])!=type.null){
-				var c = all[[cla]];
-				count[c] = count[c]:0 + 1;
-				if(max){
-					if(count[c] > count[max]) max=c;
-				}else max = c;
+			var cla = ..string.match(k,"<<[gG]irl>|<[tT]a?itan>\d\d\d[a-z]?><_\d\d[a-z]?>?[_/\\\.]?=");
+			cla = cla?..string.replace(..string.lower(cla),"<ta?itan>","girl",1);
+			var c = all[[cla]];
+			if(cla and type(c)!=type.null){
+				count[c] = (count[c]:0) + 1;
+				if((not max) or (count[c] > count[max])) max=c;
 			}
 			//..console.log(cla,all[[cla]]);
 		}

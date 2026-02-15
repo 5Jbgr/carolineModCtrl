@@ -2,9 +2,9 @@
 modCtl={path_not_found_error="路径不存在:{%s}"};
 category_tree={title="模组类别"};
 about={warningText='模组是作者的一片心血，请大家不要随意分享，\r\n也请大家不要去官方以及社区分享这些信息！！！\r\n不要把MOD截图发到官群和公开平台,否则会导致封号和MOD被堵死';redownload="重新下载角色信息";title="关于";about_richedit={web='\r\n网址：';update_success="更新成功";version='\r\n版本：';newest_version='\r\n最新版本：';loding="获取中";updating="更新中";character_info='\r\n角色信息';fail="获取失败"}};
-modList={enable_mod_error="%s启用失败[id=%d]";update_info="(需要/只能)选择一条记录!";hash_error="文件[%s]计算Hash失败";ask_for_delete="确认删除文件[%s]?
-[%s]";display="显示";have_same_file="模组文件已存在[id=%d]";sql_move_error="注册文件/移动文件失败,请检查数据库及文件位置
-[path=%s]";use_category_or_not="是否使用类别[%s]?"};
+modList={enable_mod_error="%s启用失败[id=%d]";hash_error="文件[%s]计算Hash失败";ask_for_delete="确认删除文件[%s]?
+[%s]";open_folder="打开所在的文件夹";sql_move_error="注册文件/移动文件失败,请检查数据库及文件位置
+[path=%s]";have_same_file="模组文件已存在[id=%d]";update_info="(需要/只能)选择一条记录!";rename="文件重命名";display="显示";open_url="打开来源网址";no_website="网址不存在!";use_category_or_not="是否使用类别[%s]?"};
 modManage={have_same_file="模组文件已存在[id=%d]";sql_move_error="注册文件/移动文件失败,请检查数据库及文件位置
 [path=%s]";add_success="注册成功"};
 settings={ask_admin="使用符号链接需要管理员权限，请确认启用!!";ask_symbolicLink="请注意，这种方法不被推荐。在继续之前，请确保你清楚自己在做什么!!";can_not_find_file="未找到文件%s";ask_hardlink="使用硬链接请确保本软件和游戏在同一磁盘中!!"};

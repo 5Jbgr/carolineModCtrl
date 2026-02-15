@@ -47,10 +47,10 @@ modtable.setTable(_table);
 modsStart.splitter.split(modsStart.tree_custom,modsStart.table_custom);
 modsStart.splitter2.split(modsStart.table_custom,modsStart.image_custom);
 
-modsStart.splitter.ltMin=300;
-modsStart.splitter.rbMin=600;
-modsStart.splitter2.ltMin=600;
-modsStart.splitter2.rbMin=400;
+modsStart.splitter.ltMin=275;
+modsStart.splitter.rbMin=200;
+modsStart.splitter2.ltMin=200;
+modsStart.splitter2.rbMin=200;
 
 //更新表格
 var update_table=function(){
