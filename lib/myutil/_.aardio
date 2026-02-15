@@ -3,6 +3,12 @@
 namespace myutil{
 	import debug.log;
 	import crypt;
+	
+	get_true_mod_name = function(name,id){
+		return ..string.format("%d_%s.pak", id, name);
+	}
+	
+	
 	hash_file=function(path){
 		if(..io.exist(path,4)){
 			var result,error_code=crypt().hashFile(path);
@@ -11,7 +17,7 @@ namespace myutil{
 		return ""; 
 	}
 	
-	img_list={".jpg",".png",".jpeg",".bmp"}
+	img_list={".jpg",".png",".jpeg",".bmp",".webp"}
 	check_image=function(img){
 		var ext=..io.splitpath(img).ext;
 		return ..table.indexOf(img_list,..string.lower(ext)):false; 

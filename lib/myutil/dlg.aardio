@@ -60,5 +60,20 @@ namespace myutil.dlg{
 		if(...) msg=..string.format(msg,...);
 	    return self.dlg.ask(msg); 
 	}
+	
+	input_dlg = function(parent,title,msg,tips){
+		import win.inputBox;
+		var window = win.inputBox(parent,msg,title,tips);
+	    var lang=..myutil.config.get_config().ui[["language"]];
+	    if(lang=="zh_cn"){
+	        window.btnOk.text='确认';
+	        window.btnCancel.text='取消';
+	    }else {
+	    	window.btnOk.text='OK';
+	    	window.btnCancel.text='Cancel';
+	    }
+		return window.doModal();
+	}
+	
 	    
 }

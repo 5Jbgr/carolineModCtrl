@@ -27,7 +27,7 @@ get_ext = function(path,default = "_100_P.pak"){
 	//..debug.log.print(path);
 	var temp = ..string.match(path,"[.:]*?/?[^/]*?_(\d+)_[Pp]<\.pak>?$");
 	//..debug.log.dump(temp);
-	if(temp and #temp>0) return ..string.format("_%s_P.pak",temp);
+	if(temp and #temp>0 and tonumber(temp)>100) return ..string.format("_%s_P.pak",temp);
 	else return default;
 }
 
@@ -115,6 +115,21 @@ add_mod=function(from ,to ){
 	}else {
 		return fsys.copy(from,to);
 	}
+}
+
+rename_mod = function(root,origin,target){
+	if (origin && target){
+		if (not ..string.endsWith(target,".pak")){
+			target = target ++ ".pak";
+		}
+		var from = ..io.joinpath(root,origin);
+		if (..io.exist(from,6)){
+			return fsys.rename(from,..io.joinpath(root,target));
+		}else{
+			myutil.dlg.error_dlg(_get_lang().path_not_found_error,from);
+		}
+	}
+	return false;
 }
 
 

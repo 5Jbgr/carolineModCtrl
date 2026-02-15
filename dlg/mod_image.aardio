@@ -5,6 +5,7 @@ import win.clip;
 import console;
 import myutil.dlg;
 import myutil.config;
+import gdip.webp;
 /*DSG{{*/
 var mod_image = win.form(text="模组预览图";right=287;bottom=550;acceptfiles=1)
 mod_image.add(

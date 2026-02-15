@@ -8,9 +8,9 @@ import myutil.dlg;
 var mainForm = win.form(text="卡罗琳模组管理器";right=1100;bottom=623)
 mainForm.add(
 custom={cls="custom";left=0;top=32;right=1096;bottom=622;db=1;dl=1;dr=1;dt=1;z=4};
-nav1={cls="plus";left=0;top=0;right=150;bottom=32;border={bottom=1;color=-16744448};dl=1;dt=1;font=LOGFONT(h=-14;name='微软雅黑');z=2};
-nav2={cls="plus";left=149;top=0;right=299;bottom=32;border={bottom=1;color=-16744448};dl=1;dt=1;font=LOGFONT(h=-14;name='微软雅黑');z=3};
-navEnd={cls="bkplus";left=-2;top=31;right=1096;bottom=32;bgcolor=32768;border=1;disabled=1;dl=1;dr=1;dt=1;z=1}
+nav1={cls="plus";left=0;top=0;right=150;bottom=32;border={bottom=1;color=0xFF008000};dl=1;dt=1;font=LOGFONT(h=-14;name='微软雅黑');z=2};
+nav2={cls="plus";left=149;top=0;right=299;bottom=32;border={bottom=1;color=0xFF008000};dl=1;dt=1;font=LOGFONT(h=-14;name='微软雅黑');z=3};
+navEnd={cls="bkplus";left=-2;top=31;right=1096;bottom=32;bgcolor=0x008000;border=1;disabled=1;dl=1;dr=1;dt=1;z=1}
 )
 /*}}*/
 

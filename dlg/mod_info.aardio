@@ -10,28 +10,29 @@ import myutil;
 import myutil.dlg;
 import myutil.modCtl;
 import string.conv.pinyin;
+import gdip.webp;
 /*DSG{{*/
 var mod_info = win.form(text="模组信息";right=351;bottom=550;mode="popup")
 mod_info.add(
-all_img_combobox={cls="combobox";left=216;top=296;right=344;bottom=320;bgcolor=16771561;db=1;disabled=1;dr=1;edge=1;items={};mode="dropdown";vscroll=1;z=18};
-author_edit={cls="edit";left=72;top=64;right=344;bottom=88;bgcolor=15335401;disabled=1;dl=1;dr=1;dt=1;edge=1;z=3};
+all_img_combobox={cls="combobox";left=216;top=296;right=344;bottom=320;bgcolor=0xFFE9E9;db=1;disabled=1;dr=1;edge=1;items={};mode="dropdown";vscroll=1;z=18};
+author_edit={cls="edit";left=72;top=64;right=344;bottom=88;bgcolor=0xE9FFE9;disabled=1;dl=1;dr=1;dt=1;edge=1;z=3};
 author_static={cls="static";text="作者";left=0;top=64;right=64;bottom=88;align="right";center=1;dl=1;dt=1;transparent=1;z=4};
-category_combobox={cls="combobox";left=72;top=128;right=344;bottom=152;bgcolor=16771561;disabled=1;dl=1;dr=1;dt=1;edge=1;items={};mode="dropdown";vscroll=1;z=17};
+category_combobox={cls="combobox";left=72;top=128;right=344;bottom=152;bgcolor=0xFFE9E9;disabled=1;dl=1;dr=1;dt=1;edge=1;items={};mode="dropdown";vscroll=1;z=17};
 category_static={cls="static";text="类别";left=0;top=128;right=64;bottom=152;align="right";center=1;dl=1;dt=1;transparent=1;z=7};
-describe_edit={cls="edit";left=72;top=224;right=344;bottom=288;bgcolor=15329791;db=1;disabled=1;dl=1;dr=1;dt=1;edge=1;multiline=1;z=13};
+describe_edit={cls="edit";left=72;top=224;right=344;bottom=288;bgcolor=0xE9E9FF;db=1;disabled=1;dl=1;dr=1;dt=1;edge=1;multiline=1;z=13};
 describe_static={cls="static";text="描述";left=0;top=224;right=64;bottom=248;align="right";center=1;dl=1;dt=1;transparent=1;z=12};
 enable_edit={cls="plus";text="编辑";left=48;top=8;right=152;bottom=24;align="left";dl=1;dt=1;iconStyle={align="left";font=LOGFONT(h=-13;name='FontAwesome')};iconText='\uF0C8';notify=1;textPadding={left=15;top=-2};transparent=1;z=15};
-filename_edit={cls="edit";left=72;top=32;right=344;bottom=56;acceptfiles=1;bgcolor=15335423;disabled=1;dl=1;dr=1;dt=1;edge=1;z=1};
+filename_edit={cls="edit";left=72;top=32;right=344;bottom=56;acceptfiles=1;bgcolor=0xE9FFFF;disabled=1;dl=1;dr=1;dt=1;edge=1;z=1};
 filename_static={cls="static";text="文件名";left=0;top=32;right=64;bottom=56;align="right";center=1;dl=1;dt=1;transparent=1;z=2};
 image_plus={cls="plus";left=0;top=320;right=352;bottom=552;acceptfiles=1;db=1;dl=1;dr=1;notify=1;repeat="scale";z=20};
 image_static={cls="static";text="预览图";left=0;top=296;right=64;bottom=320;align="right";center=1;db=1;dl=1;transparent=1;z=14};
-mod_img_combobox={cls="combobox";left=72;top=296;right=200;bottom=320;bgcolor=16771561;db=1;dl=1;dr=1;edge=1;items={};mode="dropdown";vscroll=1;z=19};
-save_plus={cls="plus";text="保存";left=248;top=8;right=336;bottom=24;align="left";color=3947580;disabled=1;dr=1;dt=1;iconStyle={align="left";font=LOGFONT(h=-13;name='FontAwesome')};iconText='\uF0ED';notify=1;textPadding={left=15;top=-3};transparent=1;z=16};
-tag_edit={cls="edit";left=72;top=160;right=344;bottom=184;bgcolor=16771561;disabled=1;dl=1;dr=1;dt=1;edge=1;z=9};
+mod_img_combobox={cls="combobox";left=72;top=296;right=200;bottom=320;bgcolor=0xFFE9E9;db=1;dl=1;dr=1;edge=1;items={};mode="dropdown";vscroll=1;z=19};
+save_plus={cls="plus";text="保存";left=248;top=8;right=336;bottom=24;align="left";color=0x3C3C3C;disabled=1;dr=1;dt=1;iconStyle={align="left";font=LOGFONT(h=-13;name='FontAwesome')};iconText='\uF0ED';notify=1;textPadding={left=15;top=-3};transparent=1;z=16};
+tag_edit={cls="edit";left=72;top=160;right=344;bottom=184;bgcolor=0xFFE9E9;disabled=1;dl=1;dr=1;dt=1;edge=1;z=9};
 tag_static={cls="static";text="标签";left=0;top=160;right=64;bottom=184;align="right";center=1;dl=1;dt=1;transparent=1;z=8};
-url_edit={cls="edit";left=72;top=96;right=344;bottom=120;bgcolor=16777193;disabled=1;dl=1;dr=1;dt=1;edge=1;z=5};
+url_edit={cls="edit";left=72;top=96;right=344;bottom=120;bgcolor=0xFFFFE9;disabled=1;dl=1;dr=1;dt=1;edge=1;z=5};
 url_static={cls="static";text="网址";left=0;top=96;right=64;bottom=120;align="right";center=1;dl=1;dt=1;transparent=1;z=6};
-version_edit={cls="edit";left=72;top=192;right=344;bottom=216;bgcolor=16771583;disabled=1;dl=1;dr=1;dt=1;edge=1;z=11};
+version_edit={cls="edit";left=72;top=192;right=344;bottom=216;bgcolor=0xFFE9FF;disabled=1;dl=1;dr=1;dt=1;edge=1;z=11};
 version_static={cls="static";text="版本";left=0;top=192;right=64;bottom=216;align="right";center=1;dl=1;dt=1;transparent=1;z=10}
 )
 /*}}*/
