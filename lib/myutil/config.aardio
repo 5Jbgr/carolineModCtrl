@@ -33,22 +33,35 @@ namespace myutil.config{
 	    	    	{name="Epic/Steam";path="\Game\Content\Paks\~~mods";};
 	    			{name="Default/Official";path="\data\game\Game\Content\Paks\~~mods";};
 	    			{name="NewOfficial/SeasunGame";path="\Game\cbjq\game\Game\Content\Paks\~~mods";};
-	    			{name="Auto";
+	    			{name="Auto";_path=null;suffix = "~~mods";
 	    		    	@{
 	    		        	_get=function(k){
-	    		        	    var relative_path="\Game\Content\Paks\~~mods";
-	    		    			if(k==="path" and ..io.exist(self.configs.path.game)){
-	    		    			    import JSON;
-	    		    			    import fsys.path;
-	    		    			    var path = ..io.joinpath(self.configs.path.game,"preference.json");
-	    		    			    var data = JSON.load(path);
-	    		    			    return fsys.path.relative(..io.joinpath(data.dataPath,relative_path),self.configs.path.game); 
-	    		    			}	
-	    		    			else{
+	    		        	    var relative_path=owner["suffix"];
+	    		        	    var path = null;
+	    		        	    if(k!=="path") return ; 
+	    		        	    if(owner[["_path"]]){
+	    		        	    	return owner[["_path"]];
+	    		        	    }elseif(..io.exist(self.configs.path.game)){
+	    		    				import fsys;
+	    		    				fsys.enum( self.configs.path.game,
+	    		    					["App_Engine-WindowsNoEditor.pak","PAK_Engine-WindowsNoEditor.pak","APP_Game_Blueprints_0-WindowsNoEditor.pak"],
+	    		    					function(dir,filename,fullpath,findData){ 
+	    		    						if(filename){
+	    		    						    var abspath = ..io.joinpath(dir,relative_path);
+	    		    						    path = fsys.path.relative(abspath,self.configs.path.game);
+	    		    						    ..debug.log.printf("[config]找到文件%s, 确认相对路径为%s",fullpath,path);
+	    		    						    return false;
+	    		    						}
+	    		    					}, 
+	    		    					true,/*如果此参数为 false 则忽略子目录*/
+	    		    				);
+	    		    			}
+	    		    			if(not path){
 	    		    			    import myutil.dlg;
 	    		    			    myutil.dlg.error_dlg('请先选择正确的游戏目录，然后再选择Auto!\nPlease select the correct game directory first, and then choose Auto!');
-	    		    				return null;
 	    		    			}
+	    		    			owner[["_path"]] = path;
+	    		    			return owner[["_path"]];
 	    		    		}
 	    		    	};
 	    			};
