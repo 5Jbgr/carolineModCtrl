@@ -97,7 +97,7 @@ namespace myutil{
 		var count = {};
 		var max = null;
 		for(k,_ in r){
-			var cla = ..string.match(k,"<<[gG]irl>|<[tT]a?itan>\d\d\d[a-z]?><_\d\d[a-z]?>?[_/\\\.]?=");
+			var cla = ..string.match(k,"<^\\[Gg]ame\\[Cc]ontent>.+?(<<[gG]irl>|<[tT]a?itan>\d\d\d[a-z]?><_\d\d[a-z]?>?)[_/\\\.]?=");
 			cla = cla?..string.replace(..string.lower(cla),"<ta?itan>","girl",1);
 			var c = all[[cla]];
 			if(cla and type(c)!=type.null){
